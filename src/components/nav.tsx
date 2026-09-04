@@ -1,0 +1,201 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { siteData } from "@/content/site";
+import { sound } from "@/lib/sound";
+import { CommandPalette } from "./command-palette";
+import { Button } from "./ui/button";
+import {
+  Menu,
+  X,
+  Command,
+  Sun,
+  Moon,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
+
+export function Nav() {
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+
+  useEffect(() => {
+    setIsMuted(sound.getIsMuted());
+    const isDarkTheme = document.documentElement.classList.contains("dark");
+    setIsDark(isDarkTheme);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const toggleTheme = () => {
+    sound.playClick(750);
+    const root = document.documentElement;
+    if (root.classList.contains("dark")) {
+      root.classList.remove("dark");
+      setIsDark(false);
+    } else {
+      root.classList.add("dark");
+      setIsDark(true);
+    }
+  };
+
+  const toggleSound = () => {
+    const muted = sound.toggleMute();
+    setIsMuted(muted);
+  };
+
+  const navLinks = [
+    { label: "Work", href: "#work" },
+    { label: "The Lab", href: "#lab" },
+    { label: "Research", href: "#research" },
+    { label: "Experience", href: "#experience" },
+    { label: "Skills", href: "#skills" },
+  ];
+
+  return (
+    <>
+      <header className="sticky top-0 z-40 w-full border-b border-line/80 bg-paper/95 backdrop-blur-md transition-colors duration-200">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+          {/* Brand Wordmark */}
+          <div className="flex items-center gap-3">
+            <a
+              href="#"
+              onClick={() => sound.playClick(900)}
+              className="group flex items-baseline gap-2 text-ink hover:text-accent transition-colors"
+            >
+              <span className="font-mono text-sm font-semibold tracking-tight">
+                {siteData.personal.wordmark}
+              </span>
+              <span className="hidden sm:inline-block font-mono text-[11px] text-ink-soft group-hover:text-ink transition-colors">
+                / {siteData.personal.role}
+              </span>
+            </a>
+
+            {/* Status Dot */}
+            <div className="hidden lg:flex items-center gap-1.5 px-2 py-0.5 border border-line rounded-token bg-paper-2 text-[11px] font-mono text-ink-soft">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+              <span>Available</span>
+            </div>
+          </div>
+
+          {/* Center Links (Desktop) */}
+          <nav className="hidden md:flex items-center gap-6" aria-label="Main Navigation">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => sound.playClick(750)}
+                className="text-xs font-mono uppercase tracking-wider text-ink-soft hover:text-ink transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+
+          {/* Right Actions */}
+          <div className="flex items-center gap-2">
+            {/* Quick Command Palette Trigger */}
+            <button
+              onClick={() => {
+                sound.playClick(850);
+                setPaletteOpen(true);
+              }}
+              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono text-ink-soft hover:text-ink bg-paper-2 border border-line rounded-token hover:border-ink-soft transition-colors cursor-pointer"
+              title="Open Command Palette (Ctrl+K or ⌘K)"
+              aria-label="Search and command palette"
+            >
+              <Command className="w-3.5 h-3.5 text-accent" />
+              <span className="hidden sm:inline">Search</span>
+              <kbd className="hidden sm:inline-block text-[10px] text-ink-soft/70">⌘K</kbd>
+            </button>
+
+            {/* Audio Toggle */}
+            <button
+              onClick={toggleSound}
+              className="p-1.5 text-ink-soft hover:text-ink border border-transparent hover:border-line rounded-token transition-colors cursor-pointer"
+              title={isMuted ? "Unmute audio micro-clicks" : "Mute audio"}
+              aria-label={isMuted ? "Unmute audio clicks" : "Mute audio"}
+            >
+              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-accent" />}
+            </button>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 text-ink-soft hover:text-ink border border-transparent hover:border-line rounded-token transition-colors cursor-pointer"
+              title={isDark ? "Switch to Editorial Paper mode" : "Switch to Dark Terminal mode"}
+              aria-label="Toggle theme"
+            >
+              {isDark ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4" />}
+            </button>
+
+            {/* Primary CTA */}
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => {
+                const el = document.querySelector("#contact");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="hidden sm:inline-flex ml-1"
+            >
+              Contact
+            </Button>
+
+            {/* Mobile Hamburger Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-1.5 text-ink-soft hover:text-ink border border-line rounded-token"
+              aria-label="Toggle mobile menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-line bg-paper px-4 py-4 space-y-3 animate-fade-in">
+            <div className="flex flex-col gap-2">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => {
+                    sound.playClick(750);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="px-3 py-2 text-sm font-mono text-ink hover:bg-paper-2 rounded-token"
+                >
+                  {link.label}
+                </a>
+              ))}
+              <a
+                href="#contact"
+                onClick={() => {
+                  sound.playClick(750);
+                  setMobileMenuOpen(false);
+                }}
+                className="px-3 py-2 text-sm font-mono text-accent font-semibold hover:bg-paper-2 rounded-token"
+              >
+                Get in Touch
+              </a>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Global Command Palette */}
+      <CommandPalette isOpen={paletteOpen} onClose={() => setPaletteOpen(false)} />
+    </>
+  );
+}

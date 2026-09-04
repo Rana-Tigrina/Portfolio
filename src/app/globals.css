@@ -1,0 +1,200 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --paper: #F7F6F2;
+    --paper-2: #EEECE4;
+    --ink: #15161B;
+    --ink-soft: #5B5D63;
+    --line: #DCD8CD;
+    --accent: #0F6B5C;
+    --accent-soft: #E3EEEB;
+    --radius-token: 3px;
+  }
+
+  .dark {
+    --paper: #0E1015;
+    --paper-2: #171922;
+    --ink: #F4F3EE;
+    --ink-soft: #9CA1AB;
+    --line: #252836;
+    --accent: #1DB89F;
+    --accent-soft: #112925;
+  }
+
+  * {
+    border-color: var(--line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--paper);
+    color: var(--ink);
+  }
+
+  body {
+    min-height: 100vh;
+    font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+    background-color: var(--paper);
+    color: var(--ink);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: #ffffff;
+  }
+}
+
+/* Reduced motion global override per master spec */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-delay: 0s !important;
+    transition-duration: 0s !important;
+  }
+}
+
+/* Custom utility classes */
+.bg-paper {
+  background-color: var(--paper);
+}
+
+.bg-paper-2 {
+  background-color: var(--paper-2);
+}
+
+.text-ink {
+  color: var(--ink);
+}
+
+.text-ink-soft {
+  color: var(--ink-soft);
+}
+
+.border-line {
+  border-color: var(--line);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.bg-accent {
+  background-color: var(--accent);
+}
+
+.bg-accent-soft {
+  background-color: var(--accent-soft);
+}
+
+.rounded-token {
+  border-radius: var(--radius-token);
+}
+
+/* Monospace accents & subtle lines */
+.font-serif {
+  font-family: var(--font-serif, "Newsreader", Georgia, serif);
+}
+
+.font-mono {
+  font-family: var(--font-mono, "IBM Plex Mono", monospace);
+}
+
+.font-sans {
+  font-family: var(--font-sans, "IBM Plex Sans", -apple-system, sans-serif);
+}
+
+/* Subtle editorial grid & borders */
+.subtle-grid {
+  background-size: 24px 24px;
+  background-image: linear-gradient(to right, var(--line) 1px, transparent 1px),
+                    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  opacity: 0.35;
+}
+
+/* SVG Fill and Stroke utilities for inline architecture diagrams */
+.fill-paper {
+  fill: var(--paper) !important;
+}
+
+.fill-paper-2 {
+  fill: var(--paper-2) !important;
+}
+
+.fill-ink {
+  fill: var(--ink) !important;
+}
+
+.fill-ink-soft {
+  fill: var(--ink-soft) !important;
+}
+
+.fill-accent {
+  fill: var(--accent) !important;
+}
+
+.stroke-line {
+  stroke: var(--line) !important;
+}
+
+.stroke-accent {
+  stroke: var(--accent) !important;
+}
+
+/* High-Tech Editorial Custom Slider */
+input[type="range"].custom-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+input[type="range"].custom-slider:hover {
+  border-color: var(--accent);
+}
+
+input[type="range"].custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--paper);
+  box-shadow: 0 0 10px rgba(15, 107, 92, 0.45);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type="range"].custom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 16px rgba(15, 107, 92, 0.7);
+}
+
+input[type="range"].custom-slider::-webkit-slider-thumb:active {
+  transform: scale(1.05);
+}
+
+input[type="range"].custom-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--paper);
+  box-shadow: 0 0 10px rgba(15, 107, 92, 0.45);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
