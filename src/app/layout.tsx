@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Newsreader, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -23,40 +23,67 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://portfolio-rana-tigrina.vercel.app";
+
+export const viewport: Viewport = {
+  themeColor: "#161614",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: "Mohammad Munawwar Malook | AI & GenAI Systems Engineer",
+  title: "Mohammad Munawwar Malook | Senior AI & GenAI Systems Engineer",
   description:
-    "Portfolio of Mohammad Munawwar Malook — AI Engineer & Applied Researcher (IIT Madras). Autonomous multi-agent systems, clinical NLP, and production RAG pipelines.",
+    "Production AI portfolio of Mohammad Munawwar Malook (IIT Madras). Specializing in autonomous multi-agent pipelines, deterministic RAG architectures, and HIPAA-compliant clinical NLP systems.",
   keywords: [
-    "AI Engineer",
-    "GenAI",
+    "Mohammad Munawwar Malook",
+    "AI Systems Engineer",
+    "Senior AI Engineer",
+    "GenAI Engineer",
     "Multi-Agent Systems",
-    "RAG",
-    "Clinical NLP",
-    "IIT Madras",
     "LangGraph",
     "LangChain",
-    "Mohammad Munawwar Malook",
+    "Deterministic RAG",
+    "RAGAS",
+    "Clinical NLP",
+    "WhisperX",
+    "LLaMA 3.2",
+    "IIT Madras Data Science",
   ],
-  authors: [{ name: "Mohammad Munawwar Malook" }],
+  authors: [{ name: "Mohammad Munawwar Malook", url: baseUrl }],
   creator: "Mohammad Munawwar Malook",
-  metadataBase: new URL("https://munawwar.dev"),
+  publisher: "Mohammad Munawwar Malook",
+  metadataBase: new URL(baseUrl),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Mohammad Munawwar Malook | AI Systems Engineer",
-    description: "Architecting AI systems that reason, retrieve, and survive contact with production.",
-    url: "https://munawwar.dev",
-    siteName: "Mohammad Munawwar Malook Portfolio",
+    title: "Mohammad Munawwar Malook | Senior AI & GenAI Systems Engineer",
+    description:
+      "Autonomous multi-agent architectures, deterministic RAG pipelines, and verified production benchmarks from an IIT Madras Data Science graduate.",
+    url: baseUrl,
+    siteName: "Mohammad Munawwar Malook — AI Engineering Portfolio",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mohammad Munawwar Malook | AI Systems Engineer",
-    description: "Architecting AI systems that reason, retrieve, and survive contact with production.",
+    title: "Mohammad Munawwar Malook | Senior AI & GenAI Systems Engineer",
+    description:
+      "Architecting AI systems that reason, retrieve, and survive contact with production.",
+    creator: "@Rana_Tigrina",
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -65,11 +92,49 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": `${baseUrl}/#person`,
+        name: "Mohammad Munawwar Malook",
+        jobTitle: "Senior AI/ML & Systems Engineer",
+        description:
+          "Specialized in autonomous multi-agent pipelines, clinical NLP architectures, and production-grade RAG frameworks with automated evaluation harnesses.",
+        alumniOf: {
+          "@type": "CollegeOrUniversity",
+          name: "Indian Institute of Technology Madras (IIT Madras)",
+        },
+        url: baseUrl,
+        sameAs: [
+          "https://github.com/Rana-Tigrina",
+          "https://www.linkedin.com/in/munawwar-malook/",
+        ],
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${baseUrl}/#website`,
+        url: baseUrl,
+        name: "Mohammad Munawwar Malook Portfolio",
+        publisher: {
+          "@id": `${baseUrl}/#person`,
+        },
+      },
+    ],
+  };
+
   return (
     <html
       lang="en"
       className={`${newsreader.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="antialiased bg-paper text-ink transition-colors duration-200">
         <a
           href="#content"
