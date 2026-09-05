@@ -13,6 +13,7 @@ import {
   Moon,
   Volume2,
   VolumeX,
+  Bot,
 } from "lucide-react";
 
 export function Nav() {
@@ -111,6 +112,21 @@ export function Nav() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
+            {/* AI Copilot Trigger */}
+            <button
+              onClick={() => {
+                sound.playClick(900);
+                window.dispatchEvent(new CustomEvent("open-portfolio-chat"));
+              }}
+              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono text-ink hover:text-accent bg-paper-2 border border-line rounded-token hover:border-accent/60 transition-colors cursor-pointer group"
+              title="Ask Munawwar AI Copilot (Ctrl+J or ⌘J)"
+              aria-label="Open AI Copilot"
+            >
+              <Bot className="w-3.5 h-3.5 text-accent" />
+              <span className="hidden sm:inline font-medium">Copilot</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+            </button>
+
             {/* Quick Command Palette Trigger */}
             <button
               onClick={() => {
@@ -202,6 +218,22 @@ export function Nav() {
                   {link.label}
                 </a>
               ))}
+              <button
+                onClick={() => {
+                  sound.playClick(900);
+                  setMobileMenuOpen(false);
+                  window.dispatchEvent(new CustomEvent("open-portfolio-chat"));
+                }}
+                className="w-full flex items-center justify-between px-3 py-2 text-sm font-mono text-ink hover:text-accent bg-paper-2 border border-line rounded-token text-left"
+              >
+                <span className="flex items-center gap-2">
+                  <Bot className="w-4 h-4 text-accent" />
+                  <span>Ask Portfolio Copilot</span>
+                </span>
+                <span className="text-[10px] text-accent font-semibold px-1.5 py-0.5 bg-accent-soft rounded-token">
+                  Active
+                </span>
+              </button>
               <a
                 href="#contact"
                 onClick={() => {

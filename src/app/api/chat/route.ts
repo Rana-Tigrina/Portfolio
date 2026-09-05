@@ -1,0 +1,164 @@
+import { NextRequest } from "next/server";
+import Groq from "groq-sdk";
+import { CHATBOT_SYSTEM_PROMPT } from "@/lib/chatbot-knowledge";
+
+export const runtime = "nodejs";
+
+const CANDIDATE_MODELS = [
+  "qwen/qwen3.8-27b",
+  "qwen/qwen3.6-27b",
+  "groq/compound-mini",
+];
+
+export async function POST(req: NextRequest) {
+  try {
+    const apiKey = process.env.GROQ_API_KEY || process.env.Groq_Api_key;
+
+    if (!apiKey) {
+      return new Response(
+        JSON.stringify({
+          error: "Missing Groq API key. Please configure GROQ_API_KEY in your environment.",
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const body = await req.json();
+    const { messages } = body;
+
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "Invalid request: 'messages' array is required." }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Sanitize message history (keep last 4 turns to optimize free tier token limits)
+    const sanitizedMessages: Groq.Chat.ChatCompletionMessageParam[] = messages
+      .slice(-4)
+      .map((msg: { role: string; content: string }) => ({
+        role: msg.role === "assistant" ? "assistant" : "user",
+        content: String(msg.content || "").slice(0, 2000),
+      }));
+
+    const groq = new Groq({ apiKey });
+
+    // Try primary model with automated graceful fallback if rate-limited or busy
+    let stream = null;
+    let lastError: Error | null = null;
+
+    for (const model of CANDIDATE_MODELS) {
+      try {
+        stream = await groq.chat.completions.create({
+          model,
+          messages: [
+            {
+              role: "system",
+              content: CHATBOT_SYSTEM_PROMPT,
+            },
+            ...sanitizedMessages,
+          ],
+          temperature: 0.6,
+          max_completion_tokens: 1024,
+          top_p: 0.95,
+          ...(model.startsWith("qwen/")
+            ? { reasoning_effort: "default" as unknown as undefined }
+            : {}),
+          stream: true,
+        });
+        if (stream) break;
+      } catch (err: unknown) {
+        lastError = err instanceof Error ? err : new Error(String(err));
+        // Continue to fallback model on 429 rate limit or 503 capacity
+        continue;
+      }
+    }
+
+    if (!stream) {
+      throw lastError || new Error("Failed to initialize completion stream with Groq models.");
+    }
+
+    const encoder = new TextEncoder();
+    const readable = new ReadableStream({
+      async start(controller) {
+        try {
+          let insideThink = false;
+          let thinkBuffer = "";
+
+          for await (const chunk of stream) {
+            const content = chunk.choices[0]?.delta?.content || "";
+            if (!content) continue;
+
+            // Filter out reasoning chain-of-thought <think>...</think> tags
+            if (insideThink) {
+              thinkBuffer += content;
+              if (thinkBuffer.includes("</think>")) {
+                insideThink = false;
+                const afterThink = thinkBuffer.split("</think>")[1] || "";
+                thinkBuffer = "";
+                if (afterThink.trim()) {
+                  controller.enqueue(
+                    encoder.encode(`data: ${JSON.stringify({ content: afterThink.trimStart() })}\n\n`)
+                  );
+                }
+              }
+              continue;
+            }
+
+            if (content.includes("<think>")) {
+              insideThink = true;
+              thinkBuffer = content;
+              if (thinkBuffer.includes("</think>")) {
+                insideThink = false;
+                const afterThink = thinkBuffer.split("</think>")[1] || "";
+                thinkBuffer = "";
+                if (afterThink.trim()) {
+                  controller.enqueue(
+                    encoder.encode(`data: ${JSON.stringify({ content: afterThink.trimStart() })}\n\n`)
+                  );
+                }
+              }
+              continue;
+            }
+
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ content })}\n\n`)
+            );
+          }
+
+          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+          controller.close();
+        } catch (err: unknown) {
+          const errorMsg =
+            err instanceof Error ? err.message : "Error streaming response from Groq";
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ error: errorMsg })}\n\n`)
+          );
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(readable, {
+      headers: {
+        "Content-Type": "text/event-stream; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",
+      },
+    });
+  } catch (error: unknown) {
+    const errorMsg =
+      error instanceof Error ? error.message : "Internal Server Error";
+    return new Response(JSON.stringify({ error: errorMsg }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+}

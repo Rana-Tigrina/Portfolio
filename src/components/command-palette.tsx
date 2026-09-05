@@ -18,6 +18,8 @@ import {
   VolumeX,
   ExternalLink,
   Terminal,
+  Bot,
+  Sparkles,
 } from "lucide-react";
 
 interface CommandPaletteProps {
@@ -106,8 +108,17 @@ export function CommandPalette({ isOpen, onClose, onRunTrace }: CommandPalettePr
       ],
     },
     {
-      category: "Interactive Simulation",
+      category: "AI & Interactive Simulation",
       items: [
+        {
+          label: "Ask Portfolio Architecture Copilot",
+          icon: Bot,
+          action: () => {
+            sound.playClick(900);
+            onClose();
+            window.dispatchEvent(new CustomEvent("open-portfolio-chat"));
+          },
+        },
         {
           label: "Execute Live Pipeline Trace",
           icon: Terminal,

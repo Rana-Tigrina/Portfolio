@@ -92,6 +92,7 @@ export const metadata: Metadata = {
 import { SmoothScrollProvider } from "@/components/ui/smooth-scroll-provider";
 import { ContextCursor } from "@/components/ui/context-cursor";
 import { NeuralScrollBackground } from "@/components/ui/neural-scroll-background";
+import { PortfolioChat } from "@/components/chat/portfolio-chat";
 
 export default function RootLayout({
   children,
@@ -156,6 +157,7 @@ export default function RootLayout({
             Skip to content
           </a>
           <div id="content">{children}</div>
+          <PortfolioChat />
         </SmoothScrollProvider>
       </body>
     </html>
