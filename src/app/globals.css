@@ -220,3 +220,40 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
+/* Smooth View Transitions for Dark/Light Mode toggle */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 99999;
+}
+
+.dark::view-transition-old(root) {
+  z-index: 99999;
+}
+
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* Fallback smooth transition for browsers without View Transitions */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 350ms cubic-bezier(0.25, 1, 0.5, 1),
+              border-color 350ms cubic-bezier(0.25, 1, 0.5, 1),
+              color 300ms cubic-bezier(0.25, 1, 0.5, 1),
+              fill 300ms cubic-bezier(0.25, 1, 0.5, 1),
+              stroke 300ms cubic-bezier(0.25, 1, 0.5, 1) !important;
+  transition-delay: 0s !important;
+}
+
+

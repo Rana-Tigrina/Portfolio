@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { siteData } from "@/content/site";
 import { sound } from "@/lib/sound";
 import { CommandPalette } from "./command-palette";
@@ -45,16 +46,73 @@ export function Nav() {
     };
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = (e?: React.MouseEvent<HTMLButtonElement>) => {
     sound.playClick(750);
     const root = document.documentElement;
-    if (root.classList.contains("dark")) {
-      root.classList.remove("dark");
-      setIsDark(false);
-    } else {
-      root.classList.add("dark");
-      setIsDark(true);
+    const isReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Use View Transitions API with circular radial wave if supported
+    if ("startViewTransition" in document && !isReducedMotion && e?.clientX !== undefined) {
+      const x = e.clientX;
+      const y = e.clientY;
+      const endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
+
+      const transition = (document as unknown as { startViewTransition: (cb: () => void) => { ready: Promise<void> } }).startViewTransition(() => {
+        const nextDark = !root.classList.contains("dark");
+        if (nextDark) {
+          root.classList.add("dark");
+        } else {
+          root.classList.remove("dark");
+        }
+        setIsDark(nextDark);
+        try {
+          localStorage.setItem("theme", nextDark ? "dark" : "light");
+        } catch {}
+      });
+
+      transition.ready.then(() => {
+        const isDarkNow = root.classList.contains("dark");
+        const clipPath = [
+          `circle(0px at ${x}px ${y}px)`,
+          `circle(${endRadius}px at ${x}px ${y}px)`,
+        ];
+        document.documentElement.animate(
+          {
+            clipPath: isDarkNow ? clipPath : [...clipPath].reverse(),
+          },
+          {
+            duration: 450,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            pseudoElement: isDarkNow
+              ? "::view-transition-new(root)"
+              : "::view-transition-old(root)",
+          }
+        );
+      });
+      return;
     }
+
+    // Fallback: smooth CSS color transition
+    root.classList.add("theme-transitioning");
+    const nextDark = !root.classList.contains("dark");
+    if (nextDark) {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+    setIsDark(nextDark);
+    try {
+      localStorage.setItem("theme", nextDark ? "dark" : "light");
+    } catch {}
+
+    setTimeout(() => {
+      root.classList.remove("theme-transitioning");
+    }, 400);
   };
 
   const toggleSound = () => {
@@ -73,37 +131,40 @@ export function Nav() {
   return (
     <>
       <header className="sticky top-0 z-40 w-full border-b border-line/80 bg-paper/95 backdrop-blur-md transition-colors duration-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          {/* Brand Wordmark */}
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
+          {/* Brand Wordmark & Live Status */}
+          <div className="flex items-center gap-3 shrink-0">
             <a
               href="#"
               onClick={() => sound.playClick(900)}
-              className="group flex items-baseline gap-2 text-ink hover:text-accent transition-colors"
+              className="group flex items-center gap-2 text-ink hover:text-accent transition-colors"
             >
               <span className="font-mono text-sm font-semibold tracking-tight">
                 {siteData.personal.wordmark}
               </span>
-              <span className="hidden sm:inline-block font-mono text-[11px] text-ink-soft group-hover:text-ink transition-colors">
+              <span className="hidden xl:inline-block font-mono text-[11px] text-ink-soft group-hover:text-ink transition-colors">
                 / {siteData.personal.role}
               </span>
             </a>
 
             {/* Status Dot */}
-            <div className="hidden lg:flex items-center gap-1.5 px-2 py-0.5 border border-line rounded-token bg-paper-2 text-[11px] font-mono text-ink-soft">
+            <div className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 border border-line/70 rounded-full bg-paper-2/80 text-[10.5px] font-mono text-ink-soft shadow-2xs">
               <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
               <span>Available</span>
             </div>
           </div>
 
-          {/* Center Links (Desktop) */}
-          <nav className="hidden md:flex items-center gap-6" aria-label="Main Navigation">
+          {/* Center Links (Desktop) - Centered with balanced breathing room */}
+          <nav
+            className="hidden lg:flex items-center justify-center gap-6 xl:gap-8 flex-1 mx-6 xl:mx-10"
+            aria-label="Main Navigation"
+          >
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={() => sound.playClick(750)}
-                className="text-xs font-mono uppercase tracking-wider text-ink-soft hover:text-ink transition-colors"
+                className="text-xs font-mono uppercase tracking-wider text-ink-soft hover:text-ink transition-colors py-1 relative hover:after:w-full after:w-0 after:h-0.5 after:bg-accent after:absolute after:bottom-0 after:left-0 after:transition-all after:duration-200"
               >
                 {link.label}
               </a>
@@ -111,14 +172,14 @@ export function Nav() {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 justify-end">
             {/* AI Copilot Trigger */}
             <button
               onClick={() => {
                 sound.playClick(900);
                 window.dispatchEvent(new CustomEvent("open-portfolio-chat"));
               }}
-              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono text-ink hover:text-accent bg-paper-2 border border-line rounded-token hover:border-accent/60 transition-colors cursor-pointer group"
+              className="flex items-center gap-1.5 px-2.5 h-8 text-xs font-mono text-ink hover:text-accent bg-paper-2/90 border border-accent/40 rounded-token hover:border-accent hover:shadow-xs transition-colors cursor-pointer group"
               title="Ask Munawwar AI Copilot (Ctrl+J or ⌘J)"
               aria-label="Open AI Copilot"
             >
@@ -133,49 +194,70 @@ export function Nav() {
                 sound.playClick(850);
                 setPaletteOpen(true);
               }}
-              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono text-ink-soft hover:text-ink bg-paper-2 border border-line rounded-token hover:border-ink-soft transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 h-8 text-xs font-mono text-ink-soft hover:text-ink bg-paper-2/50 border border-line/70 rounded-token hover:border-ink-soft transition-colors cursor-pointer"
               title="Open Command Palette (Ctrl+K or ⌘K)"
               aria-label="Search and command palette"
             >
               <Command className="w-3.5 h-3.5 text-accent" />
-              <span className="hidden sm:inline">Search</span>
-              <kbd className="hidden sm:inline-block text-[10px] text-ink-soft/70">⌘K</kbd>
+              <span className="hidden xl:inline text-xs">Search</span>
+              <kbd className="hidden sm:inline-block text-[10px] text-ink-soft/80 font-mono px-1 py-0.2 bg-paper/90 border border-line/60 rounded">⌘K</kbd>
             </button>
+
+            {/* Hairline Separator */}
+            <div className="hidden sm:block w-px h-4 bg-line/80 mx-0.5" />
 
             {/* Audio Toggle */}
             <button
               onClick={toggleSound}
-              className="flex items-center gap-1.5 px-2 py-1 text-xs font-mono text-ink-soft hover:text-ink border border-line rounded-token hover:border-accent/60 transition-colors cursor-pointer"
+              className="w-8 h-8 flex items-center justify-center text-ink-soft hover:text-ink bg-paper-2/50 border border-line/70 hover:border-line rounded-token transition-colors cursor-pointer relative"
               title={isMuted ? "Unmute Audio FX (Press M)" : "Mute Audio FX (Press M)"}
               aria-label={isMuted ? "Unmute Audio FX" : "Mute Audio FX"}
             >
               {isMuted ? (
-                <>
-                  <VolumeX className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline text-[11px]">Muted</span>
-                </>
+                <VolumeX className="w-3.5 h-3.5" />
               ) : (
                 <>
                   <Volume2 className="w-3.5 h-3.5 text-accent" />
-                  <span className="hidden sm:inline text-[11px] text-accent font-medium">Sound ON</span>
-                  <div className="flex items-end gap-0.5 h-2.5">
-                    <span className="w-0.5 h-2 bg-accent animate-pulse rounded-full" />
-                    <span className="w-0.5 h-3 bg-accent animate-pulse delay-75 rounded-full" />
-                    <span className="w-0.5 h-1.5 bg-accent animate-pulse delay-150 rounded-full" />
-                  </div>
+                  <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
                 </>
               )}
             </button>
 
-            {/* Theme Toggle */}
-            <button
+            {/* Theme Toggle with smooth icon animation */}
+            <motion.button
               onClick={toggleTheme}
-              className="p-1.5 text-ink-soft hover:text-ink border border-transparent hover:border-line rounded-token transition-colors cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.92 }}
+              className="w-8 h-8 flex items-center justify-center text-ink-soft hover:text-ink bg-paper-2/50 border border-line/70 hover:border-line rounded-token transition-colors cursor-pointer relative overflow-hidden"
               title={isDark ? "Switch to Editorial Paper mode" : "Switch to Dark Terminal mode"}
               aria-label="Toggle theme"
             >
-              {isDark ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4" />}
-            </button>
+              <AnimatePresence mode="wait" initial={false}>
+                {isDark ? (
+                  <motion.div
+                    key="sun"
+                    initial={{ scale: 0.3, rotate: -90, opacity: 0 }}
+                    animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                    exit={{ scale: 0.3, rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
+                    className="flex items-center justify-center"
+                  >
+                    <Sun className="w-3.5 h-3.5 text-amber-500" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="moon"
+                    initial={{ scale: 0.3, rotate: 90, opacity: 0 }}
+                    animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                    exit={{ scale: 0.3, rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
+                    className="flex items-center justify-center"
+                  >
+                    <Moon className="w-3.5 h-3.5" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
 
             {/* Primary CTA */}
             <Button
@@ -185,7 +267,7 @@ export function Nav() {
                 const el = document.querySelector("#contact");
                 if (el) el.scrollIntoView({ behavior: "smooth" });
               }}
-              className="hidden sm:inline-flex ml-1"
+              className="hidden sm:inline-flex h-8 px-3.5 text-xs font-mono ml-0.5"
             >
               Contact
             </Button>
@@ -193,17 +275,17 @@ export function Nav() {
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-1.5 text-ink-soft hover:text-ink border border-line rounded-token"
+              className="lg:hidden w-8 h-8 flex items-center justify-center text-ink-soft hover:text-ink border border-line rounded-token"
               aria-label="Toggle mobile menu"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-line bg-paper px-4 py-4 space-y-3 animate-fade-in">
+          <div className="lg:hidden border-t border-line bg-paper px-4 py-4 space-y-3 animate-fade-in">
             <div className="flex flex-col gap-2">
               {navLinks.map((link) => (
                 <a

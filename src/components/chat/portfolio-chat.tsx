@@ -19,6 +19,9 @@ import {
   ArrowUpRight,
   Terminal,
   Zap,
+  WifiOff,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 
 interface Message {
@@ -58,6 +61,21 @@ export function PortfolioChat() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isOnline, setIsOnline] = useState(true);
+
+  // Track online/offline status
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setIsOnline(navigator.onLine);
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -153,6 +171,24 @@ export function PortfolioChat() {
     sound.playClick(820);
     setInput("");
 
+    // Check client-side internet connectivity
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      const userMessage: Message = {
+        id: "msg-" + Date.now(),
+        role: "user",
+        content: query,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      const offlineAssistantMessage: Message = {
+        id: "msg-" + (Date.now() + 1),
+        role: "assistant",
+        content: "You appear to be offline. Please check your internet connection and try again.",
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setMessages((prev) => [...prev, userMessage, offlineAssistantMessage]);
+      return;
+    }
+
     const userMessage: Message = {
       id: "msg-" + Date.now(),
       role: "user",
@@ -199,19 +235,22 @@ export function PortfolioChat() {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let accumulated = "";
+      let lineBuffer = "";
 
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
 
-        const rawChunk = decoder.decode(value, { stream: true });
-        const lines = rawChunk.split("\n");
+        lineBuffer += decoder.decode(value, { stream: true });
+        const lines = lineBuffer.split("\n");
+        // Keep the last incomplete line fragment in the buffer
+        lineBuffer = lines.pop() || "";
 
         for (const line of lines) {
           const trimmed = line.trim();
           if (!trimmed || !trimmed.startsWith("data: ")) continue;
 
-          const jsonStr = trimmed.replace("data: ", "").trim();
+          const jsonStr = trimmed.slice(6).trim();
           if (jsonStr === "[DONE]") {
             break;
           }
@@ -224,29 +263,63 @@ export function PortfolioChat() {
                 prev.map((msg) => (msg.id === assistantId ? { ...msg, content: accumulated } : msg))
               );
             } else if (parsed.error) {
-              accumulated += `\n\n*[Error: ${parsed.error}]*`;
+              accumulated += `\n\n*[Notice: ${parsed.error}]*`;
               setMessages((prev) =>
                 prev.map((msg) => (msg.id === assistantId ? { ...msg, content: accumulated } : msg))
               );
             }
           } catch {
-            // Buffer split across chunks, ignore parse errors
+            // Buffer split across chunks, ignore partial JSON
           }
         }
       }
 
-      sound.playChime();
+      // Process any remaining tail in lineBuffer
+      if (lineBuffer.trim().startsWith("data: ")) {
+        const jsonStr = lineBuffer.trim().slice(6).trim();
+        if (jsonStr && jsonStr !== "[DONE]") {
+          try {
+            const parsed = JSON.parse(jsonStr);
+            if (parsed.content) {
+              accumulated += parsed.content;
+              setMessages((prev) =>
+                prev.map((msg) => (msg.id === assistantId ? { ...msg, content: accumulated } : msg))
+              );
+            }
+          } catch {
+            // Ignore trailing malformed text
+          }
+        }
+      }
+
+      // Safety: Never leave an empty message bubble if stream finished with no content
+      if (!accumulated.trim()) {
+        const fallback =
+          "Apologies, no output was received from the inference runtime. Please check your internet connection and try clicking Retry.";
+        setMessages((prev) =>
+          prev.map((msg) => (msg.id === assistantId ? { ...msg, content: fallback } : msg))
+        );
+      } else {
+        sound.playChime();
+      }
     } catch (err: unknown) {
       if ((err as Error)?.name !== "AbortError") {
         const errorMsg = (err as Error)?.message || "Failed to generate response";
+        const isNetworkErr =
+          errorMsg.toLowerCase().includes("fetch") ||
+          errorMsg.toLowerCase().includes("network") ||
+          errorMsg.toLowerCase().includes("connection");
+
+        const displayNotice = isNetworkErr
+          ? "Network connection issue: Unable to reach the inference service. Please check your internet connection and retry."
+          : `Apologies, I ran into an issue connecting to the neural inference service (${errorMsg}). Please try again shortly.`;
+
         setMessages((prev) =>
           prev.map((msg) =>
             msg.id === assistantId
               ? {
                   ...msg,
-                  content:
-                    msg.content ||
-                    `Apologies, I ran into an issue connecting to the neural inference service (${errorMsg}). Please try again shortly.`,
+                  content: msg.content || displayNotice,
                 }
               : msg
           )
@@ -526,13 +599,21 @@ export function PortfolioChat() {
                     <span className="font-mono text-xs font-bold tracking-tight text-ink">
                       MUNAWWAR COPILOT
                     </span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                    <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? "bg-accent animate-pulse" : "bg-amber-500"}`} />
                   </div>
                   <div className="flex items-center gap-1.5 text-[10px] font-mono text-ink-soft">
                     <span>Architecture Intelligence</span>
                     <span>·</span>
-                    <span className="text-accent flex items-center gap-0.5">
-                      <Zap className="w-2.5 h-2.5" /> Active
+                    <span className={`flex items-center gap-0.5 ${isOnline ? "text-accent" : "text-amber-500"}`}>
+                      {isOnline ? (
+                        <>
+                          <Zap className="w-2.5 h-2.5" /> Active
+                        </>
+                      ) : (
+                        <>
+                          <WifiOff className="w-2.5 h-2.5" /> Offline
+                        </>
+                      )}
                     </span>
                   </div>
                 </div>
@@ -576,6 +657,17 @@ export function PortfolioChat() {
                 </button>
               </div>
             </div>
+
+            {/* Offline Network Warning Banner */}
+            {!isOnline && (
+              <div className="px-3.5 py-1.5 bg-amber-500/10 border-b border-amber-500/30 text-amber-600 dark:text-amber-400 text-[11px] font-mono flex items-center justify-between animate-fade-in">
+                <div className="flex items-center gap-1.5">
+                  <WifiOff className="w-3.5 h-3.5 animate-pulse flex-shrink-0" />
+                  <span>Internet connection offline</span>
+                </div>
+                <span className="text-[10px] opacity-80">Reconnecting...</span>
+              </div>
+            )}
 
             {/* Conversation Messages Container */}
             <div
@@ -625,11 +717,18 @@ export function PortfolioChat() {
                   </div>
                 </div>
               ) : (
-                messages.map((msg) => {
+                messages.map((msg, idx) => {
                   const isUser = msg.role === "user";
                   const displayContent = isUser
                     ? msg.content
                     : msg.content.replace(/<think>[\s\S]*?(<\/think>|$)/g, "").trimStart();
+
+                  // Find previous user query to allow 1-click retry if interrupted
+                  const previousUserMsg = !isUser
+                    ? messages.slice(0, idx).reverse().find((m) => m.role === "user")?.content
+                    : undefined;
+
+                  const isBlankAssistant = !isUser && !displayContent.trim() && !isLoading;
 
                   return (
                     <div
@@ -649,7 +748,28 @@ export function PortfolioChat() {
                             : "bg-paper-2 border border-line text-ink"
                         }`}
                       >
-                        <div className="space-y-1">{renderMarkdown(displayContent)}</div>
+                        {isBlankAssistant ? (
+                          <div className="space-y-2 py-0.5">
+                            <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-mono text-[11px]">
+                              <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                              <span>Response interrupted or connection lost</span>
+                            </div>
+                            <p className="text-xs text-ink-soft leading-relaxed">
+                              No response was received from the inference runtime. Please check your network and click below to retry.
+                            </p>
+                            {previousUserMsg && (
+                              <button
+                                onClick={() => sendMessage(previousUserMsg)}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 mt-1 bg-paper border border-line hover:border-accent text-accent rounded-token text-xs font-mono transition-colors cursor-pointer"
+                              >
+                                <RefreshCw className="w-3 h-3" />
+                                <span>Retry question</span>
+                              </button>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="space-y-1">{renderMarkdown(displayContent)}</div>
+                        )}
 
                         {/* Blinking streaming indicator if still responding and empty */}
                         {!isUser && isLoading && !displayContent && (
