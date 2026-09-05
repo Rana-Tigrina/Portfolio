@@ -95,21 +95,21 @@ export function ArchitectureDiagram({ slug }: DiagramProps) {
     ];
 
     return (
-      <div className="p-4 bg-paper-2/70 border border-line rounded-token">
-        <div className="flex items-center justify-between pb-3 text-xs font-mono text-ink-soft">
-          <span className="font-semibold text-ink uppercase tracking-wider">
-            LangGraph StateGraph · Claims Audit Architecture (healthcare_auditor.md)
+      <div className="w-full min-w-0 p-3 sm:p-4 bg-paper-2/70 border border-line rounded-xl overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-2 text-xs font-mono text-ink-soft min-w-0">
+          <span className="font-semibold text-ink uppercase tracking-wider text-[11px] sm:text-xs truncate">
+            LangGraph StateGraph · Claims Audit Architecture
           </span>
-          <span className="flex items-center gap-1 text-accent text-[11px]">
-            <Sparkles className="w-3 h-3" /> Click any node to inspect telemetry
+          <span className="flex items-center gap-1 text-accent text-[10px] sm:text-[11px] shrink-0">
+            <Sparkles className="w-3 h-3" /> Click node to inspect
           </span>
         </div>
 
         {/* SVG Flowchart */}
-        <div className="w-full overflow-x-auto py-2">
+        <div className="w-full min-w-0 overflow-hidden py-1">
           <svg
             viewBox="0 0 760 170"
-            className="w-full min-w-[700px] h-auto font-mono text-[11px]"
+            className="w-full h-auto max-w-full font-mono text-[11px] block select-none"
             aria-label="Healthcare Claims Multi-Agent Architecture Diagram"
           >
             <defs>
@@ -250,21 +250,21 @@ export function ArchitectureDiagram({ slug }: DiagramProps) {
     ];
 
     return (
-      <div className="p-4 bg-paper-2/70 border border-line rounded-token">
-        <div className="flex items-center justify-between pb-3 text-xs font-mono text-ink-soft">
-          <span className="font-semibold text-ink uppercase tracking-wider">
-            Clinical Documentation &amp; SOAP Notes Pipeline · WhisperX + Gemma 4 + Qwen 3.5
+      <div className="w-full min-w-0 p-3 sm:p-4 bg-paper-2/70 border border-line rounded-xl overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-2 text-xs font-mono text-ink-soft min-w-0">
+          <span className="font-semibold text-ink uppercase tracking-wider text-[11px] sm:text-xs truncate">
+            Clinical SOAP Pipeline · WhisperX + Gemma 4 + Qwen 3.5
           </span>
-          <span className="flex items-center gap-1 text-accent text-[11px]">
-            <Sparkles className="w-3 h-3" /> Click any node to inspect telemetry
+          <span className="flex items-center gap-1 text-accent text-[10px] sm:text-[11px] shrink-0">
+            <Sparkles className="w-3 h-3" /> Click node to inspect
           </span>
         </div>
 
         {/* SVG Flowchart */}
-        <div className="w-full overflow-x-auto py-2">
+        <div className="w-full min-w-0 overflow-hidden py-1">
           <svg
             viewBox="0 0 760 150"
-            className="w-full min-w-[700px] h-auto font-mono text-[11px]"
+            className="w-full h-auto max-w-full font-mono text-[11px] block select-none"
             aria-label="Clinical Documentation SOAP Notes Architecture Diagram"
           >
             <defs>
@@ -388,20 +388,20 @@ export function ArchitectureDiagram({ slug }: DiagramProps) {
     ];
 
     return (
-      <div className="p-4 bg-paper-2/70 border border-line rounded-token">
-        <div className="flex items-center justify-between pb-2 text-xs font-mono text-ink-soft">
-          <span className="font-semibold text-ink uppercase tracking-wider">
-            LangGraph State Architecture + MCP Tool Protocol
+      <div className="w-full min-w-0 p-3 sm:p-4 bg-paper-2/70 border border-line rounded-xl overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-2 text-xs font-mono text-ink-soft min-w-0">
+          <span className="font-semibold text-ink uppercase tracking-wider text-[11px] sm:text-xs truncate">
+            LangGraph State Architecture + MCP Protocol
           </span>
-          <span className="flex items-center gap-1 text-accent text-[11px]">
-            <Sparkles className="w-3 h-3" /> Click any node to inspect telemetry
+          <span className="flex items-center gap-1 text-accent text-[10px] sm:text-[11px] shrink-0">
+            <Sparkles className="w-3 h-3" /> Click node to inspect
           </span>
         </div>
 
-        <div className="w-full overflow-x-auto py-2">
+        <div className="w-full min-w-0 overflow-hidden py-1">
           <svg
             viewBox="0 0 720 140"
-            className="w-full min-w-[620px] h-auto font-mono text-[11px]"
+            className="w-full h-auto max-w-full font-mono text-[11px] block select-none"
             aria-label="Multi-Agent LangGraph MCP Diagram"
           >
             <defs>
@@ -519,20 +519,20 @@ export function ArchitectureDiagram({ slug }: DiagramProps) {
   ];
 
   return (
-    <div className="p-4 bg-paper-2/70 border border-line rounded-token">
-      <div className="flex items-center justify-between pb-2 text-xs font-mono text-ink-soft">
-        <span className="font-semibold text-ink uppercase tracking-wider">
+    <div className="w-full min-w-0 p-3 sm:p-4 bg-paper-2/70 border border-line rounded-xl overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 text-xs font-mono text-ink-soft min-w-0">
+        <span className="font-semibold text-ink uppercase tracking-wider text-[11px] sm:text-xs truncate">
           Production RAG + RAGAS Observability Pipeline
         </span>
-        <span className="flex items-center gap-1 text-accent text-[11px]">
-          <Sparkles className="w-3 h-3" /> Click any node to inspect telemetry
+        <span className="flex items-center gap-1 text-accent text-[10px] sm:text-[11px] shrink-0">
+          <Sparkles className="w-3 h-3" /> Click node to inspect
         </span>
       </div>
 
-      <div className="w-full overflow-x-auto py-2">
+      <div className="w-full min-w-0 overflow-hidden py-1">
         <svg
           viewBox="0 0 720 120"
-          className="w-full min-w-[620px] h-auto font-mono text-[11px]"
+          className="w-full h-auto max-w-full font-mono text-[11px] block select-none"
           aria-label="Production RAG Observability Diagram"
         >
           <defs>
@@ -598,33 +598,33 @@ export function ArchitectureDiagram({ slug }: DiagramProps) {
 function renderInspector(selectedNode: NodeInfo | null) {
   if (!selectedNode) {
     return (
-      <div className="mt-2 text-center text-[11px] font-mono text-ink-soft py-1">
-        Click any node above to inspect input/output schemas &amp; telemetry
+      <div className="mt-1.5 text-center text-[10px] sm:text-[11px] font-mono text-ink-soft py-0.5">
+        Click any node above to inspect model runtime &amp; payload telemetry
       </div>
     );
   }
 
   return (
-    <div className="mt-3 p-3.5 bg-paper border border-accent/40 rounded-token text-xs font-mono shadow-xs animate-fade-in">
-      <div className="flex items-center justify-between pb-2 border-b border-line text-ink">
-        <span className="font-semibold text-accent flex items-center gap-1.5">
+    <div className="mt-2 p-2.5 sm:p-3 bg-paper border border-accent/40 rounded-xl text-xs font-mono shadow-xs animate-fade-in">
+      <div className="flex items-center justify-between pb-1.5 border-b border-line text-ink">
+        <span className="font-semibold text-accent flex items-center gap-1.5 text-[11px] sm:text-xs">
           <Sparkles className="w-3.5 h-3.5" /> NODE: {selectedNode.title}
         </span>
-        <span className="text-[11px] text-ink-soft bg-paper-2 px-2 py-0.5 rounded-token border border-line">
-          Engine: {selectedNode.modelOrTool}
+        <span className="text-[10px] sm:text-[11px] text-ink-soft bg-paper-2 px-2 py-0.5 rounded border border-line">
+          {selectedNode.modelOrTool}
         </span>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2.5 text-[11px]">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 text-[10px] sm:text-[11px]">
         <div>
-          <span className="text-ink-soft block font-semibold">Input Payload:</span>
-          <span className="text-ink pt-0.5 block">{selectedNode.input}</span>
+          <span className="text-ink-soft block font-semibold">Input:</span>
+          <span className="text-ink pt-0.5 block line-clamp-2">{selectedNode.input}</span>
         </div>
         <div>
-          <span className="text-ink-soft block font-semibold">Output Payload:</span>
-          <span className="text-ink pt-0.5 block">{selectedNode.output}</span>
+          <span className="text-ink-soft block font-semibold">Output:</span>
+          <span className="text-ink pt-0.5 block line-clamp-2">{selectedNode.output}</span>
         </div>
         <div>
-          <span className="text-ink-soft block font-semibold">Telemetry Metric:</span>
+          <span className="text-ink-soft block font-semibold">Metric:</span>
           <span className="text-accent font-semibold pt-0.5 block">{selectedNode.latencyOrMetric}</span>
         </div>
       </div>

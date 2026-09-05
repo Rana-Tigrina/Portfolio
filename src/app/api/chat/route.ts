@@ -5,9 +5,9 @@ import { CHATBOT_SYSTEM_PROMPT } from "@/lib/chatbot-knowledge";
 export const runtime = "nodejs";
 
 const CANDIDATE_MODELS = [
-  "qwen/qwen3.8-27b",
+  "llama-3.3-70b-versatile",
+  "llama-3.1-8b-instant",
   "openai/gpt-oss-120b",
-  "openai/gpt-oss-20b",
   "groq/compound",
 ];
 
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { messages } = body;
+    const { messages, model: requestedModel, effort } = body;
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return new Response(
@@ -40,12 +40,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Sanitize message history (keep last 4 turns to optimize free tier token limits)
+    // Determine candidate model order based on user selection
+    const modelsToTry = requestedModel && typeof requestedModel === "string"
+      ? [requestedModel, ...CANDIDATE_MODELS.filter((m) => m !== requestedModel)]
+      : CANDIDATE_MODELS;
+
+    // Adjust system prompt and temperature based on reasoning effort
+    let systemPrompt = CHATBOT_SYSTEM_PROMPT;
+    let temperature = 0.6;
+    if (effort === "high") {
+      systemPrompt += "\n\n[REASONING LEVEL: HIGH / ARCHITECTURAL PROOF]\nProvide in-depth architectural rigor, explicit mathematical invariants, concrete latency trade-offs, and failure-mode audits based on Munawwar's real engineering accomplishments.";
+      temperature = 0.4;
+    } else if (effort === "low") {
+      systemPrompt += "\n\n[REASONING LEVEL: LOW / DIRECT]\nKeep response concise, rapid, and directly answered with minimal preamble.";
+      temperature = 0.7;
+    }
+
+    // Sanitize message history (keep last 4 turns to optimize token limits)
     const sanitizedMessages: Groq.Chat.ChatCompletionMessageParam[] = messages
       .slice(-4)
       .map((msg: { role: string; content: string }) => ({
         role: msg.role === "assistant" ? "assistant" : "user",
-        content: String(msg.content || "").slice(0, 2000),
+        content: String(msg.content || "").slice(0, 3000),
       }));
 
     const groq = new Groq({ apiKey, timeout: 20000 });
@@ -54,19 +70,19 @@ export async function POST(req: NextRequest) {
     let stream = null;
     let lastError: Error | null = null;
 
-    for (const model of CANDIDATE_MODELS) {
+    for (const model of modelsToTry) {
       try {
         stream = await groq.chat.completions.create({
           model,
           messages: [
             {
               role: "system",
-              content: CHATBOT_SYSTEM_PROMPT,
+              content: systemPrompt,
             },
             ...sanitizedMessages,
           ],
-          temperature: 0.6,
-          max_completion_tokens: 1536,
+          temperature,
+          max_completion_tokens: effort === "high" ? 2048 : 1536,
           top_p: 0.95,
           ...(model.startsWith("qwen/")
             ? { reasoning_effort: "none" as unknown as undefined }

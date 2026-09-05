@@ -69,7 +69,7 @@ export const siteData = {
     linkedin: "https://www.linkedin.com/in/munawwar-malook/",
     status: {
       available: true,
-      text: "Available for Senior AI/ML & Founding Engineer roles",
+      text: "Available for Full-Time AI & GenAI Engineering roles",
     },
   },
 
@@ -299,7 +299,7 @@ export const siteData = {
         "Architected, built, and deployed an end-to-end hybrid clinical diagnostic AI system combining fine-tuned BioClinicalBERT with a Gemini 3.8 Flash reasoning layer, achieving >91% symptom identification accuracy (on par with licensed psychologists).",
         "Designed and implemented multi-turn clinical dialogue management, structured decision support, hypothesis generation, and differential diagnosis workflows from unstructured patient inputs.",
         "Built and integrated a Pinecone-backed RAG pipeline to maintain persistent longitudinal patient memory across multi-session consultations, mirroring EHR-style continuity of care.",
-        "Operated as a solo/founding contributor owning the entire AI stack, driving architecture, tooling, containerization, and production serving decisions independently.",
+        "Operated as a key AI contributor owning model pipeline development, driving architecture, tooling, containerization, and production serving.",
       ],
       stack: ["BioClinicalBERT", "Gemini 3.8 Flash", "Pinecone", "FastAPI", "Docker", "Python"],
     },

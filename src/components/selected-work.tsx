@@ -326,8 +326,19 @@ export function SelectedWork() {
       }
     };
 
+    const handleCustomSelect = (e: Event) => {
+      const customEvent = e as CustomEvent<{ index: number }>;
+      if (typeof customEvent.detail?.index === "number") {
+        handleSelectSystem(customEvent.detail.index);
+      }
+    };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("select-case-study", handleCustomSelect);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("select-case-study", handleCustomSelect);
+    };
   }, [handleSelectSystem, handleNext, handlePrev, studies.length]);
 
   return (

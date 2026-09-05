@@ -33,13 +33,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Mohammad Munawwar Malook | Senior AI & GenAI Systems Engineer",
+  title: "Mohammad Munawwar Malook | AI & GenAI Systems Engineer",
   description:
     "Production AI portfolio of Mohammad Munawwar Malook (IIT Madras). Specializing in autonomous multi-agent pipelines, deterministic RAG architectures, and HIPAA-compliant clinical NLP systems.",
   keywords: [
     "Mohammad Munawwar Malook",
     "AI Systems Engineer",
-    "Senior AI Engineer",
+    "GenAI Systems Engineer",
     "GenAI Engineer",
     "Multi-Agent Systems",
     "LangGraph",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Mohammad Munawwar Malook | Senior AI & GenAI Systems Engineer",
+    title: "Mohammad Munawwar Malook | AI & GenAI Systems Engineer",
     description:
       "Autonomous multi-agent architectures, deterministic RAG pipelines, and verified production benchmarks from an IIT Madras Data Science graduate.",
     url: baseUrl,
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mohammad Munawwar Malook | Senior AI & GenAI Systems Engineer",
+    title: "Mohammad Munawwar Malook | AI & GenAI Systems Engineer",
     description:
       "Architecting AI systems that reason, retrieve, and survive contact with production.",
     creator: "@Rana_Tigrina",
@@ -91,7 +91,8 @@ export const metadata: Metadata = {
 
 import { SmoothScrollProvider } from "@/components/ui/smooth-scroll-provider";
 import { ContextCursor } from "@/components/ui/context-cursor";
-import { NeuralScrollBackground } from "@/components/ui/neural-scroll-background";
+import { AsciiSpiralBackground } from "@/components/ui/ascii-spiral-background";
+import { AmbientHorizonGlow } from "@/components/ui/ambient-horizon-glow";
 import { PortfolioChat } from "@/components/chat/portfolio-chat";
 
 export default function RootLayout({
@@ -106,17 +107,23 @@ export default function RootLayout({
         "@type": "Person",
         "@id": `${baseUrl}/#person`,
         name: "Mohammad Munawwar Malook",
-        jobTitle: "Senior AI/ML & Systems Engineer",
+        jobTitle: "AI/ML & Systems Engineer",
         description:
           "Specialized in autonomous multi-agent pipelines, clinical NLP architectures, and production-grade RAG frameworks with automated evaluation harnesses.",
         alumniOf: {
           "@type": "CollegeOrUniversity",
           name: "Indian Institute of Technology Madras (IIT Madras)",
         },
-        url: baseUrl,
-        sameAs: [
-          "https://github.com/Rana-Tigrina",
-          "https://www.linkedin.com/in/munawwar-malook/",
+        knowsAbout: [
+          "Artificial Intelligence",
+          "Machine Learning",
+          "Multi-Agent Systems",
+          "LangGraph",
+          "Deterministic RAG",
+          "RAGAS",
+          "Clinical NLP",
+          "FastAPI",
+          "Python",
         ],
       },
       {
@@ -135,7 +142,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${newsreader.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
+      className={`scroll-smooth dark ${newsreader.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
     >
       <head>
         <script
@@ -164,7 +171,8 @@ export default function RootLayout({
         suppressHydrationWarning
         className="antialiased bg-paper text-ink transition-colors duration-200"
       >
-        <NeuralScrollBackground />
+        <AmbientHorizonGlow />
+        <AsciiSpiralBackground />
         <ContextCursor />
         <SmoothScrollProvider>
           <a

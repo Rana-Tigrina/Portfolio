@@ -1,13 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { siteData } from "@/content/site";
 import { sound } from "@/lib/sound";
 import { CommandPalette } from "./command-palette";
 import { Button } from "./ui/button";
+import { AnimatedDock, DockItem } from "./ui/animated-dock";
+import { Menu, MenuItem, ProductItem, HoveredLink } from "./ui/navbar-menu";
+import { Github, Linkedin } from "./icons";
 import {
-  Menu,
+  Menu as MenuIcon,
   X,
   Command,
   Sun,
@@ -15,13 +18,50 @@ import {
   Volume2,
   VolumeX,
   Bot,
+  Sparkles,
+  Workflow,
+  Cpu,
+  FlaskConical,
+  GraduationCap,
+  Briefcase,
+  ShieldCheck,
+  FileCode2,
+  ExternalLink,
 } from "lucide-react";
 
 export function Nav() {
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [navVisible, setNavVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  // Navbar only appears when at the top/starting area of the page.
+  // Smoothly disappears when scrolling away and does not reappear during mid-page scroll.
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Keep navbar locked open when interacting with menus
+      if (activeMenu || mobileMenuOpen) {
+        setNavVisible(true);
+        return;
+      }
+
+      // Navbar is ONLY visible at top of page (scrollY <= 80)
+      if (currentScrollY <= 80) {
+        setNavVisible(true);
+      } else {
+        setNavVisible(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [activeMenu, mobileMenuOpen]);
 
   useEffect(() => {
     const unsub = sound.subscribe((muted) => setIsMuted(muted));
@@ -66,219 +106,462 @@ export function Nav() {
     setIsMuted(muted);
   };
 
-  const navLinks = [
-    { label: "Work", href: "#work" },
-    { label: "The Lab", href: "#lab" },
-    { label: "Research", href: "#research" },
-    { label: "Experience", href: "#experience" },
-    { label: "Skills", href: "#skills" },
+  const handleOpenCopilot = () => {
+    sound.playClick(900);
+    window.dispatchEvent(new CustomEvent("open-portfolio-chat"));
+  };
+
+  // Animated Dock Items with Magnification Physics
+  const dockItems: DockItem[] = [
+    {
+      title: "GitHub",
+      icon: <Github className="w-4 h-4" />,
+      href: siteData.personal.github,
+      target: "_blank",
+      ariaLabel: "Munawwar's GitHub Profile",
+    },
+    {
+      title: "LinkedIn",
+      icon: <Linkedin className="w-4 h-4" />,
+      href: siteData.personal.linkedin,
+      target: "_blank",
+      ariaLabel: "Munawwar's LinkedIn Profile",
+    },
+    {
+      title: "AI Copilot",
+      icon: <Bot className="w-4 h-4 text-accent" />,
+      onClick: handleOpenCopilot,
+      badge: <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />,
+      ariaLabel: "Ask AI Copilot",
+    },
+    {
+      title: "Search (⌘K)",
+      icon: <Command className="w-4 h-4" />,
+      onClick: () => {
+        sound.playClick(850);
+        setPaletteOpen(true);
+      },
+      ariaLabel: "Open Command Palette",
+    },
+    {
+      title: isMuted ? "Unmute Audio (M)" : "Mute Audio (M)",
+      icon: isMuted ? (
+        <VolumeX className="w-4 h-4" />
+      ) : (
+        <Volume2 className="w-4 h-4 text-accent" />
+      ),
+      onClick: toggleSound,
+      ariaLabel: isMuted ? "Unmute Sound" : "Mute Sound",
+    },
+    {
+      title: isDark ? "Editorial Paper Mode" : "Dark Terminal Mode",
+      icon: (
+        <AnimatePresence mode="wait" initial={false}>
+          {isDark ? (
+            <motion.div
+              key="sun"
+              initial={{ scale: 0.6, rotate: -45, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              exit={{ scale: 0.6, rotate: 45, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              <Sun className="w-4 h-4 text-amber-500" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="moon"
+              initial={{ scale: 0.6, rotate: 45, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              exit={{ scale: 0.6, rotate: -45, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              <Moon className="w-4 h-4" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      ),
+      onClick: toggleTheme,
+      ariaLabel: "Toggle Theme",
+    },
   ];
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-line/80 bg-paper/95 backdrop-blur-md transition-colors duration-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
-          {/* Brand Wordmark & Live Status */}
-          <div className="flex items-center gap-3 shrink-0">
+      <motion.header
+        initial={{ y: 0, opacity: 1 }}
+        animate={{
+          y: navVisible ? 0 : -95,
+          opacity: navVisible ? 1 : 0,
+        }}
+        transition={{
+          duration: 0.4,
+          ease: [0.16, 1, 0.3, 1],
+        }}
+        className="fixed top-3 sm:top-4 inset-x-0 z-50 max-w-7xl mx-auto px-3 sm:px-4 pointer-events-none"
+      >
+        <div className={`flex items-center justify-between gap-2 sm:gap-4 p-1.5 sm:p-2 rounded-2xl bg-paper/90 dark:bg-[#0c0c0b]/90 border border-line/80 backdrop-blur-xl shadow-lg transition-all duration-200 ${
+          navVisible ? "pointer-events-auto" : "pointer-events-none"
+        }`}>
+          {/* ================= ZONE 1: BRAND WORDMARK & LIVE STATUS ================= */}
+          <div className="flex items-center gap-2.5 shrink-0 pl-1.5 sm:pl-2">
             <a
               href="#"
               onClick={() => sound.playClick(900)}
               className="group flex items-center gap-2 text-ink hover:text-accent transition-colors"
             >
-              <span className="font-mono text-sm font-semibold tracking-tight">
-                {siteData.personal.wordmark}
+              <span className="w-7 h-7 rounded-lg bg-paper-2 border border-line flex items-center justify-center font-mono text-xs font-bold text-accent shadow-2xs group-hover:border-accent transition-colors">
+                M
               </span>
-              <span className="hidden xl:inline-block font-mono text-[11px] text-ink-soft group-hover:text-ink transition-colors">
-                / {siteData.personal.role}
+              <span className="font-mono text-xs sm:text-sm font-semibold tracking-tight hidden xs:inline">
+                {siteData.personal.wordmark}
               </span>
             </a>
 
-            {/* Status Dot */}
-            <div className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 border border-line/70 rounded-full bg-paper-2/80 text-[10.5px] font-mono text-ink-soft shadow-2xs">
+            {/* Live Availability Radar Dot */}
+            <div className="hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 border border-line/70 rounded-full bg-paper-2/80 text-[10.5px] font-mono text-ink-soft shadow-2xs">
               <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
               <span>Available</span>
             </div>
           </div>
 
-          {/* Center Links (Desktop) - Centered with balanced breathing room */}
-          <nav
-            className="hidden lg:flex items-center justify-center gap-6 xl:gap-8 flex-1 mx-6 xl:mx-10"
-            aria-label="Main Navigation"
-          >
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => sound.playClick(750)}
-                className="text-xs font-mono uppercase tracking-wider text-ink-soft hover:text-ink transition-colors py-1 relative hover:after:w-full after:w-0 after:h-0.5 after:bg-accent after:absolute after:bottom-0 after:left-0 after:transition-all after:duration-200"
+          {/* ================= ZONE 2: INTERACTIVE NAVBAR MENU (DROPDOWNS) ================= */}
+          <div className="hidden lg:flex items-center justify-center flex-1">
+            <Menu setActive={setActiveMenu}>
+              {/* Menu Item 1: Case Studies */}
+              <MenuItem
+                setActive={setActiveMenu}
+                active={activeMenu}
+                item="Case Studies"
+                href="#work"
               >
-                {link.label}
-              </a>
-            ))}
-          </nav>
+                <div className="p-4 w-[540px]">
+                  <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-line text-xs font-mono">
+                    <span className="font-semibold text-ink flex items-center gap-1.5">
+                      <Workflow className="w-3.5 h-3.5 text-accent" />
+                      Production AI Case Studies
+                    </span>
+                    <a
+                      href="#work"
+                      onClick={() => {
+                        sound.playClick(750);
+                        setActiveMenu(null);
+                      }}
+                      className="text-accent hover:underline text-[11px] flex items-center gap-1"
+                    >
+                      View All 4 Systems <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
 
-          {/* Right Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 justify-end">
-            {/* AI Copilot Trigger */}
-            <button
-              onClick={() => {
-                sound.playClick(900);
-                window.dispatchEvent(new CustomEvent("open-portfolio-chat"));
-              }}
-              className="flex items-center gap-1.5 px-2.5 h-8 text-xs font-mono text-ink hover:text-accent bg-paper-2/90 border border-accent/40 rounded-token hover:border-accent hover:shadow-xs transition-colors cursor-pointer group"
-              title="Ask Munawwar AI Copilot (Ctrl+J or ⌘J)"
-              aria-label="Open AI Copilot"
-            >
-              <Bot className="w-3.5 h-3.5 text-accent" />
-              <span className="hidden sm:inline font-medium">Copilot</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            </button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <ProductItem
+                      title="Healthcare Claims Audit"
+                      badge="System 01"
+                      metric="91% Precision"
+                      tag="LangGraph"
+                      href="#work"
+                      icon={<Workflow className="w-5 h-5" />}
+                      description="Deterministic CPT/ICD overlap pre-matching with Gemini 3.8 Flash reasoner & 0.72 confidence gate."
+                    />
+                    <ProductItem
+                      title="Deep Research Engine"
+                      badge="System 02"
+                      metric="100% Ground Truth"
+                      tag="MCP Protocol"
+                      href="#work"
+                      icon={<Cpu className="w-5 h-5" />}
+                      description="Stateful LangGraph DAG integrated with Model Context Protocol client-server tools and cyclic reflection critic."
+                    />
+                    <ProductItem
+                      title="Clinical SOAP Notes"
+                      badge="System 03"
+                      metric="0% PHI Leakage"
+                      tag="WhisperX + Gemma 4"
+                      href="#work"
+                      icon={<FlaskConical className="w-5 h-5" />}
+                      description="Phoneme-aligned speaker diarization and structured clinical documentation validated by Qwen 3.5."
+                    />
+                    <ProductItem
+                      title="Production RAG CI/CD"
+                      badge="System 04"
+                      metric="-40% Tokens"
+                      tag="ChromaDB + RAGAS"
+                      href="#work"
+                      icon={<ShieldCheck className="w-5 h-5" />}
+                      description="Automated regression gate evaluating Faithfulness and Answer Relevance on every production deployment."
+                    />
+                  </div>
+                </div>
+              </MenuItem>
 
-            {/* Quick Command Palette Trigger */}
-            <button
-              onClick={() => {
-                sound.playClick(850);
-                setPaletteOpen(true);
-              }}
-              className="flex items-center gap-1.5 px-2.5 h-8 text-xs font-mono text-ink-soft hover:text-ink bg-paper-2/50 border border-line/70 rounded-token hover:border-ink-soft transition-colors cursor-pointer"
-              title="Open Command Palette (Ctrl+K or ⌘K)"
-              aria-label="Search and command palette"
-            >
-              <Command className="w-3.5 h-3.5 text-accent" />
-              <span className="hidden xl:inline text-xs">Search</span>
-              <kbd className="hidden sm:inline-block text-[10px] text-ink-soft/80 font-mono px-1 py-0.2 bg-paper/90 border border-line/60 rounded">⌘K</kbd>
-            </button>
+              {/* Menu Item 2: The Lab */}
+              <MenuItem
+                setActive={setActiveMenu}
+                active={activeMenu}
+                item="The Lab"
+                href="#lab"
+              >
+                <div className="p-4 w-[380px] space-y-2">
+                  <div className="flex items-center justify-between pb-2 border-b border-line text-xs font-mono">
+                    <span className="font-semibold text-ink flex items-center gap-1.5">
+                      <FlaskConical className="w-3.5 h-3.5 text-accent" />
+                      Interactive AI Lab
+                    </span>
+                    <span className="text-[10px] text-accent font-semibold px-1.5 py-0.2 bg-accent-soft rounded">
+                      Live Demos
+                    </span>
+                  </div>
 
-            {/* Hairline Separator */}
-            <div className="hidden sm:block w-px h-4 bg-line/80 mx-0.5" />
+                  <div className="space-y-1">
+                    <HoveredLink href="#lab" badge="Interactive">
+                      Multi-Agent Latency Profiler
+                    </HoveredLink>
+                    <HoveredLink href="#lab" badge="Evaluation">
+                      Deterministic Overlap Rule Tester
+                    </HoveredLink>
+                    <HoveredLink href="#lab" badge="Clinical">
+                      Acoustic Diarization &amp; SOAP Synthesizer
+                    </HoveredLink>
+                    <HoveredLink href="#lab" badge="Observability">
+                      RAGAS Faithfulness &amp; Relevance Gate
+                    </HoveredLink>
+                  </div>
+                </div>
+              </MenuItem>
 
-            {/* Audio Toggle */}
-            <button
-              onClick={toggleSound}
-              className="w-8 h-8 flex items-center justify-center text-ink-soft hover:text-ink bg-paper-2/50 border border-line/70 hover:border-line rounded-token transition-colors cursor-pointer relative"
-              title={isMuted ? "Unmute Audio FX (Press M)" : "Mute Audio FX (Press M)"}
-              aria-label={isMuted ? "Unmute Audio FX" : "Mute Audio FX"}
-            >
-              {isMuted ? (
-                <VolumeX className="w-3.5 h-3.5" />
-              ) : (
-                <>
-                  <Volume2 className="w-3.5 h-3.5 text-accent" />
-                  <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                </>
-              )}
-            </button>
+              {/* Menu Item 3: Research */}
+              <MenuItem
+                setActive={setActiveMenu}
+                active={activeMenu}
+                item="Research"
+                href="#research"
+              >
+                <div className="p-4 w-[380px] space-y-2">
+                  <div className="flex items-center justify-between pb-2 border-b border-line text-xs font-mono">
+                    <span className="font-semibold text-ink flex items-center gap-1.5">
+                      <FileCode2 className="w-3.5 h-3.5 text-accent" />
+                      Applied AI Publications
+                    </span>
+                    <span className="text-[10px] text-ink-soft">Peer-Reviewed</span>
+                  </div>
 
-            {/* Theme Toggle with smooth icon animation */}
-            <motion.button
-              onClick={toggleTheme}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.92 }}
-              className="w-8 h-8 flex items-center justify-center text-ink-soft hover:text-ink bg-paper-2/50 border border-line/70 hover:border-line rounded-token transition-colors cursor-pointer relative overflow-hidden"
-              title={isDark ? "Switch to Editorial Paper mode" : "Switch to Dark Terminal mode"}
-              aria-label="Toggle theme"
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                {isDark ? (
-                  <motion.div
-                    key="sun"
-                    initial={{ scale: 0.6, rotate: -45, opacity: 0 }}
-                    animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                    exit={{ scale: 0.6, rotate: 45, opacity: 0 }}
-                    transition={{ duration: 0.14, ease: "easeOut" }}
-                    className="flex items-center justify-center"
-                  >
-                    <Sun className="w-3.5 h-3.5 text-amber-500" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="moon"
-                    initial={{ scale: 0.6, rotate: 45, opacity: 0 }}
-                    animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                    exit={{ scale: 0.6, rotate: -45, opacity: 0 }}
-                    transition={{ duration: 0.14, ease: "easeOut" }}
-                    className="flex items-center justify-center"
-                  >
-                    <Moon className="w-3.5 h-3.5" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
+                  <div className="space-y-1">
+                    <HoveredLink href="#research" badge="Clinical NLP">
+                      Diagnostic Reasoning in LLMs
+                    </HoveredLink>
+                    <HoveredLink href="#research" badge="Affective AI">
+                      Gaze Tracking &amp; Cognitive Workload
+                    </HoveredLink>
+                    <HoveredLink href="#research" badge="RAG Benchmark">
+                      Empirical RAG Parameter Frontiers
+                    </HoveredLink>
+                  </div>
+                </div>
+              </MenuItem>
 
-            {/* Primary CTA */}
+              {/* Menu Item 4: Experience */}
+              <MenuItem
+                setActive={setActiveMenu}
+                active={activeMenu}
+                item="Experience"
+                href="#experience"
+              >
+                <div className="p-4 w-[380px] space-y-2">
+                  <div className="flex items-center justify-between pb-2 border-b border-line text-xs font-mono">
+                    <span className="font-semibold text-ink flex items-center gap-1.5">
+                      <Briefcase className="w-3.5 h-3.5 text-accent" />
+                      Background &amp; Credentials
+                    </span>
+                    <span className="text-[10px] text-accent font-semibold">IIT Madras '25</span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <HoveredLink href="#experience" badge="Industry">
+                      Jan Elaaj · Key AI Contributor
+                    </HoveredLink>
+                    <HoveredLink href="#education" badge="Academics">
+                      IIT Madras · B.S. Data Science
+                    </HoveredLink>
+                    <HoveredLink href="#skills" badge="Technical">
+                      Systems Depth &amp; Invariant Architecture
+                    </HoveredLink>
+                  </div>
+                </div>
+              </MenuItem>
+            </Menu>
+          </div>
+
+          {/* Hairline Separator */}
+          <div className="hidden md:block w-px h-5 bg-line/80 shrink-0" />
+
+          {/* ================= ZONE 3: ANIMATED DOCK WITH MAGNIFICATION PHYSICS ================= */}
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            {/* Desktop Animated Dock */}
+            <div className="hidden sm:flex items-center">
+              <AnimatedDock items={dockItems} />
+            </div>
+
+            {/* Quick Contact CTA */}
             <Button
               variant="primary"
               size="sm"
               onClick={() => {
+                sound.playClick(800);
                 const el = document.querySelector("#contact");
                 if (el) el.scrollIntoView({ behavior: "smooth" });
               }}
-              className="hidden sm:inline-flex h-8 px-3.5 text-xs font-mono ml-0.5"
+              className="h-8 px-3 text-xs font-mono shrink-0 hidden md:inline-flex"
             >
               Contact
             </Button>
 
-            {/* Mobile Hamburger Toggle */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden w-8 h-8 flex items-center justify-center text-ink-soft hover:text-ink border border-line rounded-token"
-              aria-label="Toggle mobile menu"
-            >
-              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-            </button>
+            {/* Mobile Actions: Theme + Copilot + Hamburger */}
+            <div className="sm:hidden flex items-center gap-1">
+              <button
+                type="button"
+                onClick={handleOpenCopilot}
+                className="w-8 h-8 flex items-center justify-center rounded-xl bg-paper-2 border border-accent/40 text-accent"
+                aria-label="Open AI Copilot"
+              >
+                <Bot className="w-4 h-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="w-8 h-8 flex items-center justify-center rounded-xl bg-paper-2 border border-line text-ink-soft cursor-pointer active:scale-95 transition-transform"
+                aria-label="Toggle Theme"
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {isDark ? (
+                    <motion.div
+                      key="sun-mobile"
+                      initial={{ scale: 0.6, rotate: -45, opacity: 0 }}
+                      animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                      exit={{ scale: 0.6, rotate: 45, opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <Sun className="w-4 h-4 text-amber-500" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="moon-mobile"
+                      initial={{ scale: 0.6, rotate: 45, opacity: 0 }}
+                      animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                      exit={{ scale: 0.6, rotate: -45, opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <Moon className="w-4 h-4" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  sound.playClick(750);
+                  setMobileMenuOpen(!mobileMenuOpen);
+                }}
+                className="w-8 h-8 flex items-center justify-center rounded-xl bg-paper-2 border border-line text-ink"
+                aria-label="Toggle Navigation Menu"
+              >
+                {mobileMenuOpen ? <X className="w-4 h-4" /> : <MenuIcon className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Mobile Dropdown */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-line bg-paper px-4 py-4 space-y-3 animate-fade-in">
-            <div className="flex flex-col gap-2">
-              {navLinks.map((link) => (
+        {/* ================= MOBILE SLIDE-DOWN DRAWER ================= */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.98 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="pointer-events-auto mt-2 p-4 rounded-2xl border border-line bg-paper/95 dark:bg-[#0c0c0b]/95 backdrop-blur-xl shadow-2xl space-y-3 lg:hidden"
+            >
+              <div className="grid grid-cols-2 gap-2 font-mono text-xs">
                 <a
-                  key={link.href}
-                  href={link.href}
+                  href="#work"
                   onClick={() => {
                     sound.playClick(750);
                     setMobileMenuOpen(false);
                   }}
-                  className="px-3 py-2 text-sm font-mono text-ink hover:bg-paper-2 rounded-token"
+                  className="p-2.5 rounded-xl bg-paper-2 border border-line/60 text-ink flex items-center justify-between"
                 >
-                  {link.label}
+                  <span>Case Studies</span>
+                  <span className="text-[10px] text-accent font-semibold">4 Systems</span>
                 </a>
-              ))}
-              <button
-                onClick={() => {
-                  sound.playClick(900);
-                  setMobileMenuOpen(false);
-                  window.dispatchEvent(new CustomEvent("open-portfolio-chat"));
-                }}
-                className="w-full flex items-center justify-between px-3 py-2 text-sm font-mono text-ink hover:text-accent bg-paper-2 border border-line rounded-token text-left"
-              >
-                <span className="flex items-center gap-2">
-                  <Bot className="w-4 h-4 text-accent" />
-                  <span>Ask Portfolio Copilot</span>
-                </span>
-                <span className="text-[10px] text-accent font-semibold px-1.5 py-0.5 bg-accent-soft rounded-token">
-                  Active
-                </span>
-              </button>
-              <a
-                href="#contact"
-                onClick={() => {
-                  sound.playClick(750);
-                  setMobileMenuOpen(false);
-                }}
-                className="px-3 py-2 text-sm font-mono text-accent font-semibold hover:bg-paper-2 rounded-token"
-              >
-                Get in Touch
-              </a>
-            </div>
-          </div>
-        )}
-      </header>
+                <a
+                  href="#lab"
+                  onClick={() => {
+                    sound.playClick(750);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="p-2.5 rounded-xl bg-paper-2 border border-line/60 text-ink flex items-center justify-between"
+                >
+                  <span>The Lab</span>
+                  <span className="text-[10px] text-accent font-semibold">Demos</span>
+                </a>
+                <a
+                  href="#research"
+                  onClick={() => {
+                    sound.playClick(750);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="p-2.5 rounded-xl bg-paper-2 border border-line/60 text-ink flex items-center justify-between"
+                >
+                  <span>Research</span>
+                  <span className="text-[10px] text-ink-soft">Papers</span>
+                </a>
+                <a
+                  href="#experience"
+                  onClick={() => {
+                    sound.playClick(750);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="p-2.5 rounded-xl bg-paper-2 border border-line/60 text-ink flex items-center justify-between"
+                >
+                  <span>Experience</span>
+                  <span className="text-[10px] text-ink-soft">Career</span>
+                </a>
+              </div>
+
+              {/* Mobile Quick Action Buttons */}
+              <div className="pt-2 border-t border-line/70 flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setPaletteOpen(true);
+                  }}
+                  className="flex-1 py-2 px-3 rounded-xl bg-paper-2 border border-line text-xs font-mono text-ink-soft flex items-center justify-center gap-1.5"
+                >
+                  <Command className="w-3.5 h-3.5 text-accent" />
+                  <span>Search</span>
+                </button>
+
+                <a
+                  href="#contact"
+                  onClick={() => {
+                    sound.playClick(750);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex-1 py-2 px-3 rounded-xl bg-accent text-white text-xs font-mono font-semibold flex items-center justify-center gap-1"
+                >
+                  <span>Contact</span>
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.header>
 
       {/* Global Command Palette */}
       <CommandPalette isOpen={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </>
   );
 }
+
+export default Nav;

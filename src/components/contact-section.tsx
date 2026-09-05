@@ -49,7 +49,7 @@ export function ContactSection() {
             Let&apos;s Build Systems That Matter
           </h2>
           <p className="font-sans text-sm sm:text-base text-ink-soft max-w-2xl">
-            Open to Senior AI/GenAI Engineering, Founding AI roles, and applied research collaborations. Let&apos;s discuss multi-agent systems, clinical architectures, or production RAG infrastructure.
+            Open to Full-Time AI/GenAI Engineering roles and applied research collaborations. Let&apos;s discuss multi-agent systems, clinical architectures, or production RAG infrastructure.
           </p>
         </div>
 

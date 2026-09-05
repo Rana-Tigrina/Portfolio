@@ -22,13 +22,17 @@ import {
   WifiOff,
   AlertCircle,
   RefreshCw,
+  Cpu,
 } from "lucide-react";
+import { PromptInput, type PromptInputMeta } from "@/components/ui/ai-chat-input";
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: string;
+  model?: string;
+  effort?: string;
 }
 
 const STARTER_PROMPTS = [
@@ -78,7 +82,6 @@ export function PortfolioChat() {
   }, []);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // Auto-scroll to bottom of conversation
@@ -89,7 +92,6 @@ export function PortfolioChat() {
   useEffect(() => {
     if (isOpen) {
       scrollToBottom();
-      inputRef.current?.focus();
     }
   }, [isOpen, messages, scrollToBottom]);
 
@@ -164,12 +166,21 @@ export function PortfolioChat() {
     }
   };
 
-  const sendMessage = async (overrideText?: string) => {
-    const query = (overrideText || input).trim();
-    if (!query || isLoading) return;
+  const sendMessage = async (overrideText?: string, meta?: PromptInputMeta) => {
+    let query = (overrideText || input).trim();
+    if (!query && (!meta || meta.attachments.length === 0)) return;
+    if (isLoading) return;
 
     sound.playClick(820);
     setInput("");
+
+    // Append attachment previews to query context if any
+    if (meta?.attachments && meta.attachments.length > 0) {
+      const attachDesc = meta.attachments
+        .map((f) => `📎 [Attached: ${f.name} (${(f.size / 1024).toFixed(0)} KB)]`)
+        .join("\n");
+      query = query ? `${query}\n\n${attachDesc}` : attachDesc;
+    }
 
     // Check client-side internet connectivity
     if (typeof navigator !== "undefined" && !navigator.onLine) {
@@ -201,11 +212,14 @@ export function PortfolioChat() {
     setIsLoading(true);
 
     const assistantId = "msg-" + (Date.now() + 1);
+    const activeModelName = "Copilot";
     const initialAssistantMessage: Message = {
       id: assistantId,
       role: "assistant",
       content: "",
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      model: activeModelName,
+      effort: meta?.effort,
     };
 
     setMessages([...nextMessages, initialAssistantMessage]);
@@ -219,6 +233,8 @@ export function PortfolioChat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: nextMessages.map((m) => ({ role: m.role, content: m.content })),
+          model: meta?.model,
+          effort: meta?.effort,
         }),
         signal: abortController.signal,
       });
@@ -535,52 +551,63 @@ export function PortfolioChat() {
 
   return (
     <>
-      {/* Floating Trigger Button (Bottom-Right) */}
-      <div className="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-40">
-        <motion.button
-          onClick={toggleOpen}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          className="group relative flex items-center gap-2 px-3 sm:px-3.5 py-2.5 bg-paper border border-line rounded-token shadow-xl hover:border-accent hover:shadow-2xl transition-all cursor-pointer select-none"
-          title="Open Munawwar AI Portfolio Copilot (Ctrl+J or ⌘J)"
-          aria-label="Open Munawwar AI Portfolio Copilot"
-        >
-          {/* Animated pulsing indicator */}
-          <div className="relative flex items-center justify-center">
-            <span className="absolute w-2.5 h-2.5 rounded-full bg-accent animate-ping opacity-75" />
-            <span className="w-2 h-2 rounded-full bg-accent" />
-          </div>
+      {/* Expanding Copilot Widget with Shared Layout Morph */}
+      <AnimatePresence mode="wait">
+        {!isOpen && (
+          <motion.div
+            key="copilot-pill-trigger"
+            layoutId="copilot-container"
+            initial={{ opacity: 0, scale: 0.85, y: 15 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 10 }}
+            transition={{ type: "spring", stiffness: 380, damping: 28 }}
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50"
+          >
+            <motion.button
+              onClick={toggleOpen}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="group relative flex items-center gap-2.5 px-3.5 sm:px-4 py-2.5 bg-paper/95 dark:bg-[#12141c]/95 border border-line rounded-full shadow-2xl hover:border-accent backdrop-blur-xl transition-all cursor-pointer select-none"
+              title="Open Munawwar AI Portfolio Copilot (Ctrl+J or ⌘J)"
+              aria-label="Open Munawwar AI Portfolio Copilot"
+            >
+              {/* Animated pulsing indicator */}
+              <div className="relative flex items-center justify-center">
+                <span className="absolute w-2.5 h-2.5 rounded-full bg-accent animate-ping opacity-75" />
+                <span className="w-2 h-2 rounded-full bg-accent" />
+              </div>
 
-          <div className="flex items-center gap-1.5">
-            <Bot className="w-4 h-4 text-accent" />
-            <span className="font-mono text-xs font-semibold text-ink group-hover:text-accent transition-colors">
-              Copilot
-            </span>
-            <span className="hidden sm:inline-block font-mono text-[10px] px-1.5 py-0.5 bg-paper-2 border border-line rounded-token text-accent font-medium">
-              Live
-            </span>
-          </div>
+              <div className="flex items-center gap-1.5">
+                <Bot className="w-4 h-4 text-accent" />
+                <span className="font-mono text-xs font-semibold text-ink group-hover:text-accent transition-colors">
+                  Copilot
+                </span>
+                <span className="font-mono text-[10px] px-1.5 py-0.2 bg-paper-2 border border-line rounded-full text-accent font-medium">
+                  Live
+                </span>
+              </div>
 
-          <kbd className="hidden md:inline-block font-mono text-[9px] text-ink-soft/70 px-1 py-0.5 bg-paper-2 border border-line rounded-token">
-            ⌘J
-          </kbd>
-        </motion.button>
-      </div>
+              <kbd className="hidden md:inline-block font-mono text-[9px] text-ink-soft/70 px-1.5 py-0.5 bg-paper-2 border border-line rounded-md">
+                ⌘J
+              </kbd>
+            </motion.button>
+          </motion.div>
+        )}
 
-      {/* Chat Window Modal */}
-      <AnimatePresence>
         {isOpen && (
           <motion.div
+            key="copilot-chat-modal"
+            layoutId="copilot-container"
             data-lenis-prevent="true"
             data-lenis-prevent-wheel="true"
             data-lenis-prevent-touch="true"
             onWheel={(e) => e.stopPropagation()}
             onTouchMove={(e) => e.stopPropagation()}
-            initial={{ opacity: 0, y: 20, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.96 }}
-            transition={{ type: "spring", damping: 25, stiffness: 320 }}
-            className={`fixed z-50 inset-x-3 bottom-3 sm:inset-x-auto sm:right-6 sm:bottom-20 w-auto sm:w-[440px] h-[82vh] sm:h-[600px] max-h-[85vh] bg-paper border border-line rounded-token shadow-2xl flex flex-col overflow-hidden overscroll-contain transition-all duration-200 ${
+            initial={{ opacity: 0, scale: 0.92, y: 15 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 15 }}
+            transition={{ type: "spring", stiffness: 350, damping: 28 }}
+            className={`fixed z-50 inset-x-3 bottom-3 sm:inset-x-auto sm:right-6 sm:bottom-6 w-auto sm:w-[440px] h-[82vh] sm:h-[620px] max-h-[85vh] bg-paper/95 dark:bg-[#12141c]/95 border border-line rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl flex flex-col overflow-hidden overscroll-contain transition-all duration-200 ${
               isExpanded
                 ? "sm:w-[680px] sm:h-[780px] max-h-[88vh]"
                 : ""
@@ -748,6 +775,18 @@ export function PortfolioChat() {
                             : "bg-paper-2 border border-line text-ink"
                         }`}
                       >
+                        {!isUser && msg.model && (
+                          <div className="flex items-center gap-1.5 mb-1.5 text-[10px] font-mono text-accent">
+                            <Cpu className="w-2.5 h-2.5" />
+                            <span className="font-semibold">{msg.model}</span>
+                            {msg.effort === "high" && (
+                              <span className="px-1.5 py-0.2 rounded bg-purple-500/10 border border-purple-500/30 text-[9px] font-semibold text-purple-600 dark:text-purple-400">
+                                Deep Reasoning
+                              </span>
+                            )}
+                          </div>
+                        )}
+
                         {isBlankAssistant ? (
                           <div className="space-y-2 py-0.5">
                             <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-mono text-[11px]">
@@ -822,45 +861,20 @@ export function PortfolioChat() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Chat Input Bar */}
-            <div className="p-3 border-t border-line bg-paper-2/40">
-              <div className="relative flex items-end gap-2 bg-paper border border-line rounded-token focus-within:border-accent transition-colors p-2 shadow-inner">
-                <textarea
-                  ref={inputRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Ask about Munawwar's projects, systems, or research..."
-                  rows={1}
-                  className="flex-1 max-h-24 min-h-[36px] bg-transparent text-[13px] sm:text-xs text-ink placeholder:text-ink-soft/70 resize-none focus:outline-none py-1.5 px-1 font-sans touch-manipulation"
-                />
-
-                {isLoading ? (
-                  <button
-                    onClick={handleStop}
-                    className="p-2 rounded-token bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 transition-colors cursor-pointer flex-shrink-0"
-                    title="Stop Generating"
-                    aria-label="Stop Generating"
-                  >
-                    <Square className="w-3.5 h-3.5" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => sendMessage()}
-                    disabled={!input.trim()}
-                    className="p-2 rounded-token bg-ink text-paper hover:bg-accent disabled:opacity-30 disabled:hover:bg-ink transition-colors cursor-pointer flex-shrink-0"
-                    title="Send message (Enter)"
-                    aria-label="Send message"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-
+            {/* Smart AI Prompt Input */}
+            <div className="p-3 border-t border-line bg-paper-2/20">
+              <PromptInput
+                onSubmit={(msg, meta) => sendMessage(msg, meta)}
+                isLoading={isLoading}
+                onStop={handleStop}
+                placeholder="Ask about Munawwar's systems, papers, code, or hiring..."
+              />
               {/* Status and Hint Footer */}
-              <div className="mt-2 flex items-center justify-between text-[10px] font-mono text-ink-soft px-1">
-                <span>Enter to send · Shift+Enter for new line</span>
-                <span className="text-accent font-medium">Neural Inference Runtime</span>
+              <div className="mt-1.5 flex items-center justify-between text-[10px] font-mono text-ink-soft px-1">
+                <span>Enter to send · Shift+Enter for newline</span>
+                <span className="text-accent font-medium flex items-center gap-1">
+                  <Zap className="w-2.5 h-2.5" /> Architecture Copilot Active
+                </span>
               </div>
             </div>
           </motion.div>

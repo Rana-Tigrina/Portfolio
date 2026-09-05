@@ -11,10 +11,11 @@ import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
 import { TracingBeam } from "@/components/ui/tracing-beam";
 import { VelocityScroll } from "@/components/ui/velocity-scroll";
+import { SystemsRunway } from "@/components/systems-runway";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-paper text-ink selection:bg-accent selection:text-white transition-colors duration-200 overflow-x-hidden relative">
+    <div className="min-h-screen flex flex-col bg-transparent text-ink selection:bg-accent selection:text-white transition-colors duration-200 overflow-x-clip relative z-10">
       <Nav />
       <main className="flex-1">
         <Hero />
@@ -23,8 +24,8 @@ export default function Home() {
           track1="✦ AUTONOMOUS MULTI-AGENT DAGs ✦ DETERMINISTIC RULE GATES ✦ RAGAS OBSERVABILITY HARNESS ✦ WHISPERX + GEMMA 4 ✦ ZERO-HALLUCINATION AUDITS"
           track2="✦ AFFECTIVE GAZE TRACKING ✦ COGNITIVE WORKLOAD DYNAMICS ✦ GEMINI 3.8 FLASH ✦ CHROMADB EMBEDDINGS ✦ IIT MADRAS DATA SCIENCE"
         />
+        <SystemsRunway />
         <TracingBeam>
-          <SelectedWork />
           <InteractiveLab />
           <ResearchSection />
           <ExperienceSection />

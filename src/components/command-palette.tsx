@@ -98,7 +98,7 @@ export function CommandPalette({ isOpen, onClose, onRunTrace }: CommandPalettePr
     {
       category: "Navigation",
       items: [
-        { label: "Selected Work & Case Studies", icon: FolderGit2, action: () => navigateTo("#work") },
+        { label: "Selected Case Studies", icon: FolderGit2, action: () => navigateTo("#work") },
         { label: "Interactive RAG & Agent Lab", icon: FlaskConical, action: () => navigateTo("#lab") },
         { label: "Research & Publications", icon: BookOpen, action: () => navigateTo("#research") },
         { label: "Engineering Experience", icon: Briefcase, action: () => navigateTo("#experience") },
