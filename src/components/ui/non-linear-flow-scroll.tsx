@@ -527,7 +527,7 @@ export function NonLinearFlowScroll({
     <section
       id="work"
       ref={containerRef}
-      className={`relative w-full h-[500vh] bg-paper transition-colors duration-300 ${className}`}
+      className={`relative w-full h-[500vh] bg-paper ${className}`}
       aria-label="Selected Case Studies"
     >
       {/* Sticky Viewport Stage: 100vw x 100vh with overflow-hidden */}

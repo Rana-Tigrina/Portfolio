@@ -168,7 +168,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className="antialiased bg-paper text-ink transition-colors duration-200"
+        className="antialiased bg-paper text-ink"
       >
         <AmbientHorizonGlow />
         <NeuralLatticeBackground />

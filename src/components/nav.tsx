@@ -91,9 +91,6 @@ export function Nav() {
     const root = document.documentElement;
     const nextDark = !root.classList.contains("dark");
 
-    // Scoped butter-smooth transition active strictly during theme toggle
-    root.classList.add("theme-transitioning");
-
     if (nextDark) {
       root.classList.add("dark");
     } else {
@@ -103,10 +100,6 @@ export function Nav() {
     try {
       localStorage.setItem("theme", nextDark ? "dark" : "light");
     } catch {}
-
-    window.setTimeout(() => {
-      root.classList.remove("theme-transitioning");
-    }, 280);
   };
 
   const toggleSound = () => {
