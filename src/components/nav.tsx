@@ -33,7 +33,7 @@ export function Nav() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
   const [navVisible, setNavVisible] = useState(true);
   const lastScrollY = useRef(0);
@@ -86,60 +86,27 @@ export function Nav() {
     };
   }, []);
 
-  const toggleTheme = (e?: React.MouseEvent) => {
+  const toggleTheme = () => {
     sound.playClick(750);
     const root = document.documentElement;
     const nextDark = !root.classList.contains("dark");
 
-    const applyTheme = () => {
-      if (nextDark) {
-        root.classList.add("dark");
-      } else {
-        root.classList.remove("dark");
-      }
-      setIsDark(nextDark);
-      try {
-        localStorage.setItem("theme", nextDark ? "dark" : "light");
-      } catch {}
-    };
+    // Scoped butter-smooth transition active strictly during theme toggle
+    root.classList.add("theme-transitioning");
 
-    // Use modern View Transitions API with circular ripple origin if supported
-    const hasViewTransition =
-      typeof document !== "undefined" &&
-      "startViewTransition" in document &&
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (!hasViewTransition) {
-      applyTheme();
-      return;
+    if (nextDark) {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
     }
+    setIsDark(nextDark);
+    try {
+      localStorage.setItem("theme", nextDark ? "dark" : "light");
+    } catch {}
 
-    const x = e?.clientX ?? window.innerWidth / 2;
-    const y = e?.clientY ?? window.innerHeight / 2;
-    const endRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    );
-
-    const transition = (document as unknown as { startViewTransition: (cb: () => void) => { ready: Promise<void> } }).startViewTransition(() => {
-      applyTheme();
-    });
-
-    transition.ready.then(() => {
-      document.documentElement.animate(
-        {
-          clipPath: [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${endRadius}px at ${x}px ${y}px)`,
-          ],
-        },
-        {
-          duration: 480,
-          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
-          pseudoElement: "::view-transition-new(root)",
-        }
-      );
-    });
+    window.setTimeout(() => {
+      root.classList.remove("theme-transitioning");
+    }, 280);
   };
 
   const toggleSound = () => {
@@ -240,7 +207,7 @@ export function Nav() {
         }}
         className="fixed top-3 sm:top-4 inset-x-0 z-50 max-w-7xl mx-auto px-3 sm:px-4 pointer-events-none"
       >
-        <div className={`flex items-center justify-between gap-2 sm:gap-4 p-1.5 sm:p-2 rounded-2xl bg-paper/90 dark:bg-[#0c0c0b]/90 border border-line/80 backdrop-blur-xl shadow-lg transition-all duration-200 ${
+        <div className={`flex items-center justify-between gap-2 sm:gap-4 p-1.5 sm:p-2 rounded-2xl bg-paper/90 border border-line/80 backdrop-blur-xl shadow-lg transition-all duration-200 ${
           navVisible ? "pointer-events-auto" : "pointer-events-none"
         }`}>
           {/* ================= ZONE 1: BRAND WORDMARK & LIVE STATUS ================= */}
@@ -520,7 +487,7 @@ export function Nav() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.98 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="pointer-events-auto mt-2 p-4 rounded-2xl border border-line bg-paper/95 dark:bg-[#0c0c0b]/95 backdrop-blur-xl shadow-2xl space-y-3 lg:hidden"
+              className="pointer-events-auto mt-2 p-4 rounded-2xl border border-line bg-paper/95 backdrop-blur-xl shadow-2xl space-y-3 lg:hidden"
             >
               <div className="grid grid-cols-2 gap-2 font-mono text-xs">
                 <a

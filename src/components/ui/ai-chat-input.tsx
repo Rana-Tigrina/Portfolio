@@ -69,7 +69,7 @@ export function PromptInput({
 
   return (
     <div
-      className={`relative w-full rounded-2xl bg-paper/95 dark:bg-[#151720]/95 backdrop-blur-xl border border-line focus-within:border-accent/80 focus-within:ring-2 focus-within:ring-accent/20 shadow-md transition-all ${className}`}
+      className={`relative w-full rounded-2xl bg-paper/95 backdrop-blur-xl border border-line focus-within:border-accent/80 focus-within:ring-2 focus-within:ring-accent/20 shadow-md transition-all ${className}`}
     >
       <div className="p-2.5 flex items-end gap-2">
         <textarea

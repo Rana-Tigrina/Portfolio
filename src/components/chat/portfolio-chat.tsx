@@ -567,7 +567,7 @@ export function PortfolioChat() {
               onClick={toggleOpen}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="group relative flex items-center gap-2.5 px-3.5 sm:px-4 py-2.5 bg-paper/95 dark:bg-[#12141c]/95 border border-line rounded-full shadow-2xl hover:border-accent backdrop-blur-xl transition-all cursor-pointer select-none"
+              className="group relative flex items-center gap-2.5 px-3.5 sm:px-4 py-2.5 bg-paper/95 border border-line rounded-full shadow-2xl hover:border-accent backdrop-blur-xl transition-all cursor-pointer select-none"
               title="Open Munawwar AI Portfolio Copilot (Ctrl+J or ⌘J)"
               aria-label="Open Munawwar AI Portfolio Copilot"
             >
@@ -607,7 +607,7 @@ export function PortfolioChat() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 15 }}
             transition={{ type: "spring", stiffness: 350, damping: 28 }}
-            className={`fixed z-50 inset-x-3 bottom-3 sm:inset-x-auto sm:right-6 sm:bottom-6 w-auto sm:w-[440px] h-[82vh] sm:h-[620px] max-h-[85vh] bg-paper/95 dark:bg-[#12141c]/95 border border-line rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl flex flex-col overflow-hidden overscroll-contain transition-all duration-200 ${
+            className={`fixed z-50 inset-x-3 bottom-3 sm:inset-x-auto sm:right-6 sm:bottom-6 w-auto sm:w-[440px] h-[82vh] sm:h-[620px] max-h-[85vh] bg-paper/95 border border-line rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl flex flex-col overflow-hidden overscroll-contain transition-all duration-200 ${
               isExpanded
                 ? "sm:w-[680px] sm:h-[780px] max-h-[88vh]"
                 : ""

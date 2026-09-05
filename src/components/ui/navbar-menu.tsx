@@ -78,7 +78,7 @@ export const MenuItem = ({
             transition={transition}
             className="absolute top-[calc(100%+0.75rem)] left-1/2 -translate-x-1/2 z-50 pt-2"
           >
-            <div className="relative rounded-2xl border border-line/80 bg-paper/95 dark:bg-[#121211]/95 backdrop-blur-2xl shadow-2xl overflow-hidden min-w-[320px] max-w-[560px]">
+            <div className="relative rounded-2xl border border-line/80 bg-paper/95 backdrop-blur-2xl shadow-2xl overflow-hidden min-w-[320px] max-w-[560px]">
               {/* Subtle top ambient indicator */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-0.5 bg-accent/80 rounded-full" />
               {children}
@@ -103,7 +103,7 @@ export const Menu = ({
     <nav
       onMouseLeave={() => setActive(null)}
       className={cn(
-        "relative flex items-center gap-1 rounded-2xl bg-paper/85 dark:bg-[#0c0c0b]/85 border border-line/70 px-2 py-1 shadow-xs backdrop-blur-md",
+        "relative flex items-center gap-1 rounded-2xl bg-paper/85 border border-line/70 px-2 py-1 shadow-xs backdrop-blur-md",
         className
       )}
     >

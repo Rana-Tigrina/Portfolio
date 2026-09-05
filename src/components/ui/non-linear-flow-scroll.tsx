@@ -260,7 +260,7 @@ function CaseStudySlide({
           </div>
 
           {/* Right Column: Interactive Diagram / StateGraph Code / Telemetry (7 cols) */}
-          <div className="lg:col-span-7 flex flex-col border border-line/80 rounded-2xl bg-paper/95 dark:bg-[#151513]/95 backdrop-blur-md overflow-hidden shadow-xl min-w-0">
+          <div className="lg:col-span-7 flex flex-col border border-line/80 rounded-2xl bg-paper/95 backdrop-blur-md overflow-hidden shadow-xl min-w-0">
             {/* Mode Switcher */}
             <div className="flex items-center justify-between border-b border-line px-4 py-2 bg-paper-2/60 shrink-0">
               <div className="flex items-center gap-1.5">
@@ -527,11 +527,11 @@ export function NonLinearFlowScroll({
     <section
       id="work"
       ref={containerRef}
-      className={`relative w-full h-[500vh] bg-paper dark:bg-[#0c0c0b] transition-colors duration-300 ${className}`}
+      className={`relative w-full h-[500vh] bg-paper transition-colors duration-300 ${className}`}
       aria-label="Selected Case Studies"
     >
       {/* Sticky Viewport Stage: 100vw x 100vh with overflow-hidden */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between bg-paper dark:bg-[#0c0c0b]">
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between bg-paper">
         {/* Subtle Architectural Grid */}
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05]"
@@ -542,7 +542,7 @@ export function NonLinearFlowScroll({
         />
 
         {/* Floating Top Control HUD */}
-        <div className="relative z-30 w-full px-6 sm:px-10 md:px-14 lg:px-20 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b border-line/60 bg-paper/90 dark:bg-[#0c0c0b]/90 backdrop-blur-md shrink-0">
+        <div className="relative z-30 w-full px-6 sm:px-10 md:px-14 lg:px-20 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b border-line/60 bg-paper/90 backdrop-blur-md shrink-0">
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1.5 text-xs font-mono tracking-wider uppercase text-accent font-semibold px-2.5 py-0.5 border border-accent/40 bg-accent-soft rounded-token">
               <Sparkles className="w-3.5 h-3.5 animate-pulse" />
