@@ -89,6 +89,9 @@ export const metadata: Metadata = {
   },
 };
 
+import { SmoothScrollProvider } from "@/components/ui/smooth-scroll-provider";
+import { FluidCursor } from "@/components/ui/fluid-cursor";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -142,13 +145,16 @@ export default function RootLayout({
         suppressHydrationWarning
         className="antialiased bg-paper text-ink transition-colors duration-200"
       >
-        <a
-          href="#content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-ink focus:text-paper focus:rounded-token font-mono text-xs shadow-md"
-        >
-          Skip to content
-        </a>
-        <div id="content">{children}</div>
+        <FluidCursor />
+        <SmoothScrollProvider>
+          <a
+            href="#content"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-ink focus:text-paper focus:rounded-token font-mono text-xs shadow-md"
+          >
+            Skip to content
+          </a>
+          <div id="content">{children}</div>
+        </SmoothScrollProvider>
       </body>
     </html>
   );

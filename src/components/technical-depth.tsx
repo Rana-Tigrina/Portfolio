@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { siteData } from "@/content/site";
 import { sound } from "@/lib/sound";
 import { motion, useReducedMotion } from "motion/react";
+import { MagneticTilt } from "./ui/magnetic-tilt";
 import {
   Terminal,
   Cpu,
@@ -167,164 +168,172 @@ export function TechnicalDepth() {
         {/* Bento Grid Layout (Kokonut UI inspired) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1: Live Typing Code Terminal (spans 2 columns on desktop) */}
-          <div className="md:col-span-2 border border-line rounded-token bg-paper-2/40 p-5 flex flex-col space-y-3 shadow-xs">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Code2 className="w-4 h-4 text-accent" />
-                <h3 className="font-mono text-sm font-semibold uppercase text-ink">
-                  1. Multi-Agent &amp; Reasoning Orchestration
-                </h3>
+          <MagneticTilt maxAngle={3.5} scaleHover={1.008} glareOpacity={0.08} className="md:col-span-2 rounded-token">
+            <div className="h-full border border-line rounded-token bg-paper-2/40 p-5 flex flex-col space-y-3 shadow-xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Code2 className="w-4 h-4 text-accent" />
+                  <h3 className="font-mono text-sm font-semibold uppercase text-ink">
+                    1. Multi-Agent &amp; Reasoning Orchestration
+                  </h3>
+                </div>
+                <span className="text-[11px] font-mono text-ink-soft">Python 3.12 / LangGraph</span>
               </div>
-              <span className="text-[11px] font-mono text-ink-soft">Python 3.12 / LangGraph</span>
-            </div>
 
-            <p className="font-sans text-xs text-ink-soft">
-              DAG-based multi-agent execution with self-reflection loops, human-in-the-loop escalation, and structured Pydantic schema validation.
-            </p>
+              <p className="font-sans text-xs text-ink-soft">
+                DAG-based multi-agent execution with self-reflection loops, human-in-the-loop escalation, and structured Pydantic schema validation.
+              </p>
 
-            <div className="flex-1 pt-1">
-              <TypingCodeTerminal />
-            </div>
+              <div className="flex-1 pt-1">
+                <TypingCodeTerminal />
+              </div>
 
-            {/* Skills chips */}
-            <div className="flex flex-wrap gap-1.5 pt-2 border-t border-line/60">
-              {siteData.technicalDepth[0].skills.map((s) => (
-                <span
-                  key={s}
-                  onMouseEnter={() => sound.playClick(800)}
-                  className="font-mono text-[10px] text-ink bg-paper border border-line px-2 py-0.5 rounded-token hover:border-accent hover:text-accent transition-colors cursor-default"
-                >
-                  {s}
-                </span>
-              ))}
+              {/* Skills chips */}
+              <div className="flex flex-wrap gap-1.5 pt-2 border-t border-line/60">
+                {siteData.technicalDepth[0].skills.map((s) => (
+                  <span
+                    key={s}
+                    onMouseEnter={() => sound.playClick(800)}
+                    className="font-mono text-[10px] text-ink bg-paper border border-line px-2 py-0.5 rounded-token hover:border-accent hover:text-accent transition-colors cursor-default"
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          </MagneticTilt>
 
           {/* Card 2: Production Metrics & Benchmarks */}
-          <div className="border border-line rounded-token bg-paper-2/40 p-5 flex flex-col justify-between space-y-4 shadow-xs">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-accent" />
-                <h3 className="font-mono text-sm font-semibold uppercase text-ink">
-                  2. Verified Benchmarks
-                </h3>
+          <MagneticTilt maxAngle={5} scaleHover={1.01} glareOpacity={0.1} className="rounded-token">
+            <div className="h-full border border-line rounded-token bg-paper-2/40 p-5 flex flex-col justify-between space-y-4 shadow-xs">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-accent" />
+                  <h3 className="font-mono text-sm font-semibold uppercase text-ink">
+                    2. Verified Benchmarks
+                  </h3>
+                </div>
+                <p className="font-sans text-xs text-ink-soft">
+                  Automated regression testing and clinical accuracy metrics.
+                </p>
               </div>
-              <p className="font-sans text-xs text-ink-soft">
-                Automated regression testing and clinical accuracy metrics.
-              </p>
-            </div>
 
-            <div className="space-y-3.5 py-2">
-              <MetricBar label="Diagnostic Task Accuracy" value={91} suffix="%" />
-              <MetricBar label="RAG Retrieval Accuracy" value={87} suffix="%" />
-              <MetricBar label="Engineering Cycle Reduction" value={90} suffix="%" />
-              <MetricBar label="SOAP Notes Time Savings" value={65} suffix="%" />
-              <MetricBar label="LLM Token Cost Reduction" value={40} suffix="%" />
-            </div>
+              <div className="space-y-3.5 py-2">
+                <MetricBar label="Diagnostic Task Accuracy" value={91} suffix="%" />
+                <MetricBar label="RAG Retrieval Accuracy" value={87} suffix="%" />
+                <MetricBar label="Engineering Cycle Reduction" value={90} suffix="%" />
+                <MetricBar label="SOAP Notes Time Savings" value={65} suffix="%" />
+                <MetricBar label="LLM Token Cost Reduction" value={40} suffix="%" />
+              </div>
 
-            <div className="p-3 bg-paper border border-line rounded-token flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
-              <span className="font-mono text-[11px] text-ink-soft">
-                Validated using RAGAS &amp; LangSmith eval suites
-              </span>
+              <div className="p-3 bg-paper border border-line rounded-token flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-accent shrink-0" />
+                <span className="font-mono text-[11px] text-ink-soft">
+                  Validated using RAGAS &amp; LangSmith eval suites
+                </span>
+              </div>
             </div>
-          </div>
+          </MagneticTilt>
 
           {/* Card 3: Foundation Models & Inference Grid */}
-          <div className="border border-line rounded-token bg-paper-2/40 p-5 flex flex-col space-y-3 shadow-xs">
-            <div className="flex items-center gap-2">
-              <HeartPulse className="w-4 h-4 text-accent" />
-              <h3 className="font-mono text-sm font-semibold uppercase text-ink">
-                3. Clinical NLP &amp; Models
-              </h3>
-            </div>
-            <p className="font-sans text-xs text-ink-soft">
-              Domain-tuned medical entity extraction and high-throughput transcription.
-            </p>
-
-            <div className="grid grid-cols-2 gap-2 pt-1">
-              {models.map((m) => (
-                <div
-                  key={m.name}
-                  onMouseEnter={() => sound.playClick(720)}
-                  className="p-2.5 bg-paper border border-line rounded-token hover:border-accent/60 transition-colors space-y-0.5 group cursor-default"
-                >
-                  <div className="font-mono text-xs font-semibold text-ink group-hover:text-accent transition-colors">
-                    {m.name}
-                  </div>
-                  <div className="text-[10px] font-mono text-ink-soft">
-                    {m.role}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Skills chips */}
-            <div className="flex flex-wrap gap-1.5 pt-2 border-t border-line/60">
-              {siteData.technicalDepth[1].skills.map((s) => (
-                <span
-                  key={s}
-                  className="font-mono text-[10px] text-ink bg-paper border border-line px-2 py-0.5 rounded-token"
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Card 4: Infra, Observability & Cloud (spans 2 columns on desktop) */}
-          <div className="md:col-span-2 border border-line rounded-token bg-paper-2/40 p-5 flex flex-col justify-between space-y-3 shadow-xs">
-            <div className="space-y-1">
+          <MagneticTilt maxAngle={5} scaleHover={1.01} glareOpacity={0.1} className="rounded-token">
+            <div className="h-full border border-line rounded-token bg-paper-2/40 p-5 flex flex-col space-y-3 shadow-xs">
               <div className="flex items-center gap-2">
-                <Server className="w-4 h-4 text-accent" />
+                <HeartPulse className="w-4 h-4 text-accent" />
                 <h3 className="font-mono text-sm font-semibold uppercase text-ink">
-                  4. Retrieval, LLMOps &amp; Production Infrastructure
+                  3. Clinical NLP &amp; Models
                 </h3>
               </div>
               <p className="font-sans text-xs text-ink-soft">
-                Full-lifecycle observability, automated regression testing, containerized microservices, and human-in-the-loop workflows.
+                Domain-tuned medical entity extraction and high-throughput transcription.
               </p>
-            </div>
 
-            {/* Feature matrix */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              <div className="p-3 bg-paper border border-line rounded-token space-y-1">
-                <div className="font-mono text-xs font-semibold text-accent flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  RAGAS &amp; LangSmith Observability
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                {models.map((m) => (
+                  <div
+                    key={m.name}
+                    onMouseEnter={() => sound.playClick(720)}
+                    className="p-2.5 bg-paper border border-line rounded-token hover:border-accent/60 transition-colors space-y-0.5 group cursor-default"
+                  >
+                    <div className="font-mono text-xs font-semibold text-ink group-hover:text-accent transition-colors">
+                      {m.name}
+                    </div>
+                    <div className="text-[10px] font-mono text-ink-soft">
+                      {m.role}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Skills chips */}
+              <div className="flex flex-wrap gap-1.5 pt-2 border-t border-line/60">
+                {siteData.technicalDepth[1].skills.map((s) => (
+                  <span
+                    key={s}
+                    className="font-mono text-[10px] text-ink bg-paper border border-line px-2 py-0.5 rounded-token"
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </MagneticTilt>
+
+          {/* Card 4: Infra, Observability & Cloud (spans 2 columns on desktop) */}
+          <MagneticTilt maxAngle={3.5} scaleHover={1.008} glareOpacity={0.08} className="md:col-span-2 rounded-token">
+            <div className="h-full border border-line rounded-token bg-paper-2/40 p-5 flex flex-col justify-between space-y-3 shadow-xs">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Server className="w-4 h-4 text-accent" />
+                  <h3 className="font-mono text-sm font-semibold uppercase text-ink">
+                    4. Retrieval, LLMOps &amp; Production Infrastructure
+                  </h3>
                 </div>
-                <p className="text-xs text-ink-soft leading-relaxed">
-                  Real-time latency tracing, token cost accounting, context precision curves, and faithfulness scoring on every deploy.
+                <p className="font-sans text-xs text-ink-soft">
+                  Full-lifecycle observability, automated regression testing, containerized microservices, and human-in-the-loop workflows.
                 </p>
               </div>
 
-              <div className="p-3 bg-paper border border-line rounded-token space-y-1">
-                <div className="font-mono text-xs font-semibold text-accent flex items-center gap-1.5">
-                  <Layers className="w-3.5 h-3.5" />
-                  Cloud &amp; Microservices Architecture
+              {/* Feature matrix */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div className="p-3 bg-paper border border-line rounded-token space-y-1">
+                  <div className="font-mono text-xs font-semibold text-accent flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    RAGAS &amp; LangSmith Observability
+                  </div>
+                  <p className="text-xs text-ink-soft leading-relaxed">
+                    Real-time latency tracing, token cost accounting, context precision curves, and faithfulness scoring on every deploy.
+                  </p>
                 </div>
-                <p className="text-xs text-ink-soft leading-relaxed">
-                  Dockerized multi-agent workers, FastAPI asynchronous endpoints, CI/CD pipeline automation, and zero-downtime rollouts.
-                </p>
+
+                <div className="p-3 bg-paper border border-line rounded-token space-y-1">
+                  <div className="font-mono text-xs font-semibold text-accent flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5" />
+                    Cloud &amp; Microservices Architecture
+                  </div>
+                  <p className="text-xs text-ink-soft leading-relaxed">
+                    Dockerized multi-agent workers, FastAPI asynchronous endpoints, CI/CD pipeline automation, and zero-downtime rollouts.
+                  </p>
+                </div>
+              </div>
+
+              {/* Skills chips */}
+              <div className="flex flex-wrap gap-1.5 pt-2 border-t border-line/60">
+                {[
+                  ...siteData.technicalDepth[2].skills,
+                  ...siteData.technicalDepth[3].skills,
+                ].map((s) => (
+                  <span
+                    key={s}
+                    onMouseEnter={() => sound.playClick(850)}
+                    className="font-mono text-[10px] text-ink bg-paper border border-line px-2 py-0.5 rounded-token hover:border-accent hover:text-accent transition-colors cursor-default"
+                  >
+                    {s}
+                  </span>
+                ))}
               </div>
             </div>
-
-            {/* Skills chips */}
-            <div className="flex flex-wrap gap-1.5 pt-2 border-t border-line/60">
-              {[
-                ...siteData.technicalDepth[2].skills,
-                ...siteData.technicalDepth[3].skills,
-              ].map((s) => (
-                <span
-                  key={s}
-                  onMouseEnter={() => sound.playClick(850)}
-                  className="font-mono text-[10px] text-ink bg-paper border border-line px-2 py-0.5 rounded-token hover:border-accent hover:text-accent transition-colors cursor-default"
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-          </div>
+          </MagneticTilt>
         </div>
       </div>
     </section>

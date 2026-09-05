@@ -67,6 +67,14 @@
 
 This portfolio is built as an interactive engineering playground, combining rigorous editorial design (Newsreader serif + IBM Plex Mono) with modern motion physics:
 
+- **WebGL Navier-Stokes Fluid Canvas (`FluidCursor`)**: Real-time GPU fluid dynamics simulation reacting to cursor motion and touch with iridescent mint emerald, cyan, and cyber violet dye vortices that dissipate organically.
+- **Lenis Butter-Smooth Inertial Scrolling**: Weighted momentum scroll physics creating a frictionless luxury browsing experience.
+- **Kinetic Velocity Skew Marquee (`VelocityScroll`)**: Bi-directional kinetic typography ribbons tracking scroll velocity via Framer Motion springs, dynamically skewing text angle (`skewX: -16deg → +16deg`) with acceleration.
+- **3D Magnetic Spatial Tilt (`MagneticTilt`)**: Interactive cards that tilt with cursor perspective in true 3D (`rotateX`, `rotateY`, `translateZ`) while casting dynamic specular glare reflections.
+- **Floating Neural OS HUD Deck (`NeuralHud`)**: Persistent glassmorphic command deck featuring:
+  - **3 Dimension Modes**: Editorial Studio, Cyber Matrix (CRT scanline shader & phosphor telemetry), and Lab Mode.
+  - **Web Audio Haptic Synthesizer**: Client-side sound generation (zero external MP3 assets) with tactile ticks, frequency sweeps, and animated audio equalizer.
+  - **Live Agent Cascade Traversal**: Automated cinematic state machine sequence running simulated LangGraph executions with audio-visual telemetry.
 - **Flagship Engineering Studio**: Split command center with directional slide and blur transitions (`slideVariants`), spring tab indicator (`layoutId="activeSystemPill"`), hotkey keyboard navigation (<kbd>1</kbd>–<kbd>4</kbd> and <kbd>←</kbd>/<kbd>→</kbd>), and an interactive CAD flowchart with live node telemetry popovers.
 - **Dual View Mode Switcher**: Seamlessly switch between the **Interactive Studio** console and the **Full Deck** view.
 - **Interactive RAG Parameter & Curve Simulator**: Real-time SVG dynamic waveform curves grounded in empirical research (arXiv:2505.08445 & arXiv:2606.28337), featuring Cross-Encoder reranking toggle and live token math.

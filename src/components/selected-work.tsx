@@ -6,6 +6,7 @@ import { siteData, CaseStudy } from "@/content/site";
 import { ArchitectureDiagram } from "./architecture-diagram";
 import { SpotlightCard } from "./ui/spotlight-card";
 import { ParticleButton } from "./ui/particle-button";
+import { MagneticTilt } from "./ui/magnetic-tilt";
 import { sound } from "@/lib/sound";
 import { Github } from "./icons";
 import {
@@ -548,50 +549,52 @@ export function SelectedWork() {
 
                   {/* RIGHT PANE: Interactive CAD Flowchart & Node Inspector (7 cols on lg) */}
                   <div className="lg:col-span-7 space-y-4">
-                    <div className="bg-paper border border-line rounded-xl shadow-xs overflow-hidden">
-                      {/* Top CAD Terminal Console Bar */}
-                      <div className="px-4 py-3 bg-paper-2/90 border-b border-line flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
-                        <div className="flex items-center gap-2">
-                          <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
-                          </span>
-                          <span className="font-semibold text-ink uppercase tracking-wider text-[11px]">
-                            Live Architecture Workbench
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-2 text-[10px] text-ink-soft">
-                          <span className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-paper border border-line">
-                            {meta.engine}
-                          </span>
-                          <span className="px-1.5 py-0.5 rounded bg-paper border border-line">
-                            {meta.runtime}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Interactive Diagram Canvas */}
-                      <div className="p-4 sm:p-5">
-                        <ArchitectureDiagram slug={currentStudy.slug} />
-                      </div>
-
-                      {/* Bottom Flow Telemetry Footnote */}
-                      <div className="px-4 py-3 bg-paper-2/40 border-t border-line/70 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono text-ink-soft">
-                        <div className="flex items-center gap-1.5 truncate max-w-xl">
-                          <Terminal className="w-3.5 h-3.5 text-accent shrink-0" />
-                          <span className="truncate">
-                            Pipeline Flow:{" "}
-                            <span className="text-ink font-sans text-xs">
-                              {currentStudy.architecture}
+                    <MagneticTilt maxAngle={3.5} scaleHover={1.008} glareOpacity={0.08} className="rounded-xl">
+                      <div className="bg-paper border border-line rounded-xl shadow-xs overflow-hidden">
+                        {/* Top CAD Terminal Console Bar */}
+                        <div className="px-4 py-3 bg-paper-2/90 border-b border-line flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+                          <div className="flex items-center gap-2">
+                            <span className="relative flex h-2 w-2">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
                             </span>
-                          </span>
+                            <span className="font-semibold text-ink uppercase tracking-wider text-[11px]">
+                              Live Architecture Workbench
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-[10px] text-ink-soft">
+                            <span className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-paper border border-line">
+                              {meta.engine}
+                            </span>
+                            <span className="px-1.5 py-0.5 rounded bg-paper border border-line">
+                              {meta.runtime}
+                            </span>
+                          </div>
                         </div>
-                        <div className="text-[10px] text-ink-soft shrink-0 self-end sm:self-center">
-                          Click any node to inspect telemetry
+
+                        {/* Interactive Diagram Canvas */}
+                        <div className="p-4 sm:p-5">
+                          <ArchitectureDiagram slug={currentStudy.slug} />
+                        </div>
+
+                        {/* Bottom Flow Telemetry Footnote */}
+                        <div className="px-4 py-3 bg-paper-2/40 border-t border-line/70 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono text-ink-soft">
+                          <div className="flex items-center gap-1.5 truncate max-w-xl">
+                            <Terminal className="w-3.5 h-3.5 text-accent shrink-0" />
+                            <span className="truncate">
+                              Pipeline Flow:{" "}
+                              <span className="text-ink font-sans text-xs">
+                                {currentStudy.architecture}
+                              </span>
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-ink-soft shrink-0 self-end sm:self-center">
+                            Click any node to inspect telemetry
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </MagneticTilt>
 
                     {/* Quick navigation bottom banner */}
                     <div className="flex items-center justify-between px-2 text-xs font-mono text-ink-soft">
@@ -641,7 +644,8 @@ export function SelectedWork() {
               };
 
               return (
-                <SpotlightCard key={study.slug} className="bg-paper p-6 sm:p-8 space-y-6">
+                <MagneticTilt key={study.slug} maxAngle={4} scaleHover={1.01} glareOpacity={0.12} className="rounded-2xl">
+                  <SpotlightCard className="bg-paper p-6 sm:p-8 space-y-6">
                   {/* Card Header */}
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-4">
                     <div className="space-y-1.5">
@@ -746,7 +750,8 @@ export function SelectedWork() {
                     </p>
                   </div>
                 </SpotlightCard>
-              );
+              </MagneticTilt>
+            );
             })}
           </div>
         )}

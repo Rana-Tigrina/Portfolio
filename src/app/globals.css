@@ -198,3 +198,52 @@ input[type="range"].custom-slider::-moz-range-thumb {
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+
+/* Unconventional Cyber Matrix / Hologram Mode */
+.matrix-mode-active {
+  --accent: #00ffaa;
+  --accent-soft: #002b1c;
+  --line: #004d33;
+}
+
+.matrix-mode-active body::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
+              linear-gradient(90deg, rgba(0, 255, 170, 0.03), rgba(0, 0, 0, 0.05), rgba(0, 255, 170, 0.03));
+  z-index: 35;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.matrix-mode-active * {
+  text-shadow: 0 0 2px rgba(0, 255, 170, 0.35);
+}
+
+/* Lenis smooth scrolling core styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
