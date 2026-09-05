@@ -24,21 +24,19 @@ export function GazeCanvas() {
     (ctx: CanvasRenderingContext2D, width: number, height: number, items: Fixation[]) => {
       ctx.clearRect(0, 0, width, height);
 
-      // Subtle Dürer grid lines
+      // Subtle Dürer grid lines (Batched single path)
       ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
       ctx.lineWidth = 1;
+      ctx.beginPath();
       for (let x = 0; x < width; x += 36) {
-        ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, height);
-        ctx.stroke();
       }
       for (let y = 0; y < height; y += 36) {
-        ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(width, y);
-        ctx.stroke();
       }
+      ctx.stroke();
 
       // Connecting saccadic paths
       if (items.length > 1) {
@@ -124,7 +122,13 @@ export function GazeCanvas() {
     drawCanvas(ctx, width, height, fixations);
   }, [fixations, drawCanvas]);
 
+  const lastMoveTimeRef = useRef(0);
+
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const now = Date.now();
+    if (now - lastMoveTimeRef.current < 50) return;
+    lastMoveTimeRef.current = now;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();

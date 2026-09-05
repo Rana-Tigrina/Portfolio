@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { siteData } from "@/content/site";
 import { sound } from "@/lib/sound";
 import { CommandPalette } from "./command-palette";
@@ -20,11 +20,32 @@ export function Nav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const alphaRef = useRef<HTMLSpanElement>(null);
+  const betaRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const unsub = sound.subscribe((muted) => setIsMuted(muted));
     const isDarkTheme = document.documentElement.classList.contains("dark");
     setIsDark(isDarkTheme);
+
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+          const progress = maxScroll > 0 ? scrollY / maxScroll : 0;
+          if (alphaRef.current) {
+            alphaRef.current.textContent = (progress * 100).toFixed(2);
+          }
+          if (betaRef.current) {
+            betaRef.current.textContent = ((progress + Math.sin(progress * Math.PI * 4) * 0.04) * 100).toFixed(2);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -37,8 +58,10 @@ export function Nav() {
         sound.toggleMute();
       }
     };
+    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("keydown", handleKeyDown);
     return () => {
+      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("keydown", handleKeyDown);
       unsub();
     };
@@ -109,8 +132,28 @@ export function Nav() {
             ))}
           </nav>
 
+          {/* Steve Reich Phasing Dual Tickers */}
+          <div className="hidden xl:flex items-center gap-2 border-l border-line pl-4 text-[10px] text-ink-soft font-mono">
+            <span>PHASE-α: <span ref={alphaRef} className="text-ink">0.00</span></span>
+            <span>·</span>
+            <span>PHASE-β: <span ref={betaRef} className="text-accent">0.00</span></span>
+          </div>
+
           {/* Right Actions */}
           <div className="flex items-center gap-2">
+            {/* Audio Catalogue Desk Modal Trigger */}
+            <button
+              onClick={() => {
+                sound.playClick(900);
+                window.dispatchEvent(new KeyboardEvent("keydown", { key: "a" }));
+              }}
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono text-accent border border-accent/40 bg-accent/10 rounded-token hover:bg-accent/20 transition-colors cursor-pointer"
+              title="Open Curatorial Audio Desk (Press A)"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-ping" />
+              <span>DESK [A]</span>
+            </button>
+
             {/* Quick Command Palette Trigger */}
             <button
               onClick={() => {

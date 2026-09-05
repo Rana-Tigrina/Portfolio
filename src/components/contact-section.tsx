@@ -35,21 +35,39 @@ export function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-16 md:py-24 border-b border-line bg-paper-2/40">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
+    <section id="contact" className="py-16 md:py-24 border-b border-line bg-paper-2/40 relative overflow-hidden">
+      {/* 20. Voyager Golden Record Engraved Pulsar Map */}
+      <svg
+        className="absolute top-4 right-4 w-72 h-72 text-accent/15 pointer-events-none"
+        viewBox="0 0 200 200"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+        aria-hidden="true"
+      >
+        <circle cx="100" cy="100" r="90" strokeDasharray="3 3" />
+        <circle cx="100" cy="100" r="60" />
+        <circle cx="100" cy="100" r="30" />
+        <line x1="100" y1="10" x2="100" y2="190" />
+        <line x1="10" y1="100" x2="190" y2="100" />
+        <line x1="36" y1="36" x2="164" y2="164" />
+        <line x1="164" y1="36" x2="36" y2="164" />
+      </svg>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10 relative z-10">
         {/* Header */}
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-accent font-semibold tracking-wider uppercase">
-              Initiate Contact
+              PLAQUE NO. 1977-VOYAGER · TRANSMISSION CONSOLE
             </span>
-            <span className="text-xs font-mono text-ink-soft">/ Direct Line</span>
+            <span className="text-xs font-mono text-ink-soft">/ 28.6139° N, 77.2090° E [DELHI]</span>
           </div>
           <h2 className="font-serif italic text-3xl sm:text-4xl text-ink">
-            Let&apos;s Build Systems That Matter
+            Commission a New Monument
           </h2>
           <p className="font-sans text-sm sm:text-base text-ink-soft max-w-2xl">
-            Open to Senior AI/GenAI Engineering, Founding AI roles, and applied research collaborations. Let&apos;s discuss multi-agent systems, clinical architectures, or production RAG infrastructure.
+            Currently receptive to appointments for <strong>Senior AI/ML Engineer</strong> and <strong>Founding Systems Engineer</strong> roles. Whether you are building mission-critical agentic architectures or regulated clinical intelligence, let us build something that endures.
           </p>
         </div>
 

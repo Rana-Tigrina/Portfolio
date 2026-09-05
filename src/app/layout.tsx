@@ -92,6 +92,9 @@ export const metadata: Metadata = {
 import { SmoothScrollProvider } from "@/components/ui/smooth-scroll-provider";
 import { ContextCursor } from "@/components/ui/context-cursor";
 import { NeuralScrollBackground } from "@/components/ui/neural-scroll-background";
+import { ConservationBanner } from "@/components/conservation-banner";
+import { CaravaggioSpotlight } from "@/components/ui/caravaggio-spotlight";
+import { AudioGuideModal } from "@/components/audio-guide-modal";
 
 export default function RootLayout({
   children,
@@ -134,7 +137,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${newsreader.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
+      className={`dark ${newsreader.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
     >
       <head>
         <script
@@ -146,8 +149,11 @@ export default function RootLayout({
         suppressHydrationWarning
         className="antialiased bg-paper text-ink transition-colors duration-200"
       >
+        <ConservationBanner />
+        <CaravaggioSpotlight />
         <NeuralScrollBackground />
         <ContextCursor />
+        <AudioGuideModal />
         <SmoothScrollProvider>
           <a
             href="#content"

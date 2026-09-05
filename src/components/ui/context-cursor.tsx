@@ -27,30 +27,35 @@ export function ContextCursor() {
       return;
     }
 
+    let lastTarget: EventTarget | null = null;
+
     const onMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
-      if (!isVisible) setIsVisible(true);
+      setIsVisible(true);
 
-      // Detect context from element under cursor
-      const target = e.target as HTMLElement | null;
-      if (!target) return;
+      // Only query DOM context if target changed
+      if (e.target !== lastTarget) {
+        lastTarget = e.target;
+        const target = e.target as HTMLElement | null;
+        if (!target) return;
 
-      const cursorAttr = target.closest("[data-cursor]")?.getAttribute("data-cursor");
-      const cursorText = target.closest("[data-cursor-text]")?.getAttribute("data-cursor-text");
+        const cursorAttr = target.closest("[data-cursor]")?.getAttribute("data-cursor");
+        const cursorText = target.closest("[data-cursor-text]")?.getAttribute("data-cursor-text");
 
-      if (cursorAttr) {
-        setVariant(cursorAttr as CursorVariant);
-        setCustomText(cursorText || "");
-      } else if (target.closest("button, a, [role='button'], input[type='range']")) {
-        setVariant("hover");
-        setCustomText("");
-      } else if (target.closest("pre, code")) {
-        setVariant("code");
-        setCustomText("INSPECT");
-      } else {
-        setVariant("default");
-        setCustomText("");
+        if (cursorAttr) {
+          setVariant(cursorAttr as CursorVariant);
+          setCustomText(cursorText || "");
+        } else if (target.closest("button, a, [role='button'], input[type='range']")) {
+          setVariant("hover");
+          setCustomText("");
+        } else if (target.closest("pre, code")) {
+          setVariant("code");
+          setCustomText("INSPECT");
+        } else {
+          setVariant("default");
+          setCustomText("");
+        }
       }
     };
 
@@ -73,7 +78,7 @@ export function ContextCursor() {
       window.removeEventListener("mousedown", onMouseDown);
       document.removeEventListener("mouseleave", onMouseLeave);
     };
-  }, [mouseX, mouseY, isVisible]);
+  }, [mouseX, mouseY]);
 
   if (shouldReduceMotion || !isVisible) return null;
 
@@ -90,24 +95,23 @@ export function ContextCursor() {
           translateY: "-50%",
           width: variant === "default" ? 6 : 4,
           height: variant === "default" ? 6 : 4,
-          transition: "width 0.15s ease, height 0.15s ease",
         }}
       />
 
-      {/* Outer Context-Aware Follower Ring */}
+      {/* Outer Context-Aware Follower Ring (No heavy backdrop-filter to guarantee 60fps) */}
       <motion.div
         aria-hidden="true"
         className={`pointer-events-none fixed top-0 left-0 z-[9998] flex items-center justify-center font-mono text-[10px] font-semibold tracking-wider transition-colors duration-200 ${
           variant === "view"
-            ? "rounded-full bg-accent/90 text-white px-3 py-1 shadow-[0_0_20px_rgba(15,107,92,0.45)] backdrop-blur-md"
+            ? "rounded-full bg-accent text-neutral-900 px-3 py-1 shadow-md border border-accent/40"
             : variant === "tune"
-            ? "rounded-full bg-cyan-600/90 text-white px-3 py-1 shadow-[0_0_20px_rgba(8,145,178,0.45)] backdrop-blur-md"
+            ? "rounded-full bg-cyan-500 text-neutral-900 px-3 py-1 shadow-md border border-cyan-400"
             : variant === "paper"
-            ? "rounded-full bg-amber-600/90 text-white px-3 py-1 shadow-[0_0_20px_rgba(217,119,6,0.45)] backdrop-blur-md"
+            ? "rounded-full bg-amber-500 text-neutral-900 px-3 py-1 shadow-md border border-amber-400"
             : variant === "code"
             ? "rounded-md bg-paper border border-accent text-accent px-2 py-0.5 shadow-sm"
             : variant === "hover"
-            ? "rounded-full border-2 border-accent bg-accent/15 backdrop-blur-[1px]"
+            ? "rounded-full border-2 border-accent bg-accent/20"
             : "rounded-full border border-accent/40 bg-accent/5"
         }`}
         style={{

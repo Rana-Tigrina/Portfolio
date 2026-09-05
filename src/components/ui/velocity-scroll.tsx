@@ -89,7 +89,7 @@ export function VelocityScroll({
   className?: string;
 }) {
   return (
-    <section className={`relative w-full py-6 md:py-8 border-y border-border/40 bg-paper/60 backdrop-blur-md overflow-hidden ${className}`}>
+    <section className={`relative w-full py-6 md:py-8 border-y border-line/60 bg-[#101014] overflow-hidden ${className}`}>
       {/* Subtle edge vignette gradient */}
       <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-paper to-transparent z-10 pointer-events-none" />
       <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-paper to-transparent z-10 pointer-events-none" />

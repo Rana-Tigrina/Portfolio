@@ -60,9 +60,9 @@ export function NeuralScrollBackground() {
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY };
     };
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
-    // Contextual Network Topology
+    // Curated high-performance grid nodes (reduced density for 60fps)
     let nodes: NodePoint[] = [];
     let pulses: PulsePacket[] = [];
 
@@ -70,31 +70,29 @@ export function NeuralScrollBackground() {
       nodes = [];
       pulses = [];
 
-      // Grid-aligned neural nodes
-      const cols = Math.floor(width / 160);
-      const rows = Math.floor(height / 140);
+      const cols = Math.max(3, Math.min(6, Math.floor(width / 260)));
+      const rows = Math.max(3, Math.min(5, Math.floor(height / 220)));
 
       for (let i = 0; i <= cols; i++) {
         for (let j = 0; j <= rows; j++) {
-          const x = (i / cols) * width + (Math.random() - 0.5) * 40;
-          const y = (j / rows) * height + (Math.random() - 0.5) * 40;
+          const x = (i / cols) * width + (Math.random() - 0.5) * 30;
+          const y = (j / rows) * height + (Math.random() - 0.5) * 30;
           const stage = Math.floor((j / rows) * 4);
 
           let label: string | undefined;
           if (i === 1 && j === 1) label = "SYS_INIT";
-          if (i === cols - 1 && j === 2) label = "LATENCY_GTE";
+          if (i === cols - 1 && j === 1) label = "LATENCY_GTE";
           if (i === 2 && j === Math.floor(rows / 2)) label = "STATE_GRAPH";
-          if (i === cols - 2 && j === Math.floor(rows / 2)) label = "VECTOR_INDEX";
-          if (i === 1 && j === rows - 1) label = "QWEN_VAL";
+          if (i === cols - 1 && j === rows - 1) label = "QWEN_VAL";
 
           nodes.push({
             x,
             y,
             baseX: x,
             baseY: y,
-            vx: (Math.random() - 0.5) * 0.25,
-            vy: (Math.random() - 0.5) * 0.25,
-            radius: Math.random() * 1.8 + 1.2,
+            vx: (Math.random() - 0.5) * 0.18,
+            vy: (Math.random() - 0.5) * 0.18,
+            radius: 1.8,
             stage,
             label,
           });
@@ -105,108 +103,111 @@ export function NeuralScrollBackground() {
     initNetwork();
 
     let lastTime = performance.now();
+    let isHidden = false;
+
+    const handleVisibility = () => {
+      isHidden = document.hidden;
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
 
     const render = (now: number) => {
       animId = requestAnimationFrame(render);
-      const dt = Math.min((now - lastTime) / 1000, 0.1);
+      if (isHidden) return;
+
+      const dt = Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
 
       ctx.clearRect(0, 0, width, height);
 
       const progress = smoothProgress.get();
-      const velocity = Math.abs(scrollVelocity.get() || 0);
-
-      // Determine active contextual stage:
-      // 0: Hero, 1: Selected Work, 2: Interactive Lab, 3: Tech Depth / Research
+      const velocity = Math.min(Math.abs(scrollVelocity.get() || 0), 2);
       const currentStage = Math.min(Math.floor(progress * 4.2), 3);
 
-      // Accent color palette based on active contextual stage
-      let themeColor = "rgba(16, 185, 129, "; // emerald (Agentic default)
-      if (currentStage === 1) themeColor = "rgba(6, 182, 212, "; // cyan (WhisperX / Audio)
-      if (currentStage === 2) themeColor = "rgba(139, 92, 246, "; // violet (RAG / Vector)
-      if (currentStage === 3) themeColor = "rgba(245, 158, 11, "; // amber (Benchmarks / Metrics)
+      // Museum curated palette
+      let r = 201, g = 162, b = 39; // gold
+      if (currentStage === 1) { r = 0; g = 47; b = 167; } // Klein Blue
+      else if (currentStage === 2) { r = 59; g = 168; b = 159; } // Verdigris
+      else if (currentStage === 3) { r = 158; g = 56; b = 42; } // Oxblood
 
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
+      const maxDistSq = 220 * 220;
 
-      // Update and draw connections (orthogonal & diagonal data buses)
-      ctx.lineWidth = 0.8;
+      // 1. Single batched path for all lines
+      ctx.lineWidth = 0.75;
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${0.1 + velocity * 0.08})`;
+      ctx.beginPath();
 
       for (let i = 0; i < nodes.length; i++) {
         const a = nodes[i];
-
-        // Slight drift
         a.x += a.vx;
         a.y += a.vy;
-        if (Math.abs(a.x - a.baseX) > 20) a.vx *= -1;
-        if (Math.abs(a.y - a.baseY) > 20) a.vy *= -1;
+        if (Math.abs(a.x - a.baseX) > 15) a.vx *= -1;
+        if (Math.abs(a.y - a.baseY) > 15) a.vy *= -1;
 
-        // Mouse magnetic elasticity
         const dx = mx - a.x;
         const dy = my - a.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 180) {
-          const force = (1 - dist / 180) * 8;
-          a.x += (dx / dist) * force * 0.05;
-          a.y += (dy / dist) * force * 0.05;
+        const dsq = dx * dx + dy * dy;
+        if (dsq < 25000 && dsq > 0) {
+          const dist = Math.sqrt(dsq);
+          const force = (1 - dist / 160) * 4;
+          a.x += (dx / dist) * force * 0.04;
+          a.y += (dy / dist) * force * 0.04;
         }
 
-        // Draw connections to nearby nodes
         for (let j = i + 1; j < nodes.length; j++) {
-          const b = nodes[j];
-          const cdx = b.x - a.x;
-          const cdy = b.y - a.y;
-          const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
+          const bNode = nodes[j];
+          const cdx = bNode.x - a.x;
+          const cdy = bNode.y - a.y;
+          const cdistSq = cdx * cdx + cdy * cdy;
 
-          if (cdist < 190) {
-            const alpha = (1 - cdist / 190) * 0.12 * (1 + velocity * 1.5);
-            ctx.strokeStyle = `${themeColor}${alpha})`;
-            ctx.beginPath();
+          if (cdistSq < maxDistSq) {
             ctx.moveTo(a.x, a.y);
-
-            // Orthogonal step routing for cybernetic circuit feel
             if ((i + j) % 2 === 0) {
-              const midX = (a.x + b.x) / 2;
+              const midX = (a.x + bNode.x) / 2;
               ctx.lineTo(midX, a.y);
-              ctx.lineTo(midX, b.y);
+              ctx.lineTo(midX, bNode.y);
             }
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
+            ctx.lineTo(bNode.x, bNode.y);
 
-            // Randomly spawn pulses between connected nodes on scroll
-            if (Math.random() < 0.003 + velocity * 0.04 && pulses.length < 35) {
+            if (Math.random() < 0.0015 + velocity * 0.02 && pulses.length < 12) {
               pulses.push({
                 startX: a.x,
                 startY: a.y,
-                endX: b.x,
-                endY: b.y,
+                endX: bNode.x,
+                endY: bNode.y,
                 progress: 0,
-                speed: 0.8 + Math.random() * 1.2 + velocity * 3,
-                color: themeColor,
+                speed: 0.9 + Math.random() * 1.0 + velocity * 2,
+                color: `rgba(${r}, ${g}, ${b},`,
               });
             }
           }
         }
+      }
+      ctx.stroke();
 
-        // Draw nodes
-        const isHighlight = a.stage === currentStage;
-        const nodeAlpha = isHighlight ? 0.45 : 0.18;
-        const nodeRadius = isHighlight ? a.radius * 1.3 : a.radius;
+      // 2. Draw nodes in batched fill
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.28)`;
+      ctx.beginPath();
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        ctx.moveTo(a.x + a.radius, a.y);
+        ctx.arc(a.x, a.y, a.radius, 0, Math.PI * 2);
+      }
+      ctx.fill();
 
-        ctx.fillStyle = `${themeColor}${nodeAlpha})`;
-        ctx.beginPath();
-        ctx.arc(a.x, a.y, nodeRadius, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Node labels
-        if (a.label && isHighlight) {
-          ctx.font = "9px monospace";
-          ctx.fillStyle = `${themeColor}0.65)`;
+      // 3. Node labels (only when close to current stage)
+      ctx.font = "9px monospace";
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.65)`;
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        if (a.label && a.stage === currentStage) {
           ctx.fillText(a.label, a.x + 8, a.y + 3);
         }
       }
 
-      // Update and draw traveling pulse packets
+      // 4. Update and draw traveling pulse packets without allocating gradients
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.8)`;
       for (let p = pulses.length - 1; p >= 0; p--) {
         const pulse = pulses[p];
         pulse.progress += pulse.speed * dt;
@@ -219,20 +220,14 @@ export function NeuralScrollBackground() {
         const px = pulse.startX + (pulse.endX - pulse.startX) * pulse.progress;
         const py = pulse.startY + (pulse.endY - pulse.startY) * pulse.progress;
 
-        // Glowing head
-        const grad = ctx.createRadialGradient(px, py, 0, px, py, 6);
-        grad.addColorStop(0, `${pulse.color}0.9)`);
-        grad.addColorStop(1, `${pulse.color}0)`);
-
-        ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(px, py, 6, 0, Math.PI * 2);
+        ctx.arc(px, py, 3.5, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Contextual telemetry watermark in corner
+      // 5. Watermark telemetry in corner
       ctx.font = "10px monospace";
-      ctx.fillStyle = `${themeColor}0.35)`;
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.35)`;
       const stageName = [
         "SYS: INITIALIZING ARCHITECTURE BUS",
         "SYS: ACTIVE MULTI-AGENT STATEGRAPH",
@@ -253,6 +248,7 @@ export function NeuralScrollBackground() {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [smoothProgress, scrollVelocity]);
 

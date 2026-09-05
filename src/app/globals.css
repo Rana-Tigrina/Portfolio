@@ -2,24 +2,42 @@
 
 @layer base {
   :root {
-    --paper: #F7F6F2;
-    --paper-2: #EEECE4;
-    --ink: #15161B;
-    --ink-soft: #5B5D63;
-    --line: #DCD8CD;
-    --accent: #0F6B5C;
-    --accent-soft: #E3EEEB;
+    --paper: #0a0a0c;
+    --paper-2: #121216;
+    --ink: #f5f2eb;
+    --ink-soft: #a6a297;
+    --line: rgba(245, 242, 235, 0.12);
+    --accent: #C9A227;
+    --accent-soft: rgba(201, 162, 39, 0.15);
     --radius-token: 3px;
+
+    /* Tate Museum Pigment & Material System */
+    --outrenoir: #0a0a0c;
+    --outrenoir-surface: #121216;
+    --outrenoir-card: #18181e;
+    --bone: #f5f2eb;
+    --bone-muted: #a6a297;
+    --bone-faint: rgba(245, 242, 235, 0.3);
+    --ikb: #002FA7;
+    --gold-leaf: #C9A227;
+    --verdigris: #3BA89F;
+    --oxblood: #9E382A;
+    --scarpa-brass: #b8932b;
+    --lead-ash: #2d2d33;
+
+    --mx: 50vw;
+    --my: 50vh;
+    --spotlight-radius: 450px;
   }
 
   .dark {
-    --paper: #0E1015;
-    --paper-2: #171922;
-    --ink: #F4F3EE;
-    --ink-soft: #9CA1AB;
-    --line: #252836;
-    --accent: #1DB89F;
-    --accent-soft: #112925;
+    --paper: #0a0a0c;
+    --paper-2: #121216;
+    --ink: #f5f2eb;
+    --ink-soft: #a6a297;
+    --line: rgba(245, 242, 235, 0.12);
+    --accent: #C9A227;
+    --accent-soft: rgba(201, 162, 39, 0.15);
   }
 
   * {
@@ -41,8 +59,20 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Outrenoir textured surface (Soulages micro-groove canvas effect, GPU-cached) */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 998;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    will-change: transform;
+  }
+
   ::selection {
-    background-color: var(--accent);
+    background-color: var(--ikb);
     color: #ffffff;
   }
 }
@@ -220,3 +250,110 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
+/* =========================================================================
+   MUSEUM CRAFT & FINE ART TECHNIQUES
+   ========================================================================= */
+
+/* 1. Caravaggio Chiaroscuro Spotlight (Hardware GPU Accelerated) */
+#caravaggio-spotlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 600px;
+  height: 600px;
+  margin-top: -300px;
+  margin-left: -300px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 40;
+  background: radial-gradient(
+    circle closest-side,
+    rgba(201, 162, 39, 0.08) 0%,
+    rgba(0, 47, 167, 0.04) 45%,
+    transparent 85%
+  );
+  will-change: transform;
+  transform: translate3d(-1000px, -1000px, 0);
+  transition: opacity 0.3s ease;
+}
+
+/* 13. Muqarnas Stacked Z-Depth Pedestals */
+.muqarnas-pedestal {
+  background-color: var(--outrenoir-surface);
+  border: 1px solid rgba(245, 242, 235, 0.08);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.6),
+    0 10px 15px -3px rgba(0, 0, 0, 0.5),
+    0 20px 25px -5px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(201, 162, 39, 0.05);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+}
+.muqarnas-pedestal:hover {
+  transform: translateY(-4px) scale(1.004);
+  border-color: rgba(201, 162, 39, 0.35);
+  box-shadow: 
+    0 6px 12px -2px rgba(0, 0, 0, 0.8),
+    0 16px 28px -4px rgba(0, 0, 0, 0.7),
+    0 32px 48px -6px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(201, 162, 39, 0.15);
+}
+
+/* 3. Carlo Scarpa Brass Threshold Joint */
+.scarpa-joint {
+  position: relative;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent 0%, var(--scarpa-brass) 15%, var(--gold-leaf) 50%, var(--scarpa-brass) 85%, transparent 100%);
+  opacity: 0.6;
+  margin: 3.5rem 0;
+}
+.scarpa-joint::after {
+  content: "✦";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--outrenoir);
+  padding: 0 1rem;
+  font-size: 0.75rem;
+  color: var(--gold-leaf);
+}
+
+/* 15. Dürer Engraving Hatching Pattern */
+.durer-hatch {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(245, 242, 235, 0.03),
+    rgba(245, 242, 235, 0.03) 1px,
+    transparent 1px,
+    transparent 6px
+  );
+}
+
+/* 11. Turrell Skyspace Shifting Void */
+.turrell-skyspace {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(245, 242, 235, 0.12);
+  transition: background 8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 16. Girih 5-Fold Sacred Watermark */
+.girih-watermark {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.035;
+  animation: girihBreathe 18s ease-in-out infinite alternate;
+}
+@keyframes girihBreathe {
+  0% { transform: scale(1) rotate(0deg); opacity: 0.025; }
+  100% { transform: scale(1.08) rotate(4deg); opacity: 0.05; }
+}
+
+/* 6. Sumi-e Ink Bleed (Active on hover to preserve 60fps scroll compositing) */
+.sumi-e-title {
+  transition: filter 0.3s ease;
+}
+.sumi-e-title:hover {
+  filter: url(#sumi-ink-bleed);
+}

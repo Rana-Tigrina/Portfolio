@@ -45,7 +45,7 @@ function Word({
   return (
     <motion.span
       style={reducedMotion ? undefined : { opacity }}
-      className="inline-block transition-opacity duration-75"
+      className="inline-block"
     >
       {children}
     </motion.span>

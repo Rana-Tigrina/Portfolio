@@ -88,19 +88,38 @@ export function SufiClimax() {
         </div>
       </div>
 
+      {/* 4. Kintsugi Gold Fracture Drawing (金継ぎ) */}
+      <div className="relative py-4 max-w-2xl mx-auto">
+        <svg className="w-full h-12 overflow-visible" viewBox="0 0 600 50">
+          <motion.path
+            d="M 10 25 Q 120 5, 220 35 T 420 15 T 590 30"
+            fill="none"
+            stroke="#C9A227"
+            strokeWidth="2.5"
+            strokeDasharray="600"
+            initial={{ strokeDashoffset: 600 }}
+            whileInView={{ strokeDashoffset: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 2.2, ease: [0.16, 1, 0.3, 1] }}
+          />
+        </svg>
+        <span className="font-mono text-[10px] text-[#C9A227] uppercase tracking-widest block -mt-2">
+          &ldquo;The fracture is not concealed; it is made structural.&rdquo; · KINTSUGI (金継ぎ)
+        </span>
+      </div>
+
       {/* Rumi's Climax Verse */}
       <div className="space-y-4">
         <blockquote className="font-serif italic text-3xl sm:text-4xl md:text-5xl text-ink leading-relaxed max-w-2xl mx-auto">
           &ldquo;The wound is the place where the Light enters you.&rdquo;
         </blockquote>
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-accent font-semibold">
-          — Jalāl al-Dīn Muḥammad Rūmī (1207 – 1273)
+          — Jalāl al-Dīn Muḥammad Rūmī (The Masnavi, 1258)
         </p>
       </div>
 
       <p className="font-sans text-xs sm:text-sm text-ink-soft max-w-xl mx-auto leading-relaxed pt-2">
-        Every edge case in clinical software, every hallucination caught by a deterministic gate, is
-        the wound where empirical rigor and artistic truth illuminate the machine.
+        In software as in ceramics, failure is inevitable. In our architecture, breakdowns are not hidden behind confident hallucinations; they are flagged, routed to human review, and repaired with auditable golden telemetry.
       </p>
     </section>
   );

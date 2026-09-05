@@ -17,6 +17,7 @@ import { TracingBeam } from "@/components/ui/tracing-beam";
 import { VelocityScroll } from "@/components/ui/velocity-scroll";
 import { FontanaSlash } from "@/components/ui/fontana-slash";
 import { CuratorialActHeader } from "@/components/curatorial-act-header";
+import { RichterSqueegee } from "@/components/ui/richter-squeegee";
 
 export default function Home() {
   return (
@@ -40,6 +41,9 @@ export default function Home() {
           <Hero />
         </section>
 
+        {/* Carlo Scarpa Brass Threshold Joint */}
+        <div className="scarpa-joint" aria-hidden="true" />
+
         {/* Lucio Fontana Canvas Slash I */}
         <FontanaSlash actLabel="Concetto Spaziale I — Incision into Entropy" />
 
@@ -59,7 +63,15 @@ export default function Home() {
           </div>
           <ProofBar />
           <TextScrollWordReveal />
+
+          {/* 12. Gerhard Richter Squeegee Smear Plate */}
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <RichterSqueegee />
+          </div>
         </section>
+
+        {/* Carlo Scarpa Brass Threshold Joint */}
+        <div className="scarpa-joint" aria-hidden="true" />
 
         {/* Velocity Ribbons */}
         <VelocityScroll

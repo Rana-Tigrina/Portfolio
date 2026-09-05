@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MUSEUM OF COGNITIVE RIGOR · MOHAMMAD MUNAWWAR MALOOK</title>
+  <meta name="description" content="A museum-grade digital artwork disguised as the applied AI and systems engineering portfolio of Mohammad Munawwar Malook (IIT Madras)." />
+  
+  <!-- Fonts: Cormorant Garamond, Cinzel, Space Grotesk, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- External Libraries from CDN: Lucide Icons, GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.344.0/umd/lucide.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* =========================================================================
+       STAGE 4: ART DIRECTION & MATERIAL SYSTEM (TOKENS)
+       Mined Pigments:
+       - Soulages Outrenoir: #0a0a0c, #121215, #18181c
+       - Bone White / Gesso: #f5f2eb
+       - Parchment Tint: #ded8cb
+       - Yves Klein Blue (IKB): #002FA7
+       - Kintsugi Gold Leaf: #C9A227
+       - Verdigris Patina: #3BA89F
+       - Terracotta Oxblood: #9E382A
+       - Lead Ash: #2D2D33
+       ========================================================================= */
+    :root {
+      --bg-outrenoir: #0a0a0c;
+      --bg-pedestal: #121216;
+      --bg-card: #18181e;
+      --bone-white: #f5f2eb;
+      --bone-muted: #a6a297;
+      --bone-faint: #44423e;
+      --ikb: #002FA7;
+      --gold-leaf: #C9A227;
+      --verdigris: #3BA89F;
+      --oxblood: #9E382A;
+      --lead-ash: #2d2d33;
+      --scarpa-brass: #b8932b;
+      
+      --ma: 6rem; /* Japanese negative space concept */
+      --font-display: 'Cinzel', serif;
+      --font-serif: 'Cormorant Garamond', serif;
+      --font-sans: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --mx: 50vw;
+      --my: 50vh;
+      --spotlight-radius: 450px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--bg-outrenoir);
+      color: var(--bone-white);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      cursor: default;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Outrenoir textured surface (Soulages micro-groove canvas effect) */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 998;
+      opacity: 0.038;
+      background-image: repeating-linear-gradient(
+        0deg,
+        #fff,
+        #fff 1px,
+        transparent 1px,
+        transparent 4px
+      ), repeating-linear-gradient(
+        90deg,
+        #000,
+        #000 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    }
+
+    /* 1. CARAVAGGIO SPOTLIGHT OVERLAY */
+    #caravaggio-spotlight {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 40;
+      background: radial-gradient(
+        circle var(--spotlight-radius) at var(--mx) var(--my),
+        rgba(201, 162, 39, 0.07) 0%,
+        rgba(0, 47, 167, 0.03) 40%,
+        rgba(10, 10, 12, 0.88) 85%,
+        rgba(10, 10, 12, 0.98) 100%
+      );
+      mix-blend-mode: soft-light;
+      transition: opacity 0.3s ease;
+    }
+
+    /* CUSTOM CHISEL CURSOR */
+    #custom-cursor {
+      position: fixed;
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--gold-leaf);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      transition: width 0.2s, height 0.2s, background-color 0.2s, border-color 0.2s;
+    }
+    #custom-cursor-dot {
+      position: fixed;
+      width: 4px;
+      height: 4px;
+      background-color: var(--bone-white);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 10000;
+    }
+
+    /* SELECTION & SCROLLBAR */
+    ::selection {
+      background: var(--ikb);
+      color: var(--bone-white);
+    }
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-outrenoir);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--lead-ash);
+      border-radius: 0px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--gold-leaf);
+    }
+
+    /* TYPOGRAPHY CLASSES */
+    .font-display { font-family: var(--font-display); }
+    .font-serif { font-family: var(--font-serif); }
+    .font-mono { font-family: var(--font-mono); }
+    .font-sans { font-family: var(--font-sans); }
+
+    /* 5. SASHIKO RUNNING STITCH */
+    .sashiko-border {
+      border: 1px dashed rgba(201, 162, 39, 0.4);
+      position: relative;
+    }
+    .sashiko-stitch-bottom {
+      background-image: repeating-linear-gradient(90deg, var(--gold-leaf) 0, var(--gold-leaf) 6px, transparent 6px, transparent 12px);
+      background-size: 100% 1px;
+      background-repeat: no-repeat;
+      background-position: bottom;
+    }
+
+    /* 13. MUQARNAS SHADOW STACKING */
+    .muqarnas-pedestal {
+      background-color: var(--bg-pedestal);
+      border: 1px solid rgba(245, 242, 235, 0.08);
+      box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.6),
+        0 10px 15px -3px rgba(0, 0, 0, 0.5),
+        0 20px 25px -5px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(201, 162, 39, 0.05);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+    .muqarnas-pedestal:hover {
+      transform: translateY(-4px) scale(1.005);
+      border-color: rgba(201, 162, 39, 0.35);
+      box-shadow: 
+        0 6px 12px -2px rgba(0, 0, 0, 0.8),
+        0 16px 28px -4px rgba(0, 0, 0, 0.7),
+        0 32px 48px -6px rgba(0, 0, 0, 0.6),
+        0 0 20px rgba(201, 162, 39, 0.15);
+    }
+
+    /* 3. FONTANA SLASH CUTAWAY & SCARPA BRASS JOINT */
+    .scarpa-joint {
+      position: relative;
+      height: 2px;
+      width: 100%;
+      background: linear-gradient(90deg, transparent 0%, var(--scarpa-brass) 15%, var(--gold-leaf) 50%, var(--scarpa-brass) 85%, transparent 100%);
+      opacity: 0.6;
+      margin: 4rem 0;
+    }
+    .scarpa-joint::after {
+      content: "✦";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bg-outrenoir);
+      padding: 0 1rem;
+      font-size: 0.75rem;
+      color: var(--gold-leaf);
+    }
+
+    /* 15. DÜRER ENGRAVING HATCH PATTERN */
+    .durer-hatch {
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(245, 242, 235, 0.03),
+        rgba(245, 242, 235, 0.03) 1px,
+        transparent 1px,
+        transparent 6px
+      );
+    }
+
+    /* 16. GIRIH 5-FOLD SACRED WATERMARK */
+    .girih-watermark {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.035;
+      animation: girihBreathe 18s ease-in-out infinite alternate;
+    }
+    @keyframes girihBreathe {
+      0% { transform: scale(1) rotate(0deg); opacity: 0.025; }
+      100% { transform: scale(1.08) rotate(4deg); opacity: 0.05; }
+    }
+
+    /* 11. TURRELL SKYSPACE RECTANGLE */
+    .turrell-skyspace {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(245, 242, 235, 0.12);
+      transition: background 8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 6. SUMI-E INK BLEED FILTER */
+    .sumi-e-title {
+      filter: url(#sumi-ink-bleed);
+      transition: filter 1.2s ease;
+    }
+    .sumi-e-title:hover {
+      filter: none;
+    }
+
+    /* REDUCED MOTION PRESERVATION (Conservation Framing) */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001s !important;
+      }
+      #caravaggio-spotlight, #canvas-loom, #custom-cursor, #custom-cursor-dot {
+        display: none !important;
+      }
+    }
+
+    /* Audio Guide Drawer */
+    #audio-guide-modal {
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #audio-guide-modal.open {
+      transform: translateX(0%);
+    }
+
+    /* Interactive Lab Slider styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      background: var(--bg-card);
+      height: 4px;
+      outline: none;
+      border-radius: 2px;
+      border: 1px solid rgba(245, 242, 235, 0.15);
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--gold-leaf);
+      cursor: pointer;
+      border: 2px solid var(--bg-outrenoir);
+      box-shadow: 0 0 8px rgba(201, 162, 39, 0.6);
+    }
+  </style>
+</head>
+<body class="relative min-h-screen">
+
+  <!-- SVG FILTER DEFINITIONS (Sumi-e ink bleed + Displacement) -->
+  <svg class="sr-only" aria-hidden="true">
+    <defs>
+      <filter id="sumi-ink-bleed" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- CARAVAGGIO SPOTLIGHT -->
+  <div id="caravaggio-spotlight" aria-hidden="true"></div>
+
+  <!-- BESPOKE CHISEL CURSOR -->
+  <div id="custom-cursor" aria-hidden="true"></div>
+  <div id="custom-cursor-dot" aria-hidden="true"></div>
+
+  <!-- CONSERVATION BANNER (Reduced Motion Notice / Museum Preservation) -->
+  <aside id="conservation-banner" class="sticky top-0 z-50 bg-[#0e0e12] border-b border-[#2d2d33] px-4 py-2 text-xs font-mono flex items-center justify-between text-[#ded8cb]">
+    <div class="flex items-center gap-2">
+      <span class="inline-block w-2 h-2 rounded-full bg-[#C9A227] animate-pulse"></span>
+      <span>CONSERVATION NOTICE: TATE DIGITAL EXHIBITION NO. 2026.09 · AMBIENT LIGHT: 14 LUX · PRESS <kbd class="px-1.5 py-0.5 border border-neutral-600 bg-neutral-900 text-white rounded">A</kbd> FOR AUDIO CURATOR</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span id="ambient-temp" class="text-neutral-400">ROOM I · 16°C · DRY ASH</span>
+      <button id="toggle-motion-btn" class="hover:text-[#C9A227] underline transition-colors" title="Toggle conservation static fallback">
+        Conserve Motion [Normal]
+      </button>
+    </div>
+  </aside>
+
+  <!-- 14. STEVE REICH PHASING STICKY FLOOR-PLAN NAV -->
+  <header class="sticky top-8 z-40 bg-[#0a0a0c]/90 backdrop-blur-md border-b border-white/5 px-6 lg:px-12 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-6">
+      <a href="#room-01" class="font-display tracking-widest text-lg font-bold text-[#f5f2eb] hover:text-[#C9A227] transition-colors">
+        M. M. MALOOK
+      </a>
+      <span class="hidden md:inline-block text-xs font-mono uppercase tracking-widest text-[#a6a297] border-l border-white/10 pl-6">
+        Architect of Deterministic Rigor &amp; Affective Perception
+      </span>
+    </div>
+
+    <!-- ROOM NUMERALS (01 - 05) WITH REICH PHASING INDICATOR -->
+    <nav class="flex items-center gap-4 sm:gap-8 font-mono text-xs" aria-label="Museum Room Gallery Navigation">
+      <a href="#room-01" class="room-nav-link text-[#C9A227] transition-colors flex items-center gap-1.5" data-room="01">
+        <span class="opacity-40">I.</span> <span>LOOM</span>
+      </a>
+      <a href="#room-02" class="room-nav-link text-neutral-400 hover:text-[#f5f2eb] transition-colors flex items-center gap-1.5" data-room="02">
+        <span class="opacity-40">II.</span> <span>MONUMENTS</span>
+      </a>
+      <a href="#room-03" class="room-nav-link text-neutral-400 hover:text-[#f5f2eb] transition-colors flex items-center gap-1.5" data-room="03">
+        <span class="opacity-40">III.</span> <span>BENCH</span>
+      </a>
+      <a href="#room-04" class="room-nav-link text-neutral-400 hover:text-[#f5f2eb] transition-colors flex items-center gap-1.5" data-room="04">
+        <span class="opacity-40">IV.</span> <span>CLINICAL</span>
+      </a>
+      <a href="#room-05" class="room-nav-link text-neutral-400 hover:text-[#f5f2eb] transition-colors flex items-center gap-1.5" data-room="05">
+        <span class="opacity-40">V.</span> <span>KINTSUGI</span>
+      </a>
+
+      <!-- Steve Reich Phasing Dual-Coordinate Drift Tickers -->
+      <div class="hidden xl:flex items-center gap-2 border-l border-white/10 pl-6 text-[10px] text-neutral-500 font-mono">
+        <span>PHASE-&alpha;: <span id="reich-alpha" class="text-white">0.00</span></span>
+        <span>·</span>
+        <span>PHASE-&beta;: <span id="reich-beta" class="text-[#C9A227]">0.00</span></span>
+      </div>
+
+      <!-- AUDIO GUIDE BUTTON -->
+      <button id="open-audio-guide" class="px-2.5 py-1 rounded border border-[#C9A227]/40 text-[#C9A227] hover:bg-[#C9A227]/10 transition-colors flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#C9A227]"></span>
+        <span>CATALOGUE [A]</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pt-12 pb-32">
+
+    <!-- ACT I: THE VESTIBULE & THE LOOM OF FIRST PRINCIPLES -->
+    <section id="room-01" class="min-h-[85vh] flex flex-col justify-center relative pt-8 pb-20" data-temp="ROOM I · 16°C · DRY ASH">
+      
+      <!-- 8. ANNI ALBERS LOOM CANVAS WEAVE -->
+      <canvas id="albers-loom-canvas" class="absolute inset-0 w-full h-full pointer-events-none opacity-25 z-0" width="1200" height="800"></canvas>
+
+      <!-- 16. GIRIH GEOMETRIC WATERMARK -->
+      <svg class="girih-watermark top-0 right-0 w-[550px] h-[550px] text-amber-600" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.75" aria-hidden="true">
+        <polygon points="100,10 126,62 184,71 142,112 152,170 100,143 48,170 58,112 16,71 74,62" />
+        <circle cx="100" cy="100" r="80" />
+        <circle cx="100" cy="100" r="50" />
+        <line x1="20" y1="20" x2="180" y2="180" />
+        <line x1="180" y1="20" x2="20" y2="180" />
+      </svg>
+
+      <!-- WALL TEXT & ACCESSION NUMBER -->
+      <div class="relative z-10 space-y-6 max-w-4xl">
+        <div class="flex items-center gap-3 font-mono text-xs text-[#a6a297] tracking-widest uppercase">
+          <span class="px-2 py-0.5 border border-[#C9A227]/40 text-[#C9A227] bg-[#141416]">ACCESSION NO. IITM-2025-01</span>
+          <span>·</span>
+          <span>GALLERY OF FIRST PRINCIPLES</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tight text-[#f5f2eb] leading-[1.05] sumi-e-title">
+          THE APPARATUS OF COGNITIVE RIGOR
+        </h1>
+
+        <p class="font-serif italic text-2xl sm:text-3xl text-[#ded8cb] font-light leading-relaxed max-w-3xl">
+          "I architect AI systems that reason, retrieve, and survive contact with production."
+        </p>
+
+        <div class="h-px w-24 bg-[#C9A227]"></div>
+
+        <p class="font-sans text-neutral-300 text-base sm:text-lg leading-relaxed max-w-2xl font-light">
+          Commissioned by the empirical disciplines of <strong class="text-white font-medium">IIT Madras</strong> and grounded in two published peer-reviewed treatises, this exhibition holds the engineering artifacts of <strong class="text-[#f5f2eb] font-medium">Mohammad Munawwar Malook</strong>. Here, autonomous graph state replaces stochastic guessing, and clinical empathy is forged from deterministic verification.
+        </p>
+
+        <!-- MUSEUM OBJECT LABEL: VERIFIED PRODUCTION TELEMETRY PEDESTALS -->
+        <div class="pt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="muqarnas-pedestal p-4 rounded-sm border-l-2 border-l-[#C9A227]">
+            <div class="font-mono text-[11px] text-neutral-400 uppercase tracking-wider">Diagnostic Fidelity</div>
+            <div class="font-display text-3xl font-bold text-[#f5f2eb] mt-1">&gt;91%</div>
+            <div class="font-sans text-xs text-neutral-400 mt-1">Benchmarked against licensed clinical psychologists</div>
+            <div class="font-mono text-[9px] text-[#C9A227] mt-2">PLATE I · JAN ELAAJ</div>
+          </div>
+
+          <div class="muqarnas-pedestal p-4 rounded-sm border-l-2 border-l-[#002FA7]">
+            <div class="font-mono text-[11px] text-neutral-400 uppercase tracking-wider">Agent Cycle Cut</div>
+            <div class="font-display text-3xl font-bold text-[#f5f2eb] mt-1">90%</div>
+            <div class="font-sans text-xs text-neutral-400 mt-1">Via low-code visual LLM orchestration platform</div>
+            <div class="font-mono text-[9px] text-[#002FA7] mt-2">PLATE II · QAPP.AI</div>
+          </div>
+
+          <div class="muqarnas-pedestal p-4 rounded-sm border-l-2 border-l-[#3BA89F]">
+            <div class="font-mono text-[11px] text-neutral-400 uppercase tracking-wider">Retrieval P@5</div>
+            <div class="font-display text-3xl font-bold text-[#f5f2eb] mt-1">87%</div>
+            <div class="font-sans text-xs text-neutral-400 mt-1">Gated under automated RAGAS regression CI/CD</div>
+            <div class="font-mono text-[9px] text-[#3BA89F] mt-2">PLATE III · ENTERPRISE RAG</div>
+          </div>
+
+          <div class="muqarnas-pedestal p-4 rounded-sm border-l-2 border-l-[#9E382A]">
+            <div class="font-mono text-[11px] text-neutral-400 uppercase tracking-wider">Clinical Charting</div>
+            <div class="font-display text-3xl font-bold text-[#f5f2eb] mt-1">-65%</div>
+            <div class="font-sans text-xs text-neutral-400 mt-1">Documentation hours saved via WhisperX + Gemma 4</div>
+            <div class="font-mono text-[9px] text-[#9E382A] mt-2">PLATE IV · SOAP PIPELINE</div>
+          </div>
+        </div>
+
+        <!-- CALL TO CONTEMPLATION -->
+        <div class="pt-6 flex flex-wrap items-center gap-4">
+          <a href="#room-02" class="px-6 py-3 bg-[#f5f2eb] text-[#0a0a0c] font-mono text-xs tracking-wider uppercase font-semibold hover:bg-[#C9A227] hover:text-black transition-colors flex items-center gap-2">
+            <span>ENTER THE APPARATUS GALLERIES</span>
+            <span>&rarr;</span>
+          </a>
+          <a href="#room-04" class="px-6 py-3 border border-white/20 text-neutral-300 font-mono text-xs tracking-wider uppercase hover:border-[#C9A227] hover:text-[#C9A227] transition-colors">
+            EXAMINE CLINICAL RESEARCH
+          </a>
+          <span class="font-mono text-[11px] text-neutral-500 italic">
+            "Instruction #01: Examine with intentional slowness."
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. SCARPA BRASS JOINT TRANSITION -->
+    <div class="scarpa-joint" aria-hidden="true"></div>
+
+    <!-- ACT II: THE GALLERY OF HIGH DISTANCE: FOUR MONUMENTAL APPARATUSES -->
+    <section id="room-02" class="py-16 relative" data-temp="ROOM II · 14°C · CAST IRON &amp; SLATE">
+      
+      <div class="mb-12 space-y-3">
+        <div class="font-mono text-xs text-[#C9A227] tracking-widest uppercase flex items-center gap-2">
+          <span>ACT II · GALLERIA DELLE MACCHINE UTILI</span>
+          <span class="h-px w-8 bg-[#C9A227]/50"></span>
+          <span>GUO XI HIGH DISTANCE PERSPECTIVE</span>
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-display font-bold text-[#f5f2eb]">
+          FOUR MONUMENTAL APPARATUSES
+        </h2>
+        <p class="font-serif italic text-lg text-[#a6a297] max-w-2xl">
+          Each system is treated as an autonomous machine of state: its input, deterministic gate, failure avoidance, and empirical proof.
+        </p>
+      </div>
+
+      <!-- THE FOUR MONUMENTS -->
+      <div class="space-y-12">
+        
+        <!-- MONUMENT 01: HEALTHCARE CLAIMS AUDIT -->
+        <article class="muqarnas-pedestal rounded p-6 lg:p-8 durer-hatch relative overflow-hidden border border-white/10 group">
+          <div class="absolute top-0 right-0 px-4 py-2 font-mono text-[10px] uppercase tracking-widest bg-[#C9A227]/10 text-[#C9A227] border-b border-l border-[#C9A227]/30">
+            PLATE I · STATEGRAPH AUDITOR
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-5 space-y-4">
+              <div class="font-mono text-xs text-[#3BA89F] tracking-widest uppercase">
+                HEALTHCARE MULTI-AGENT STATEGRAPH
+              </div>
+              <h3 class="text-2xl font-display font-bold text-[#f5f2eb]">
+                Medicare Claims Audit &amp; Non-Conflicting Gating
+              </h3>
+              <p class="font-sans text-sm text-neutral-300 leading-relaxed font-light">
+                Healthcare payers bleed billions annually through unindexed contract loopholes. Human claims auditors can only sample 1.2% of total filings. This system constructs an auditable, deterministic LangGraph state machine where non-conflicting claims bypass stochastic LLM computation entirely (zero hallucination exposure), while high-entropy claims receive composite confidence evaluation.
+              </p>
+
+              <div class="p-3 bg-[#0a0a0c]/80 border-l border-white/20 text-xs font-mono text-neutral-400 space-y-1">
+                <div class="text-[#C9A227]">MECHANISM EXCAVATED: Deterministic Pre-Filtering</div>
+                <div>ChromaDB contract rules &rarr; exact CPT/ICD intersection (0 LLM calls) &rarr; Auditor Node (Gemini 3.8 Flash, 0.6 LLM + 0.4 Match) &rarr; Routing Gate (0.72) &rarr; Hard [DRAFT] Boundary.</div>
+              </div>
+
+              <div class="flex flex-wrap gap-2 pt-2">
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">LangGraph</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">Gemini 3.8 Flash</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">ChromaDB</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">Pydantic v2</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">Python 3.11</span>
+              </div>
+
+              <div class="pt-2">
+                <a href="https://github.com/Rana-Tigrina" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 font-mono text-xs text-[#C9A227] hover:underline">
+                  <span>INSPECT SOURCE SCHEMAS ON GITHUB</span>
+                  <span>&nearr;</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Interactive CAD / State Simulation View -->
+            <div class="lg:col-span-7 bg-[#0d0d10] p-6 rounded border border-white/5 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                  <span class="font-mono text-xs text-neutral-400">STATE ROUTING TELEMETRY · LIVE DISPATCH</span>
+                  <span class="px-2 py-0.5 text-[10px] font-mono bg-emerald-950/80 text-emerald-400 border border-emerald-800">DETERMINISTIC GATED</span>
+                </div>
+                
+                <div class="space-y-3 font-mono text-xs">
+                  <div class="p-3 bg-[#131318] border-l-2 border-[#3BA89F] flex items-center justify-between">
+                    <div>
+                      <span class="text-neutral-500">[01_INGEST]</span> <span class="text-neutral-200">CMS-1500 Claim Stream: CPT-99214 + ICD-10 F41.1</span>
+                    </div>
+                    <span class="text-neutral-400 text-[10px]">0.02ms</span>
+                  </div>
+
+                  <div class="p-3 bg-[#131318] border-l-2 border-[#C9A227] flex items-center justify-between">
+                    <div>
+                      <span class="text-[#C9A227]">[02_DETERMINISTIC_MATCH]</span> <span class="text-neutral-200">CPT Code Exact Overlap Check: Zero Conflict</span>
+                    </div>
+                    <span class="text-emerald-400 text-[10px]">0 LLM TOKENS</span>
+                  </div>
+
+                  <div class="p-3 bg-[#131318] border-l-2 border-[#002FA7] flex items-center justify-between">
+                    <div>
+                      <span class="text-[#002FA7]">[03_AUDITOR_GATE]</span> <span class="text-neutral-200">Confidence Metric: 0.884 &gt; Threshold (0.72)</span>
+                    </div>
+                    <span class="text-cyan-400 text-[10px]">AUTO-APPROVED</span>
+                  </div>
+
+                  <div class="p-3 bg-[#131318] border-l-2 border-[#9E382A] flex items-center justify-between">
+                    <div>
+                      <span class="text-[#9E382A]">[04_BOUNDARY]</span> <span class="text-neutral-300">Mandatory [DRAFT] Watermark Enforcement</span>
+                    </div>
+                    <span class="text-amber-400 text-[10px]">NO OUTBOUND LEAKAGE</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between font-mono text-[11px] text-neutral-400">
+                <span>VERIFIABLE AUDIT TRAIL: 100% PASS</span>
+                <span class="text-[#f5f2eb]">REPRODUCIBLE LOG HASH #0x7FA2</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- MONUMENT 02: MULTI-AGENT RESEARCH WITH MCP -->
+        <article class="muqarnas-pedestal rounded p-6 lg:p-8 durer-hatch relative overflow-hidden border border-white/10 group">
+          <div class="absolute top-0 right-0 px-4 py-2 font-mono text-[10px] uppercase tracking-widest bg-[#002FA7]/10 text-[#002FA7] border-b border-l border-[#002FA7]/30">
+            PLATE II · PROTOCOL SYNTHESIZER
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-5 space-y-4">
+              <div class="font-mono text-xs text-[#002FA7] tracking-widest uppercase">
+                MODEL CONTEXT PROTOCOL (MCP) · CYCLIC GRAPH
+              </div>
+              <h3 class="text-2xl font-display font-bold text-[#f5f2eb]">
+                Cyclic Multi-Agent Reflection &amp; Ground-Truth Verification
+              </h3>
+              <p class="font-sans text-sm text-neutral-300 leading-relaxed font-light">
+                Standard single-turn LLMs hallucinate bibliographic sources and collapse under multi-hop ambiguity. This system implements an explicit **Planner &rarr; Retriever &rarr; Synthesizer &rarr; Critic** cycle. The Critic node evaluates citations against original raw documents over standardized MCP servers; if evidence is insufficient, it programmatically sends the graph into a Re-Plan iteration.
+              </p>
+
+              <div class="p-3 bg-[#0a0a0c]/80 border-l border-white/20 text-xs font-mono text-neutral-400 space-y-1">
+                <div class="text-[#C9A227]">MECHANISM EXCAVATED: Cyclic Reflection Loop</div>
+                <div>Zero unverified citations. MCP servers isolate tools (local vector DB, search APIs, math kernel) as independently auditable micro-services.</div>
+              </div>
+
+              <div class="flex flex-wrap gap-2 pt-2">
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">LangGraph</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">MCP Standard</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">Tavily</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">Python 3.11</span>
+              </div>
+
+              <div class="pt-2">
+                <a href="https://github.com/Rana-Tigrina" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 font-mono text-xs text-[#C9A227] hover:underline">
+                  <span>VIEW AGENT CYCLIC GRAPH ON GITHUB</span>
+                  <span>&nearr;</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7 bg-[#0d0d10] p-6 rounded border border-white/5 flex flex-col justify-between font-mono text-xs">
+              <div>
+                <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                  <span class="text-neutral-400">CRITIC FEEDBACK LOOP TELEMETRY</span>
+                  <span class="px-2 py-0.5 text-[10px] bg-blue-950 text-blue-300 border border-blue-800">MCP ACTIVE</span>
+                </div>
+                
+                <div class="space-y-2 text-neutral-300">
+                  <div class="text-neutral-500">&gt; PLANNER: Decomposing hypothesis into 3 verification sub-queries...</div>
+                  <div class="text-neutral-500">&gt; RETRIEVER: Invoking mcp://arxiv-search/query?terms="affective+teletherapy"</div>
+                  <div class="text-amber-400">&gt; CRITIC: Claim #2 lacks empirical DOI grounding. Confidence = 0.41.</div>
+                  <div class="text-[#002FA7]">&gt; ROUTE_DECISION: Insufficient ground-truth. Routing back to [RE-PLAN]...</div>
+                  <div class="text-emerald-400">&gt; SYNTHESIZER: Second-pass reflection verified with DOI 10.1080/012345. Pass.</div>
+                </div>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-neutral-400">
+                <span>HALLUCINATION BENCHMARK: 0.00%</span>
+                <span class="text-emerald-400">ALL CITATIONS VERIFIED</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- MONUMENT 03: ENTERPRISE RAG OBSERVABILITY & REGRESSION CI/CD -->
+        <article class="muqarnas-pedestal rounded p-6 lg:p-8 durer-hatch relative overflow-hidden border border-white/10 group">
+          <div class="absolute top-0 right-0 px-4 py-2 font-mono text-[10px] uppercase tracking-widest bg-[#3BA89F]/10 text-[#3BA89F] border-b border-l border-[#3BA89F]/30">
+            PLATE III · RAGAS GATED HARNESS
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-5 space-y-4">
+              <div class="font-mono text-xs text-[#3BA89F] tracking-widest uppercase">
+                OBSERVABILITY &amp; AUTOMATED EVALUATION HARNESS
+              </div>
+              <h3 class="text-2xl font-display font-bold text-[#f5f2eb]">
+                Production RAG Pipeline with CI/CD Regression Gating
+              </h3>
+              <p class="font-sans text-sm text-neutral-300 leading-relaxed font-light">
+                Enterprise knowledge retrieval often suffers silent semantic degradation when embeddings or system prompts are tweaked. To prevent this, every Pull Request triggers an automated GitHub Actions CI evaluation suite measuring **Faithfulness, Answer Relevance, and Context Precision via RAGAS**. Merges are blocked if faithfulness drops below 0.85.
+              </p>
+
+              <div class="p-3 bg-[#0a0a0c]/80 border-l border-white/20 text-xs font-mono text-neutral-400 space-y-1">
+                <div class="text-[#C9A227]">MEASURED PRODUCTION IMPACT:</div>
+                <div>87% retrieval precision (P@5), 40% inference token cost reduction achieved via contextual boundary chunking and Langfuse tracing.</div>
+              </div>
+
+              <div class="flex flex-wrap gap-2 pt-2">
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">ChromaDB</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">RAGAS</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">Langfuse</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">Docker</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">GitHub Actions</span>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7 bg-[#0d0d10] p-6 rounded border border-white/5 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4 font-mono text-xs">
+                  <span class="text-neutral-400">RETRIEVAL FIDELITY WAVEFORM (arXiv:2505.08445)</span>
+                  <span class="text-[#3BA89F]">P@5: 87.4%</span>
+                </div>
+
+                <div class="h-32 w-full relative flex items-center justify-center">
+                  <svg id="rag-waveform-svg" class="w-full h-full" viewBox="0 0 500 120" preserveAspectRatio="none">
+                    <path id="waveform-path-base" d="M0,60 Q125,20 250,60 T500,60" fill="none" stroke="rgba(245,242,235,0.15)" stroke-width="1.5" stroke-dasharray="4 4" />
+                    <path id="waveform-path-active" d="M0,60 Q125,10 250,60 T500,60" fill="none" stroke="url(#wave-grad)" stroke-width="2.5" />
+                    <defs>
+                      <linearGradient id="wave-grad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#002FA7" />
+                        <stop offset="50%" stop-color="#3BA89F" />
+                        <stop offset="100%" stop-color="#C9A227" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+
+                <div class="mt-4 space-y-2 font-mono text-xs">
+                  <div class="flex justify-between text-neutral-400">
+                    <span>Chunk Boundary Threshold (<span id="chunk-val">512</span> tokens)</span>
+                    <span id="cost-est" class="text-[#C9A227]">Estimated Cost: -40%</span>
+                  </div>
+                  <input id="rag-slider" type="range" min="128" max="1024" step="64" value="512" aria-label="Adjust chunk boundary threshold" />
+                </div>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between font-mono text-[11px] text-neutral-400">
+                <span>RAGAS FAITHFULNESS THRESHOLD: 0.85</span>
+                <span class="text-emerald-400">CI GATE: PR_APPROVED</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- MONUMENT 04: CLINICAL DOCUMENTATION & SOAP NOTES -->
+        <article class="muqarnas-pedestal rounded p-6 lg:p-8 durer-hatch relative overflow-hidden border border-white/10 group">
+          <div class="absolute top-0 right-0 px-4 py-2 font-mono text-[10px] uppercase tracking-widest bg-[#9E382A]/10 text-[#9E382A] border-b border-l border-[#9E382A]/30">
+            PLATE IV · CLINICAL TRANSLATOR
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-5 space-y-4">
+              <div class="font-mono text-xs text-[#9E382A] tracking-widest uppercase">
+                SPEECH-TO-CLINICAL NLP · WHISPERX + GEMMA 4
+              </div>
+              <h3 class="text-2xl font-display font-bold text-[#f5f2eb]">
+                Diarized Consultation Audio to Validated EHR SOAP Notes
+              </h3>
+              <p class="font-sans text-sm text-neutral-300 leading-relaxed font-light">
+                Physicians lose up to two hours per day to electronic health record charting. This apparatus takes noisy doctor-patient acoustic consultations, performs speaker diarization via WhisperX, synthesizes structured SOAP notes through Gemma 4, and subjects the clinical output to a secondary verification barrier via Qwen 3.5 to ensure zero pharmacological dosage contraindications.
+              </p>
+
+              <div class="p-3 bg-[#0a0a0c]/80 border-l border-white/20 text-xs font-mono text-neutral-400 space-y-1">
+                <div class="text-[#C9A227]">CLINICAL IMPACT BENCHMARK:</div>
+                <div>65% reduction in clinician documentation hours; 90% terminology accuracy on complex pharmacology; sub-second local inference with strict HIPAA isolation.</div>
+              </div>
+
+              <div class="flex flex-wrap gap-2 pt-2">
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">WhisperX</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">Gemma 4</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">Qwen 3.5</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">Librosa/FFmpeg</span>
+                <span class="px-2 py-1 text-[11px] font-mono bg-[#1c1c24] text-neutral-300 border border-white/5">FastAPI</span>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7 bg-[#0d0d10] p-6 rounded border border-white/5 flex flex-col justify-between font-mono text-xs">
+              <div>
+                <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                  <span class="text-neutral-400">CLINICAL TRANSCRIPTION &amp; SOAP PARSER</span>
+                  <span class="px-2 py-0.5 text-[10px] bg-red-950 text-red-300 border border-red-800">HIPAA COMPLIANT</span>
+                </div>
+                
+                <div class="space-y-3">
+                  <div class="p-2.5 bg-[#14141a] rounded">
+                    <span class="text-[#3BA89F]">[SPEAKER_00: PHYSICIAN]</span>
+                    <p class="text-neutral-300 font-sans text-xs mt-1">"Patient presents with episodic tension headaches, worsening across late afternoon. Prescribing Metoprolol 25mg daily."</p>
+                  </div>
+
+                  <div class="p-2.5 bg-[#14141a] rounded">
+                    <span class="text-[#C9A227]">[SOAP_STRUCTURED_SYNTHESIS · GEMMA 4]</span>
+                    <p class="text-neutral-300 font-sans text-xs mt-1"><strong>Assessment:</strong> Episodic tension cephalalgia. <strong>Plan:</strong> Metoprolol Tartrate 25mg PO q.d. Baseline BP check required.</p>
+                  </div>
+
+                  <div class="p-2.5 bg-[#14141a] rounded border border-emerald-500/20">
+                    <span class="text-emerald-400">[VALIDATION_BARRIER · QWEN 3.5]</span>
+                    <p class="text-neutral-300 font-sans text-xs mt-1">ICD-10 G44.209 mapped with 0 contraindication warnings. Ready for EHR commit.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-neutral-400">
+                <span>TERMINOLOGY ACCURACY: 90.0%</span>
+                <span class="text-emerald-400">ZERO DOSAGE CONFLICT</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 3. SCARPA BRASS JOINT TRANSITION -->
+    <div class="scarpa-joint" aria-hidden="true"></div>
+
+    <!-- ACT III: THE BENCH & THE SKYSPACE OF PURE CONTEMPLATION -->
+    <section id="room-03" class="py-24 my-12 turrell-skyspace rounded p-8 sm:p-16 text-center flex flex-col items-center justify-center relative bg-[#0e0e13]" data-temp="ROOM III · 18°C · HONED LIMESTONE">
+      
+      <div id="skyspace-chroma" class="absolute inset-0 opacity-20 pointer-events-none transition-colors duration-1000 bg-gradient-to-b from-[#002FA7]/30 via-transparent to-[#C9A227]/20"></div>
+
+      <div class="relative z-10 max-w-2xl space-y-6">
+        <div class="font-mono text-xs text-[#C9A227] tracking-widest uppercase">
+          ROOM III · THE BENCH OF SILENT PACING
+        </div>
+
+        <h3 class="text-2xl sm:text-4xl font-display font-light text-[#f5f2eb] leading-snug">
+          "The observer stands before the sublime — not to conquer the machine, but to hold it accountable to truth."
+        </h3>
+
+        <div class="h-px w-16 bg-[#C9A227] mx-auto"></div>
+
+        <p class="font-serif italic text-lg text-[#ded8cb]">
+          After Caspar David Friedrich's <span class="text-white">Wanderer above the Sea of Fog</span>. In an era of boundless generative noise, restraint is the rarest engineering virtue.
+        </p>
+
+        <!-- 12. RICHTER SQUEEGEE CANVAS LAYER -->
+        <div class="pt-8">
+          <div class="font-mono text-[11px] text-neutral-400 uppercase tracking-widest mb-2">
+            GERHARD RICHTER SQUEEGEE INTERACTIVE CANVAS (DRAG MOUSE TO SMEAR TEMPORAL TRACE)
+          </div>
+          <canvas id="richter-canvas" width="600" height="120" class="border border-white/10 rounded cursor-crosshair mx-auto max-w-full bg-[#121218]"></canvas>
+          <div class="font-mono text-[10px] text-neutral-500 mt-2">Instruction #02: Click and drag across the plate to blend digital telemetry into oil impasto.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. SCARPA BRASS JOINT TRANSITION -->
+    <div class="scarpa-joint" aria-hidden="true"></div>
+
+    <!-- ACT IV: THE CLINICAL LABORATORY & THE SANCTUARY OF AFFECTIVE PERCEPTION -->
+    <section id="room-04" class="py-16 relative" data-temp="ROOM IV · 21°C · VERDIGRIS &amp; VELVET">
+      
+      <div class="mb-12 space-y-3">
+        <div class="font-mono text-xs text-[#3BA89F] tracking-widest uppercase flex items-center gap-2">
+          <span>ACT IV · THE REPERTORY OF INQUIRY</span>
+          <span class="h-px w-8 bg-[#3BA89F]/50"></span>
+          <span>RESEARCH TREATISES &amp; PROFESSIONAL PROVENANCE</span>
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-display font-bold text-[#f5f2eb]">
+          PEER-REVIEWED TREATISES &amp; LAB BENCHES
+        </h2>
+        <p class="font-serif italic text-lg text-[#a6a297] max-w-2xl">
+          Where theoretical computation meets human vulnerability. Two published research papers and clinical industry tenure.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- PUBLICATIONS PEDESTALS -->
+        <div class="lg:col-span-6 space-y-6">
+          <div class="font-mono text-xs text-[#C9A227] uppercase tracking-wider pb-2 border-b border-white/10">
+            PUBLISHED SCHOLARLY DISSERTATIONS (PEER-REVIEWED)
+          </div>
+
+          <!-- PUBLICATION 01 -->
+          <div class="muqarnas-pedestal p-6 rounded border-l-2 border-l-[#C9A227] space-y-3">
+            <div class="flex items-center justify-between font-mono text-xs">
+              <span class="text-[#C9A227]">TAYLOR &amp; FRANCIS (2025)</span>
+              <span class="px-2 py-0.5 bg-amber-950/60 text-[#C9A227] border border-amber-800 text-[10px]">PUBLISHED</span>
+            </div>
+            <h4 class="text-xl font-display font-bold text-[#f5f2eb]">
+              Beyond Words: Multimodal Approach to Teletherapy Using Eye Gaze and Facial Expressions
+            </h4>
+            <p class="font-sans text-xs text-neutral-300 leading-relaxed font-light">
+              Engineered a clinical multimodal computer vision framework capturing subtle facial action unit shifts and pupillary gaze fixation during remote psychiatric sessions, measuring affective rapport and patient engagement in real-time.
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-2">
+              <span class="px-2 py-0.5 text-[10px] font-mono bg-[#0c0c10] text-neutral-400 border border-white/5">Computer Vision</span>
+              <span class="px-2 py-0.5 text-[10px] font-mono bg-[#0c0c10] text-neutral-400 border border-white/5">Multimodal AI</span>
+              <span class="px-2 py-0.5 text-[10px] font-mono bg-[#0c0c10] text-neutral-400 border border-white/5">Affective Computing</span>
+            </div>
+            <details class="pt-2 text-xs font-mono text-neutral-400">
+              <summary class="cursor-pointer text-[#C9A227] hover:underline">View BibTeX Citation Record</summary>
+              <pre class="mt-2 p-3 bg-[#0a0a0c] border border-white/10 overflow-x-auto text-[10px] text-neutral-300">@article{malook2025beyond,
+  title={Beyond Words: Multimodal Approach to Teletherapy Using Eye Gaze and Facial Expressions},
+  author={Malook, Mohammad Munawwar},
+  journal={Taylor &amp; Francis},
+  year={2025}
+}</pre>
+            </details>
+          </div>
+
+          <!-- PUBLICATION 02 -->
+          <div class="muqarnas-pedestal p-6 rounded border-l-2 border-l-[#002FA7] space-y-3">
+            <div class="flex items-center justify-between font-mono text-xs">
+              <span class="text-[#002FA7]">ICSCCC (2026)</span>
+              <span class="px-2 py-0.5 bg-blue-950/60 text-blue-300 border border-blue-800 text-[10px]">ACCEPTED</span>
+            </div>
+            <h4 class="text-xl font-display font-bold text-[#f5f2eb]">
+              The Impact of AI Educational Tools on Cognitive Processes: A Systematic Review
+            </h4>
+            <p class="font-sans text-xs text-neutral-300 leading-relaxed font-light">
+              Systematic synthesis of 45+ empirical studies investigating how LLM code-generation tools transform architectural reasoning, working memory load, and programmatic problem decomposition across technical developer cohorts.
+            </p>
+            <div class="flex flex-wrap gap-1.5 pt-2">
+              <span class="px-2 py-0.5 text-[10px] font-mono bg-[#0c0c10] text-neutral-400 border border-white/5">Cognitive Dynamics</span>
+              <span class="px-2 py-0.5 text-[10px] font-mono bg-[#0c0c10] text-neutral-400 border border-white/5">LLM Evaluation</span>
+              <span class="px-2 py-0.5 text-[10px] font-mono bg-[#0c0c10] text-neutral-400 border border-white/5">Human-AI Interaction</span>
+            </div>
+          </div>
+
+          <!-- PUBLICATION 03 (Under Review) -->
+          <div class="muqarnas-pedestal p-6 rounded border-l-2 border-l-[#3BA89F] space-y-3">
+            <div class="flex items-center justify-between font-mono text-xs">
+              <span class="text-[#3BA89F]">PREPRINT / UNDER REVIEW (2026)</span>
+              <span class="px-2 py-0.5 bg-cyan-950/60 text-cyan-300 border border-cyan-800 text-[10px]">IN REVIEW</span>
+            </div>
+            <h4 class="text-xl font-display font-bold text-[#f5f2eb]">
+              Deterministic State Coordination in Autonomous Multi-Agent Healthcare Workflows
+            </h4>
+            <p class="font-sans text-xs text-neutral-300 leading-relaxed font-light">
+              Formalizing deterministic graph boundary conditions, reflection loops, and safety isolation primitives for LLM agent states within regulated healthcare diagnosis and insurance audit pipelines.
+            </p>
+          </div>
+        </div>
+
+        <!-- INDUSTRY TENURE & PEDIGREE -->
+        <div class="lg:col-span-6 space-y-6">
+          <div class="font-mono text-xs text-[#3BA89F] uppercase tracking-wider pb-2 border-b border-white/10">
+            PROVENANCE &amp; CLINICAL INDUSTRY APPARATUS
+          </div>
+
+          <!-- JAN ELAAJ -->
+          <div class="muqarnas-pedestal p-6 rounded space-y-3">
+            <div class="flex items-center justify-between font-mono text-xs">
+              <span class="font-bold text-white">JAN ELAAJ</span>
+              <span class="text-neutral-400">Dec 2024 – July 2025</span>
+            </div>
+            <div class="text-sm font-serif italic text-[#C9A227]">
+              AI Engineer (Solo Contributor &amp; Architecture Lead) · Delhi, India
+            </div>
+            <ul class="space-y-2 text-xs font-sans text-neutral-300 font-light list-disc list-inside">
+              <li>Architected, built, and deployed an end-to-end hybrid clinical diagnostic AI system combining fine-tuned BioClinicalBERT with a Gemini 3.8 Flash reasoning layer.</li>
+              <li>Achieved <strong class="text-white">&gt;91% symptom identification accuracy</strong> benchmarked on par with licensed clinical psychologists.</li>
+              <li>Constructed a Pinecone-backed multi-turn clinical dialogue memory pipeline to maintain persistent longitudinal patient context across months of consultations.</li>
+            </ul>
+            <div class="pt-2 font-mono text-[10px] text-neutral-400">
+              STACK: BioClinicalBERT · Gemini 3.8 Flash · Pinecone · FastAPI · Docker · Python
+            </div>
+          </div>
+
+          <!-- QAPP.AI -->
+          <div class="muqarnas-pedestal p-6 rounded space-y-3">
+            <div class="flex items-center justify-between font-mono text-xs">
+              <span class="font-bold text-white">QAPP.AI</span>
+              <span class="text-neutral-400">Jun 2024 – Sep 2024</span>
+            </div>
+            <div class="text-sm font-serif italic text-[#002FA7]">
+              AI Engineer Intern · Delhi, India
+            </div>
+            <ul class="space-y-2 text-xs font-sans text-neutral-300 font-light list-disc list-inside">
+              <li>Architected a low-code drag-and-drop LLM orchestration framework and shipped it to production, slashing custom agent development cycle time by 90%.</li>
+              <li>Engineered high-throughput REST APIs powering multi-modal AI pipelines including automated speech transcription and computer vision interview assessment agents.</li>
+              <li>Deployed open-source foundation models (LLaMA 3.1, Mistral) with self-serve interfaces for non-technical domain experts.</li>
+            </ul>
+            <div class="pt-2 font-mono text-[10px] text-neutral-400">
+              STACK: LLaMA 3.1 · Mistral · ChromaDB · Vector Search · FastAPI · Python
+            </div>
+          </div>
+
+          <!-- ACADEMIC PEDIGREE -->
+          <div class="muqarnas-pedestal p-6 rounded border-t-2 border-t-[#C9A227] space-y-2">
+            <div class="font-mono text-xs text-[#C9A227]">ACADEMIC PEDIGREE</div>
+            <h4 class="text-lg font-display font-bold text-[#f5f2eb]">
+              Indian Institute of Technology, Madras (IIT Madras)
+            </h4>
+            <div class="font-mono text-xs text-neutral-300">
+              Bachelor of Science (B.S.) in Data Science and Applications · CGPA: 8.5 / 10.0 (Graduated Dec 2025)
+            </div>
+            <p class="font-sans text-xs text-neutral-400 font-light">
+              Rigorous mathematical training in machine learning algorithms, deep learning, statistical modeling, database systems, and distributed computation.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. SCARPA BRASS JOINT TRANSITION -->
+    <div class="scarpa-joint" aria-hidden="true"></div>
+
+    <!-- ACT V: THE KINTSUGI SANCTUARY & THE VOYAGER GOLDEN RECORD -->
+    <section id="room-05" class="py-16 relative" data-temp="ROOM V · 23°C · GOLD LEAF &amp; GESSO">
+      
+      <div class="mb-12 space-y-3">
+        <div class="font-mono text-xs text-[#C9A227] tracking-widest uppercase flex items-center gap-2">
+          <span>ACT V · THE SANCTUARY OF GOLDEN REPAIR</span>
+          <span class="h-px w-8 bg-[#C9A227]/50"></span>
+          <span>KINTSUGI &amp; THE UNIVERSAL RECORD</span>
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-display font-bold text-[#f5f2eb]">
+          THE CRACK REPAIRED IN GOLD
+        </h2>
+        <p class="font-serif italic text-lg text-[#ded8cb] max-w-2xl">
+          Where vulnerability becomes structural strength. Systems that fail gracefully and acknowledge human limitation.
+        </p>
+      </div>
+
+      <!-- 4. KINTSUGI GOLD REPAIR PANEL -->
+      <div class="muqarnas-pedestal p-8 rounded-sm relative overflow-hidden mb-12 border border-[#C9A227]/40">
+        
+        <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-40" viewBox="0 0 800 200" preserveAspectRatio="none">
+          <polyline id="kintsugi-gold-line" points="0,100 140,70 210,130 350,60 480,140 620,80 800,110" fill="none" stroke="#C9A227" stroke-width="2.5" stroke-dasharray="1000" stroke-dashoffset="0" />
+        </svg>
+
+        <div class="relative z-10 max-w-2xl space-y-4">
+          <div class="font-mono text-xs text-[#C9A227] uppercase tracking-widest">
+            PHILOSOPHY OF EMPATHIC RESILIENCE · KINTSUGI (金継ぎ)
+          </div>
+          <h3 class="text-2xl font-display font-bold text-[#f5f2eb]">
+            "The fracture is not concealed; it is made structural."
+          </h3>
+          <p class="font-sans text-sm text-neutral-300 leading-relaxed font-light">
+            In software as in ceramics, failure is inevitable. When a clinical model encounters an ambiguous symptom, or an enterprise RAG pipeline retrieves conflicting legal statutes, hiding the breakdown behind confident hallucination is an act of cowardice. In our architecture, the breakdown is flagged, routed to human review, and repaired with auditable golden telemetry.
+          </p>
+
+          <div class="p-4 bg-[#0a0a0c]/90 border-l-2 border-l-[#C9A227] my-4">
+            <div class="font-serif italic text-xl text-[#f5f2eb]">
+              "The wound is the place where the Light enters you."
+            </div>
+            <div class="font-mono text-xs text-[#C9A227] mt-1">&mdash; Jalāl al-Dīn Muḥammad Rūmī, <span class="italic">The Masnavi</span> (1258)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 20. VOYAGER GOLDEN RECORD ENGRAVED CONTACT PANEL -->
+      <div class="muqarnas-pedestal p-8 lg:p-12 rounded border border-white/10 relative overflow-hidden bg-gradient-to-br from-[#121216] to-[#0a0a0c]">
+        
+        <svg class="absolute top-4 right-4 w-48 h-48 text-[#C9A227]/20 pointer-events-none" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="100" cy="100" r="90" stroke-dasharray="3 3" />
+          <circle cx="100" cy="100" r="60" />
+          <circle cx="100" cy="100" r="30" />
+          <line x1="100" y1="10" x2="100" y2="190" />
+          <line x1="10" y1="100" x2="190" y2="100" />
+          <line x1="36" y1="36" x2="164" y2="164" />
+          <line x1="164" y1="36" x2="36" y2="164" />
+        </svg>
+
+        <div class="relative z-10 max-w-2xl space-y-6">
+          <div class="font-mono text-xs text-[#C9A227] tracking-widest uppercase">
+            PLAQUE NO. 1977-VOYAGER · TRANSMISSION CONSOLE
+          </div>
+
+          <h3 class="text-3xl font-display font-bold text-[#f5f2eb]">
+            COMMISSION A NEW MONUMENT
+          </h3>
+
+          <p class="font-sans text-sm text-neutral-300 leading-relaxed font-light">
+            Currently receptive to appointments for <strong>Senior AI/ML Engineer</strong> and <strong>Founding Systems Engineer</strong> roles. Whether you are building mission-critical agentic architectures or regulated clinical intelligence, let us build something that endures.
+          </p>
+
+          <div class="space-y-3 font-mono text-xs pt-2">
+            <div class="flex items-center gap-3">
+              <span class="text-neutral-500 w-24 uppercase">DIRECT DISPATCH:</span>
+              <a href="mailto:munawwar9022@email.com" class="text-[#f5f2eb] hover:text-[#C9A227] underline">munawwar9022@email.com</a>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-neutral-500 w-24 uppercase">TELEPHONE:</span>
+              <span class="text-[#ded8cb]">+91 93546 26671</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-neutral-500 w-24 uppercase">LINKEDIN:</span>
+              <a href="https://www.linkedin.com/in/munawwar-malook/" target="_blank" rel="noopener noreferrer" class="text-[#f5f2eb] hover:text-[#C9A227] underline">linkedin.com/in/munawwar-malook</a>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-neutral-500 w-24 uppercase">REPOSITORY:</span>
+              <a href="https://github.com/Rana-Tigrina" target="_blank" rel="noopener noreferrer" class="text-[#f5f2eb] hover:text-[#C9A227] underline">github.com/Rana-Tigrina</a>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-neutral-500 w-24 uppercase">COORDINATES:</span>
+              <span class="text-neutral-400">Delhi, India (28.6139° N, 77.2090° E)</span>
+            </div>
+          </div>
+
+          <div class="pt-4 flex flex-wrap gap-4">
+            <a href="mailto:munawwar9022@email.com" class="px-8 py-3.5 bg-[#C9A227] text-black font-mono text-xs uppercase font-bold tracking-wider hover:bg-white transition-colors">
+              DISPATCH AN INQUIRY NOW &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MUSEUM COLOPHON WALL -->
+      <footer class="mt-20 pt-12 border-t border-white/10 font-mono text-xs text-neutral-400 space-y-6">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div class="font-display text-base font-bold text-white">MUSEUM OF COGNITIVE RIGOR · EXHIBITION NO. 2026.09</div>
+            <div class="text-[11px] text-neutral-500 mt-0.5">Curated for Mohammad Munawwar Malook · IIT Madras Data Science Graduate</div>
+          </div>
+          <div class="text-[11px] text-[#C9A227]">
+            NO DEFAULT TEMPLATES · NO SAAS DERIVATIVES · PURE COGNITIVE PROVENANCE
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 pt-4 text-[11px] border-t border-white/5">
+          <div>
+            <span class="text-white font-semibold block mb-1">MINED PIGMENTS</span>
+            <ul class="space-y-0.5 text-neutral-500">
+              <li><span class="text-neutral-300">#0a0a0c</span>: Soulages Outrenoir</li>
+              <li><span class="text-neutral-300">#f5f2eb</span>: Gesso Bone White</li>
+              <li><span class="text-neutral-300">#002FA7</span>: Yves Klein Blue</li>
+              <li><span class="text-neutral-300">#C9A227</span>: 24K Kintsugi Gold</li>
+              <li><span class="text-neutral-300">#3BA89F</span>: Oxidized Verdigris</li>
+            </ul>
+          </div>
+          <div>
+            <span class="text-white font-semibold block mb-1">TYPOGRAPHIC SYSTEM</span>
+            <ul class="space-y-0.5 text-neutral-500">
+              <li>Display: Cinzel Classical</li>
+              <li>Wall Serifs: Cormorant Garamond</li>
+              <li>Body: Space Grotesk (Swiss)</li>
+              <li>Annotations: JetBrains Mono</li>
+            </ul>
+          </div>
+          <div>
+            <span class="text-white font-semibold block mb-1">CURATORIAL ANCHORS</span>
+            <ul class="space-y-0.5 text-neutral-500">
+              <li>Caravaggio (Tenebrism)</li>
+              <li>Anni Albers (Loom Weave)</li>
+              <li>Guo Xi (Three Distances)</li>
+              <li>Lucio Fontana (Slashes)</li>
+              <li>James Turrell (Atmosphere)</li>
+            </ul>
+          </div>
+          <div>
+            <span class="text-white font-semibold block mb-1">ACCESS &amp; CODEBASE</span>
+            <ul class="space-y-0.5 text-neutral-500">
+              <li>Engine: Self-Contained HTML5</li>
+              <li>Kinetic Physics: GSAP 3.12</li>
+              <li>Icons: Bespoke SVG Math</li>
+              <li>Keyboard Guide: Key 'A'</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="pt-6 border-t border-white/5 flex items-center justify-between text-[10px] text-neutral-600">
+          <span>ALL RIGHTS RESERVED &copy; 2026 MOHAMMAD MUNAWWAR MALOOK</span>
+          <span>BUILT AS A PERPETUAL ARTIFACT</span>
+        </div>
+      </footer>
+
+    </section>
+
+  </main>
+
+  <!-- AUDIO-GUIDE MODAL -->
+  <aside id="audio-guide-modal" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-[#111116] border-l border-[#C9A227]/30 z-50 p-6 flex flex-col justify-between shadow-2xl overflow-y-auto" role="dialog" aria-modal="true" aria-label="Curatorial Audio Catalogue">
+    <div class="space-y-6">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[#C9A227] animate-ping"></span>
+          <span class="font-mono text-xs uppercase tracking-widest text-white font-semibold">AUDIO CURATOR'S DESK</span>
+        </div>
+        <button id="close-audio-guide" class="text-neutral-400 hover:text-white font-mono text-xs px-2 py-1 border border-white/10">ESC &#x2715;</button>
+      </div>
+
+      <div class="space-y-4 font-serif text-sm text-[#ded8cb] leading-relaxed">
+        <div class="font-mono text-[10px] text-[#C9A227] uppercase">CURATORIAL COMMENTARY · ROOM BY ROOM</div>
+        
+        <div class="p-3 bg-[#0a0a0c] border border-white/5 rounded">
+          <strong class="text-white block font-sans text-xs">Room 01: The Antechamber &amp; The Loom</strong>
+          <p class="mt-1 text-xs text-neutral-400">
+            "Notice how the orthogonal lines of Anni Albers establish the ground before any computation is shown. You are introduced to Munawwar not through boasts, but through verified empirical ratios: 91% diagnostic parity, 87% retrieval accuracy."
+          </p>
+        </div>
+
+        <div class="p-3 bg-[#0a0a0c] border border-white/5 rounded">
+          <strong class="text-white block font-sans text-xs">Room 02: The Four Apparatuses</strong>
+          <p class="mt-1 text-xs text-neutral-400">
+            "We reject the word 'projects'. These are four calibrated state apparatuses. The healthcare claim auditor explicitly uses deterministic math to avoid sending unnecessary prompts to an LLM. Rigor is knowing when NOT to use artificial intelligence."
+          </p>
+        </div>
+
+        <div class="p-3 bg-[#0a0a0c] border border-white/5 rounded">
+          <strong class="text-white block font-sans text-xs">Room 03: The Bench</strong>
+          <p class="mt-1 text-xs text-neutral-400">
+            "Here the museum provides a resting point. The Richter canvas invites you to smear the telemetry with your own hands, reminding us of the tactile materiality of software."
+          </p>
+        </div>
+
+        <div class="p-3 bg-[#0a0a0c] border border-white/5 rounded">
+          <strong class="text-white block font-sans text-xs">Room 05: Kintsugi &amp; Rumi</strong>
+          <p class="mt-1 text-xs text-neutral-400">
+            "The golden scar running through the failure analysis honors the Japanese tradition of Kintsugi. Empathy is not a soft sentiment; it is a fault-tolerant distributed system."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-6 border-t border-white/10 font-mono text-[11px] text-neutral-500">
+      HOTKEY: Press <kbd class="px-1 border border-neutral-600 rounded bg-neutral-900 text-white">A</kbd> to toggle this desk anytime.
+    </div>
+  </aside>
+
+  <!-- JAVASCRIPT ENGINE -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // 1. CARAVAGGIO CURSOR-TRACKED SPOTLIGHT & CUSTOM CHISEL CURSOR
+      const spotlight = document.getElementById('caravaggio-spotlight');
+      const cursor = document.getElementById('custom-cursor');
+      const cursorDot = document.getElementById('custom-cursor-dot');
+
+      let mouseX = window.innerWidth / 2;
+      let mouseY = window.innerHeight / 2;
+      let curX = mouseX;
+      let curY = mouseY;
+
+      window.addEventListener('pointermove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        document.documentElement.style.setProperty('--mx', `${mouseX}px`);
+        document.documentElement.style.setProperty('--my', `${mouseY}px`);
+      });
+
+      function renderCursor() {
+        curX += (mouseX - curX) * 0.18;
+        curY += (mouseY - curY) * 0.18;
+        if (cursor && cursorDot) {
+          cursor.style.left = `${curX}px`;
+          cursor.style.top = `${curY}px`;
+          cursorDot.style.left = `${mouseX}px`;
+          cursorDot.style.top = `${mouseY}px`;
+        }
+        requestAnimationFrame(renderCursor);
+      }
+      renderCursor();
+
+      const interactives = document.querySelectorAll('a, button, input, summary, .muqarnas-pedestal');
+      interactives.forEach(el => {
+        el.addEventListener('pointerenter', () => {
+          if (cursor) {
+            cursor.style.width = '44px';
+            cursor.style.height = '44px';
+            cursor.style.borderColor = 'var(--bone-white)';
+            cursor.style.backgroundColor = 'rgba(201, 162, 39, 0.08)';
+          }
+        });
+        el.addEventListener('pointerleave', () => {
+          if (cursor) {
+            cursor.style.width = '24px';
+            cursor.style.height = '24px';
+            cursor.style.borderColor = 'var(--gold-leaf)';
+            cursor.style.backgroundColor = 'transparent';
+          }
+        });
+      });
+
+      // 8. ANNI ALBERS LOOM WEAVING CANVAS IN ROOM 01
+      const loomCanvas = document.getElementById('albers-loom-canvas');
+      if (loomCanvas) {
+        const ctx = loomCanvas.getContext('2d');
+        let width = loomCanvas.width = loomCanvas.parentElement.offsetWidth;
+        let height = loomCanvas.height = loomCanvas.parentElement.offsetHeight;
+
+        window.addEventListener('resize', () => {
+          width = loomCanvas.width = loomCanvas.parentElement.offsetWidth;
+          height = loomCanvas.height = loomCanvas.parentElement.offsetHeight;
+          drawLoom();
+        });
+
+        function drawLoom() {
+          ctx.clearRect(0, 0, width, height);
+          ctx.lineWidth = 1;
+          const step = 40;
+          for (let x = 0; x < width; x += step) {
+            ctx.strokeStyle = (x % 120 === 0) ? 'rgba(201, 162, 39, 0.35)' : 'rgba(245, 242, 235, 0.1)';
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, height);
+            ctx.stroke();
+          }
+          for (let y = 0; y < height; y += step) {
+            ctx.strokeStyle = (y % 120 === 0) ? 'rgba(0, 47, 167, 0.25)' : 'rgba(245, 242, 235, 0.08)';
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(width, y);
+            ctx.stroke();
+          }
+        }
+        drawLoom();
+      }
+
+      // 14. STEVE REICH PHASING INDICATOR ON SCROLL
+      const reichAlpha = document.getElementById('reich-alpha');
+      const reichBeta = document.getElementById('reich-beta');
+      const ambientTemp = document.getElementById('ambient-temp');
+      const sections = document.querySelectorAll('section[data-temp]');
+
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = maxScroll > 0 ? scrollY / maxScroll : 0;
+
+        if (reichAlpha && reichBeta) {
+          const alphaVal = (progress * 100).toFixed(2);
+          const betaVal = ((progress + Math.sin(progress * Math.PI * 4) * 0.04) * 100).toFixed(2);
+          reichAlpha.textContent = alphaVal;
+          reichBeta.textContent = betaVal;
+        }
+
+        sections.forEach(sec => {
+          const rect = sec.getBoundingClientRect();
+          if (rect.top <= window.innerHeight * 0.4 && rect.bottom >= window.innerHeight * 0.4) {
+            const temp = sec.getAttribute('data-temp');
+            if (ambientTemp && temp) ambientTemp.textContent = temp;
+            
+            const id = sec.getAttribute('id');
+            document.querySelectorAll('.room-nav-link').forEach(link => {
+              if (link.getAttribute('href') === `#${id}`) {
+                link.classList.add('text-[#C9A227]');
+                link.classList.remove('text-neutral-400');
+              } else {
+                link.classList.remove('text-[#C9A227]');
+                link.classList.add('text-neutral-400');
+              }
+            });
+          }
+        });
+      });
+
+      // 12. GERHARD RICHTER SQUEEGEE CANVAS
+      const richterCanvas = document.getElementById('richter-canvas');
+      if (richterCanvas) {
+        const rCtx = richterCanvas.getContext('2d');
+        const rW = richterCanvas.width;
+        const rH = richterCanvas.height;
+
+        function initRichter() {
+          rCtx.fillStyle = '#14141c';
+          rCtx.fillRect(0, 0, rW, rH);
+          for (let i = 0; i < 30; i++) {
+            rCtx.fillStyle = (i % 2 === 0) ? 'rgba(201, 162, 39, 0.25)' : 'rgba(0, 47, 167, 0.3)';
+            rCtx.fillRect(Math.random() * rW, 0, Math.random() * 20 + 5, rH);
+          }
+          rCtx.fillStyle = '#f5f2eb';
+          rCtx.font = '12px "JetBrains Mono"';
+          rCtx.fillText('// COMPUTED EMPIRICAL TRACE: P@5 = 87.4% · ZERO REGRESSION DETECTED', 20, 65);
+        }
+        initRichter();
+
+        let isDragging = false;
+        richterCanvas.addEventListener('mousedown', () => isDragging = true);
+        window.addEventListener('mouseup', () => isDragging = false);
+
+        richterCanvas.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          const rect = richterCanvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          rCtx.save();
+          rCtx.filter = 'blur(4px)';
+          rCtx.drawImage(richterCanvas, x - 20, 0, 40, rH, x - 15, (Math.random() - 0.5) * 6, 40, rH);
+          rCtx.restore();
+
+          rCtx.fillStyle = 'rgba(201, 162, 39, 0.4)';
+          rCtx.fillRect(x - 2, 0, 4, rH);
+        });
+      }
+
+      // RAG SIMULATOR SLIDER DYNAMICS
+      const ragSlider = document.getElementById('rag-slider');
+      const chunkVal = document.getElementById('chunk-val');
+      const costEst = document.getElementById('cost-est');
+      const wavePathActive = document.getElementById('waveform-path-active');
+
+      if (ragSlider && chunkVal && costEst && wavePathActive) {
+        ragSlider.addEventListener('input', (e) => {
+          const val = parseInt(e.target.value);
+          chunkVal.textContent = val;
+          const saving = Math.round(15 + (val / 1024) * 45);
+          costEst.textContent = `Estimated Cost: -${saving}%`;
+          
+          const amp = 10 + (val / 1024) * 40;
+          wavePathActive.setAttribute('d', `M0,60 Q125,${60 - amp} 250,60 T500,${60 + amp/2}`);
+        });
+      }
+
+      // AUDIO GUIDE MODAL (KEY 'A')
+      const audioModal = document.getElementById('audio-guide-modal');
+      const openAudioBtn = document.getElementById('open-audio-guide');
+      const closeAudioBtn = document.getElementById('close-audio-guide');
+
+      function toggleAudioGuide(show) {
+        if (!audioModal) return;
+        const isOpen = audioModal.classList.contains('open');
+        if (show !== undefined ? show : !isOpen) {
+          audioModal.classList.add('open');
+        } else {
+          audioModal.classList.remove('open');
+        }
+      }
+
+      if (openAudioBtn) openAudioBtn.addEventListener('click', () => toggleAudioGuide(true));
+      if (closeAudioBtn) closeAudioBtn.addEventListener('click', () => toggleAudioGuide(false));
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'a' || e.key === 'A') {
+          if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            toggleAudioGuide();
+          }
+        }
+        if (e.key === 'Escape') {
+          toggleAudioGuide(false);
+        }
+      });
+
+      // CONSERVATION BANNER MOTION TOGGLE
+      const motionToggleBtn = document.getElementById('toggle-motion-btn');
+      let reducedMotion = false;
+      if (motionToggleBtn) {
+        motionToggleBtn.addEventListener('click', () => {
+          reducedMotion = !reducedMotion;
+          if (reducedMotion) {
+            document.body.classList.add('reduce-motion');
+            motionToggleBtn.textContent = 'Conserve Motion [Static]';
+            if (spotlight) spotlight.style.display = 'none';
+          } else {
+            document.body.classList.remove('reduce-motion');
+            motionToggleBtn.textContent = 'Conserve Motion [Normal]';
+            if (spotlight) spotlight.style.display = 'block';
+          }
+        });
+      }
+
+    });
+  </script>
+</body>
+</html>
