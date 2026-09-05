@@ -22,7 +22,7 @@ export function Nav() {
   const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
-    setIsMuted(sound.getIsMuted());
+    const unsub = sound.subscribe((muted) => setIsMuted(muted));
     const isDarkTheme = document.documentElement.classList.contains("dark");
     setIsDark(isDarkTheme);
 
@@ -30,10 +30,18 @@ export function Nav() {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         setPaletteOpen((prev) => !prev);
+      } else if (
+        (e.key === "m" || e.key === "M") &&
+        !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
+      ) {
+        sound.toggleMute();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      unsub();
+    };
   }, []);
 
   const toggleTheme = () => {
@@ -121,11 +129,26 @@ export function Nav() {
             {/* Audio Toggle */}
             <button
               onClick={toggleSound}
-              className="p-1.5 text-ink-soft hover:text-ink border border-transparent hover:border-line rounded-token transition-colors cursor-pointer"
-              title={isMuted ? "Unmute audio micro-clicks" : "Mute audio"}
-              aria-label={isMuted ? "Unmute audio clicks" : "Mute audio"}
+              className="flex items-center gap-1.5 px-2 py-1 text-xs font-mono text-ink-soft hover:text-ink border border-line rounded-token hover:border-accent/60 transition-colors cursor-pointer"
+              title={isMuted ? "Unmute Audio FX (Press M)" : "Mute Audio FX (Press M)"}
+              aria-label={isMuted ? "Unmute Audio FX" : "Mute Audio FX"}
             >
-              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-accent" />}
+              {isMuted ? (
+                <>
+                  <VolumeX className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline text-[11px]">Muted</span>
+                </>
+              ) : (
+                <>
+                  <Volume2 className="w-3.5 h-3.5 text-accent" />
+                  <span className="hidden sm:inline text-[11px] text-accent font-medium">Sound ON</span>
+                  <div className="flex items-end gap-0.5 h-2.5">
+                    <span className="w-0.5 h-2 bg-accent animate-pulse rounded-full" />
+                    <span className="w-0.5 h-3 bg-accent animate-pulse delay-75 rounded-full" />
+                    <span className="w-0.5 h-1.5 bg-accent animate-pulse delay-150 rounded-full" />
+                  </div>
+                </>
+              )}
             </button>
 
             {/* Theme Toggle */}

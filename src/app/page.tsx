@@ -11,7 +11,6 @@ import { ContactSection } from "@/components/contact-section";
 import { Footer } from "@/components/footer";
 import { TracingBeam } from "@/components/ui/tracing-beam";
 import { VelocityScroll } from "@/components/ui/velocity-scroll";
-import { NeuralHud } from "@/components/neural-hud";
 
 export default function Home() {
   return (
@@ -40,7 +39,6 @@ export default function Home() {
         />
       </main>
       <Footer />
-      <NeuralHud />
     </div>
   );
 }

@@ -184,7 +184,11 @@ export function TechnicalDepth() {
                 DAG-based multi-agent execution with self-reflection loops, human-in-the-loop escalation, and structured Pydantic schema validation.
               </p>
 
-              <div className="flex-1 pt-1">
+              <div
+                data-cursor="code"
+                data-cursor-text="PYTHON"
+                className="flex-1 pt-1"
+              >
                 <TypingCodeTerminal />
               </div>
 

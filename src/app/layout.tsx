@@ -90,7 +90,7 @@ export const metadata: Metadata = {
 };
 
 import { SmoothScrollProvider } from "@/components/ui/smooth-scroll-provider";
-import { FluidCursor } from "@/components/ui/fluid-cursor";
+import { ContextCursor } from "@/components/ui/context-cursor";
 
 export default function RootLayout({
   children,
@@ -145,7 +145,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className="antialiased bg-paper text-ink transition-colors duration-200"
       >
-        <FluidCursor />
+        <ContextCursor />
         <SmoothScrollProvider>
           <a
             href="#content"

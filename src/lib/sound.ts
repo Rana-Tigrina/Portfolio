@@ -1,17 +1,32 @@
-// Lightweight client-side Web Audio synthesis for tactile micro-interactions
-// Zero external audio files, negligible memory footprint, fully respect mute settings
+// Tactile Web Audio synthesis for editorial micro-interactions
+// Zero external audio files, crisp acoustic feedback, respectful mute support
 
 type Listener = (isMuted: boolean) => void;
 
 class SoundManager {
   private ctx: AudioContext | null = null;
-  private isMuted: boolean = true; // Muted by default for respectful UX
+  private isMuted: boolean = false; // Enabled for interactive experience
   private listeners: Set<Listener> = new Set();
+  private userInteracted: boolean = false;
 
   constructor() {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("portfolio_sound_enabled");
-      this.isMuted = stored !== "true";
+      if (stored !== null) {
+        this.isMuted = stored === "false";
+      } else {
+        this.isMuted = false;
+      }
+
+      // Auto-unlock AudioContext on first user gesture
+      const unlockAudio = () => {
+        this.userInteracted = true;
+        this.initCtx();
+        window.removeEventListener("pointerdown", unlockAudio);
+        window.removeEventListener("keydown", unlockAudio);
+      };
+      window.addEventListener("pointerdown", unlockAudio, { passive: true });
+      window.addEventListener("keydown", unlockAudio, { passive: true });
     }
   }
 
@@ -27,17 +42,23 @@ class SoundManager {
     this.listeners.forEach((l) => l(this.isMuted));
   }
 
-  private initCtx() {
-    if (!this.ctx && typeof window !== "undefined") {
-      const AudioCtx =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (AudioCtx) {
-        this.ctx = new AudioCtx();
+  private initCtx(): AudioContext | null {
+    if (typeof window === "undefined") return null;
+    try {
+      if (!this.ctx) {
+        const AudioCtx =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
       }
-    }
-    if (this.ctx && this.ctx.state === "suspended") {
-      this.ctx.resume().catch(() => {});
+      if (this.ctx && this.ctx.state === "suspended") {
+        this.ctx.resume().catch(() => {});
+      }
+      return this.ctx;
+    } catch {
+      return null;
     }
   }
 
@@ -47,7 +68,7 @@ class SoundManager {
       localStorage.setItem("portfolio_sound_enabled", (!this.isMuted).toString());
     }
     if (!this.isMuted) {
-      this.playSuccess();
+      this.playChime();
     }
     this.notify();
     return this.isMuted;
@@ -65,134 +86,121 @@ class SoundManager {
     return this.isMuted;
   }
 
-  public playClick(pitch: number = 800) {
+  // Crisp mechanical tactile click (audible, satisfying, like a linear keyboard switch)
+  public playClick(pitch: number = 720) {
     if (this.isMuted || typeof window === "undefined") return;
     try {
-      this.initCtx();
-      if (!this.ctx) return;
+      const ctx = this.initCtx();
+      if (!ctx) return;
 
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(pitch, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + 0.04);
-
-      gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
-
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-
-      osc.start();
-      osc.stop(this.ctx.currentTime + 0.04);
-    } catch {
-      // AudioContext failure shouldn't throw
-    }
-  }
-
-  public playMechanicalTick() {
-    if (this.isMuted || typeof window === "undefined") return;
-    try {
-      this.initCtx();
-      if (!this.ctx) return;
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
 
       osc.type = "triangle";
-      osc.frequency.setValueAtTime(1400, now);
-      osc.frequency.exponentialRampToValueAtTime(400, now + 0.02);
+      osc.frequency.setValueAtTime(pitch, now);
+      osc.frequency.exponentialRampToValueAtTime(140, now + 0.05);
 
-      gain.gain.setValueAtTime(0.025, now);
+      gain.gain.setValueAtTime(0.16, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.05);
+    } catch {}
+  }
+
+  // Subtle hover tick for cards and buttons
+  public playHover() {
+    if (this.isMuted || typeof window === "undefined") return;
+    try {
+      const ctx = this.initCtx();
+      if (!ctx) return;
+
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1200, now);
+      osc.frequency.exponentialRampToValueAtTime(600, now + 0.02);
+
+      gain.gain.setValueAtTime(0.08, now);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
 
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(ctx.destination);
 
       osc.start(now);
       osc.stop(now + 0.02);
     } catch {}
   }
 
-  public playCyberSweep() {
+  // Melodic chime on success or unmute
+  public playChime() {
     if (this.isMuted || typeof window === "undefined") return;
     try {
-      this.initCtx();
-      if (!this.ctx) return;
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
+      const ctx = this.initCtx();
+      if (!ctx) return;
 
-      osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(220, now);
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+      const now = ctx.currentTime;
+      const freqs = [523.25, 659.25, 783.99]; // C5, E5, G5
 
-      gain.gain.setValueAtTime(0.02, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      freqs.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
 
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now + idx * 0.06);
 
-      osc.start(now);
-      osc.stop(now + 0.15);
+        gain.gain.setValueAtTime(0.12, now + idx * 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.2);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + idx * 0.06);
+        osc.stop(now + idx * 0.06 + 0.2);
+      });
     } catch {}
   }
 
-  public playHologramPulse() {
+  // Clean dual-pip on system or tab switch
+  public playSwitch() {
     if (this.isMuted || typeof window === "undefined") return;
     try {
-      this.initCtx();
-      if (!this.ctx) return;
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
+      const ctx = this.initCtx();
+      if (!ctx) return;
+
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
 
       osc.type = "sine";
-      osc.frequency.setValueAtTime(523.25, now); // C5
-      osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
-      osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+      osc.frequency.setValueAtTime(620, now);
+      osc.frequency.setValueAtTime(940, now + 0.04);
 
-      gain.gain.setValueAtTime(0.035, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
 
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(ctx.destination);
 
       osc.start(now);
-      osc.stop(now + 0.28);
+      osc.stop(now + 0.08);
     } catch {}
   }
 
   public playSuccess() {
-    if (this.isMuted || typeof window === "undefined") return;
-    try {
-      this.initCtx();
-      if (!this.ctx) return;
-
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      osc.type = "triangle";
-      osc.frequency.setValueAtTime(440, now);
-      osc.frequency.setValueAtTime(659.25, now + 0.06);
-      osc.frequency.setValueAtTime(880, now + 0.12);
-
-      gain.gain.setValueAtTime(0.03, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-
-      osc.start(now);
-      osc.stop(now + 0.22);
-    } catch {}
+    this.playChime();
   }
 }
 
 export const sound = new SoundManager();
 
-export function playTactileClick(pitch: number = 800, _duration: number = 0.04) {
+export function playTactileClick(pitch: number = 720, _duration?: number) {
   sound.playClick(pitch);
 }
+

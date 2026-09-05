@@ -550,7 +550,11 @@ export function SelectedWork() {
                   {/* RIGHT PANE: Interactive CAD Flowchart & Node Inspector (7 cols on lg) */}
                   <div className="lg:col-span-7 space-y-4">
                     <MagneticTilt maxAngle={3.5} scaleHover={1.008} glareOpacity={0.08} className="rounded-xl">
-                      <div className="bg-paper border border-line rounded-xl shadow-xs overflow-hidden">
+                      <div
+                        data-cursor="view"
+                        data-cursor-text="INSPECT CAD"
+                        className="bg-paper border border-line rounded-xl shadow-xs overflow-hidden"
+                      >
                         {/* Top CAD Terminal Console Bar */}
                         <div className="px-4 py-3 bg-paper-2/90 border-b border-line flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
                           <div className="flex items-center gap-2">
@@ -627,10 +631,10 @@ export function SelectedWork() {
         )}
 
         {/* ========================================================================= */}
-        {/* MODE 2: FULL SYSTEM DECK (All 4 Systems Sequentially)                     */}
+        {/* MODE 2: STICKY STACKING DECK (Editorial Dossier Stacks)                   */}
         {/* ========================================================================= */}
         {viewMode === "deck" && (
-          <div className="space-y-8 animate-fade-in">
+          <div className="relative pb-28 space-y-12">
             {studies.map((study, idx) => {
               const itemMeta = systemMetadata[study.slug] || {
                 metricValue: "90%+",
@@ -644,114 +648,124 @@ export function SelectedWork() {
               };
 
               return (
-                <MagneticTilt key={study.slug} maxAngle={4} scaleHover={1.01} glareOpacity={0.12} className="rounded-2xl">
-                  <SpotlightCard className="bg-paper p-6 sm:p-8 space-y-6">
-                  {/* Card Header */}
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-4">
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-[10px] uppercase tracking-wider text-accent font-semibold px-2 py-0.5 border border-accent/20 bg-accent-soft rounded-token">
-                          {study.badge}
-                        </span>
-                        <span className="font-mono text-xs text-ink-soft">
-                          0{idx + 1} / 0{studies.length} · {study.category}
-                        </span>
-                      </div>
-                      <h3 className="font-serif italic text-2xl sm:text-3xl text-ink">
-                        {study.title}
-                      </h3>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <div className="p-3 bg-paper-2 border border-line rounded-lg text-right">
-                        <div className="font-serif italic text-2xl text-accent font-bold leading-none">
-                          {itemMeta.metricValue}
+                <div
+                  key={study.slug}
+                  style={{
+                    top: `calc(4.5rem + ${idx * 26}px)`,
+                  }}
+                  className="sticky z-10"
+                >
+                  <div className="bg-paper border border-line rounded-2xl p-6 sm:p-8 shadow-[0_-12px_36px_rgba(0,0,0,0.4)] backdrop-blur-xl space-y-6">
+                    {/* Card Header */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-4">
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-[10px] uppercase tracking-wider text-accent font-semibold px-2 py-0.5 border border-accent/20 bg-accent-soft rounded-token">
+                            {study.badge}
+                          </span>
+                          <span className="font-mono text-xs text-ink-soft">
+                            Dossier 0{idx + 1} / 0{studies.length} · {study.category}
+                          </span>
                         </div>
-                        <div className="font-mono text-[10px] text-ink-soft">
-                          {itemMeta.metricLabel}
+                        <h3 className="font-serif italic text-2xl sm:text-3xl text-ink">
+                          {study.title}
+                        </h3>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <div className="p-3 bg-paper-2 border border-line rounded-lg text-right">
+                          <div className="font-serif italic text-2xl text-accent font-bold leading-none">
+                            {itemMeta.metricValue}
+                          </div>
+                          <div className="font-mono text-[10px] text-ink-soft">
+                            {itemMeta.metricLabel}
+                          </div>
                         </div>
+                        {study.links.github && (
+                          <a
+                            href={study.links.github}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="shrink-0"
+                          >
+                            <ParticleButton variant="outline" size="sm" className="text-xs">
+                              <Github className="w-3.5 h-3.5" />
+                              <span>Repo</span>
+                            </ParticleButton>
+                          </a>
+                        )}
                       </div>
-                      {study.links.github && (
-                        <a
-                          href={study.links.github}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="shrink-0"
-                        >
-                          <ParticleButton variant="outline" size="sm" className="text-xs">
-                            <Github className="w-3.5 h-3.5" />
-                            <span>Repo</span>
-                          </ParticleButton>
-                        </a>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Architecture Diagram */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs font-mono text-ink-soft">
-                      <span className="font-semibold text-ink uppercase tracking-wider">
-                        System Architecture &amp; Data Flow
-                      </span>
-                      <span className="text-[11px] text-accent">
-                        Interactive telemetry nodes
-                      </span>
-                    </div>
-                    <ArchitectureDiagram slug={study.slug} />
-                  </div>
-
-                  {/* Tradeoffs Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-paper-2/50 border border-line rounded-xl">
-                    <div className="space-y-1">
-                      <div className="font-mono text-[10px] uppercase text-ink-soft font-semibold">
-                        1. The Problem
-                      </div>
-                      <p className="font-sans text-xs text-ink leading-relaxed">
-                        {study.problem}
-                      </p>
                     </div>
 
-                    <div className="space-y-1">
-                      <div className="font-mono text-[10px] uppercase text-accent font-semibold flex items-center gap-1">
-                        <Sparkles className="w-3 h-3" />
-                        2. Key Tradeoff Decision
-                      </div>
-                      <p className="font-sans text-xs text-ink leading-relaxed font-medium">
-                        {study.decision}
-                      </p>
-                    </div>
-
-                    <div className="space-y-1">
-                      <div className="font-mono text-[10px] uppercase text-ink-soft font-semibold">
-                        3. Measured Outcome
-                      </div>
-                      <p className="font-sans text-xs text-ink leading-relaxed">
-                        {study.outcome}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Stack Footer */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="font-mono text-[11px] text-ink-soft mr-1">Stack:</span>
-                      {study.stack.map((t) => (
-                        <span
-                          key={t}
-                          className="font-mono text-[10px] px-2 py-0.5 border border-line bg-paper-2 rounded-token text-ink"
-                        >
-                          {t}
+                    {/* Architecture Diagram with Context-Aware Cursor hook */}
+                    <div
+                      data-cursor="view"
+                      data-cursor-text="INSPECT CAD"
+                      className="space-y-2"
+                    >
+                      <div className="flex items-center justify-between text-xs font-mono text-ink-soft">
+                        <span className="font-semibold text-ink uppercase tracking-wider">
+                          System Architecture &amp; Telemetry
                         </span>
-                      ))}
+                        <span className="text-[11px] text-accent">
+                          Click any node to inspect schemas
+                        </span>
+                      </div>
+                      <ArchitectureDiagram slug={study.slug} />
                     </div>
 
-                    <p className="font-sans text-xs text-ink-soft italic">
-                      Flow: {study.architecture}
-                    </p>
+                    {/* Tradeoffs Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-paper-2/60 border border-line rounded-xl">
+                      <div className="space-y-1">
+                        <div className="font-mono text-[10px] uppercase text-ink-soft font-semibold">
+                          1. The Problem
+                        </div>
+                        <p className="font-sans text-xs text-ink leading-relaxed">
+                          {study.problem}
+                        </p>
+                      </div>
+
+                      <div className="space-y-1">
+                        <div className="font-mono text-[10px] uppercase text-accent font-semibold flex items-center gap-1">
+                          <Sparkles className="w-3 h-3" />
+                          2. Key Tradeoff Decision
+                        </div>
+                        <p className="font-sans text-xs text-ink leading-relaxed font-medium">
+                          {study.decision}
+                        </p>
+                      </div>
+
+                      <div className="space-y-1">
+                        <div className="font-mono text-[10px] uppercase text-ink-soft font-semibold">
+                          3. Measured Outcome
+                        </div>
+                        <p className="font-sans text-xs text-ink leading-relaxed">
+                          {study.outcome}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Stack Footer */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="font-mono text-[11px] text-ink-soft mr-1">Stack:</span>
+                        {study.stack.map((t) => (
+                          <span
+                            key={t}
+                            className="font-mono text-[10px] px-2 py-0.5 border border-line bg-paper-2 rounded-token text-ink"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+
+                      <p className="font-sans text-xs text-ink-soft italic">
+                        Flow: {study.architecture}
+                      </p>
+                    </div>
                   </div>
-                </SpotlightCard>
-              </MagneticTilt>
-            );
+                </div>
+              );
             })}
           </div>
         )}

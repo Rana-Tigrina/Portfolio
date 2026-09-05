@@ -41,6 +41,8 @@ export function ResearchSection() {
             return (
               <div
                 key={pub.id}
+                data-cursor="paper"
+                data-cursor-text="PAPER"
                 className="p-5 sm:p-6 bg-paper border border-line rounded-token flex flex-col justify-between space-y-4 hover:border-ink-soft/60 transition-colors"
               >
                 <div className="space-y-3">

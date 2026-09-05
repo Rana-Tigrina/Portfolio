@@ -309,7 +309,11 @@ export function InteractiveLab() {
         {/* Two Interactive Modules Side by Side */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Module 1: RAG Parameter & Curve Simulator */}
-          <div className="p-6 bg-paper border border-line rounded-token space-y-5 shadow-xs">
+          <div
+            data-cursor="tune"
+            data-cursor-text="TUNE RAG"
+            className="p-6 bg-paper border border-line rounded-token space-y-5 shadow-xs"
+          >
             <div className="flex items-center justify-between pb-3 border-b border-line">
               <div className="flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-accent" />
