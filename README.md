@@ -2,7 +2,7 @@
 
 <div align="center">
 
-### **Senior AI/ML & Systems Engineer · Applied AI Researcher**
+### **AI/ML & Systems Engineer · Applied AI Researcher**
 *IIT Madras Data Science Graduate · 2 Published Research Papers*
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.3.4-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
@@ -197,7 +197,7 @@ npm run start
 - **LinkedIn**: [linkedin.com/in/munawwar-malook](https://www.linkedin.com/in/munawwar-malook/)
 - **GitHub**: [github.com/Rana-Tigrina](https://github.com/Rana-Tigrina)
 - **Location**: Delhi, India
-- **Availability**: Open for Senior AI/ML & Founding Engineer roles
+- **Availability**: Open for AI/ML & Founding Engineer roles
 
 ---
 
