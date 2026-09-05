@@ -46,59 +46,9 @@ export function Nav() {
     };
   }, []);
 
-  const toggleTheme = (e?: React.MouseEvent<HTMLButtonElement>) => {
+  const toggleTheme = () => {
     sound.playClick(750);
     const root = document.documentElement;
-    const isReducedMotion =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // Use View Transitions API with circular radial wave if supported
-    if ("startViewTransition" in document && !isReducedMotion && e?.clientX !== undefined) {
-      const x = e.clientX;
-      const y = e.clientY;
-      const endRadius = Math.hypot(
-        Math.max(x, window.innerWidth - x),
-        Math.max(y, window.innerHeight - y)
-      );
-
-      const transition = (document as unknown as { startViewTransition: (cb: () => void) => { ready: Promise<void> } }).startViewTransition(() => {
-        const nextDark = !root.classList.contains("dark");
-        if (nextDark) {
-          root.classList.add("dark");
-        } else {
-          root.classList.remove("dark");
-        }
-        setIsDark(nextDark);
-        try {
-          localStorage.setItem("theme", nextDark ? "dark" : "light");
-        } catch {}
-      });
-
-      transition.ready.then(() => {
-        const isDarkNow = root.classList.contains("dark");
-        const clipPath = [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${endRadius}px at ${x}px ${y}px)`,
-        ];
-        document.documentElement.animate(
-          {
-            clipPath: isDarkNow ? clipPath : [...clipPath].reverse(),
-          },
-          {
-            duration: 450,
-            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-            pseudoElement: isDarkNow
-              ? "::view-transition-new(root)"
-              : "::view-transition-old(root)",
-          }
-        );
-      });
-      return;
-    }
-
-    // Fallback: smooth CSS color transition
-    root.classList.add("theme-transitioning");
     const nextDark = !root.classList.contains("dark");
     if (nextDark) {
       root.classList.add("dark");
@@ -109,10 +59,6 @@ export function Nav() {
     try {
       localStorage.setItem("theme", nextDark ? "dark" : "light");
     } catch {}
-
-    setTimeout(() => {
-      root.classList.remove("theme-transitioning");
-    }, 400);
   };
 
   const toggleSound = () => {
@@ -236,10 +182,10 @@ export function Nav() {
                 {isDark ? (
                   <motion.div
                     key="sun"
-                    initial={{ scale: 0.3, rotate: -90, opacity: 0 }}
+                    initial={{ scale: 0.6, rotate: -45, opacity: 0 }}
                     animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                    exit={{ scale: 0.3, rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
+                    exit={{ scale: 0.6, rotate: 45, opacity: 0 }}
+                    transition={{ duration: 0.14, ease: "easeOut" }}
                     className="flex items-center justify-center"
                   >
                     <Sun className="w-3.5 h-3.5 text-amber-500" />
@@ -247,10 +193,10 @@ export function Nav() {
                 ) : (
                   <motion.div
                     key="moon"
-                    initial={{ scale: 0.3, rotate: 90, opacity: 0 }}
+                    initial={{ scale: 0.6, rotate: 45, opacity: 0 }}
                     animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                    exit={{ scale: 0.3, rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.22, ease: [0.25, 1, 0.5, 1] }}
+                    exit={{ scale: 0.6, rotate: -45, opacity: 0 }}
+                    transition={{ duration: 0.14, ease: "easeOut" }}
                     className="flex items-center justify-center"
                   >
                     <Moon className="w-3.5 h-3.5" />
