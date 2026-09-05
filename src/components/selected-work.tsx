@@ -9,6 +9,8 @@ import { ParticleButton } from "./ui/particle-button";
 import { MagneticTilt } from "./ui/magnetic-tilt";
 import { sound } from "@/lib/sound";
 import { Github } from "./icons";
+import { BorderTrail } from "./ui/border-trail";
+import { StackingCard } from "./ui/stacking-cards";
 import {
   CheckCircle,
   ExternalLink,
@@ -491,7 +493,8 @@ export function SelectedWork() {
                 >
                   {/* LEFT PANE: System Dossier & Technical Decisions (5 cols on lg) */}
                   <div className="lg:col-span-5 space-y-5">
-                    <div className="p-6 bg-paper border border-line rounded-xl shadow-xs space-y-6">
+                    <div className="p-6 bg-paper border border-line rounded-xl shadow-xs space-y-6 relative overflow-hidden">
+                      <BorderTrail size={90} duration={8} />
                       {/* System Header */}
                       <div className="space-y-2">
                         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -823,13 +826,19 @@ export function SelectedWork() {
               };
 
               return (
-                <DossierDeckCard
+                <StackingCard
                   key={study.slug}
-                  study={study}
-                  idx={idx}
+                  index={idx}
                   total={studies.length}
-                  meta={itemMeta}
-                />
+                  topOffset={76}
+                >
+                  <DossierDeckCard
+                    study={study}
+                    idx={idx}
+                    total={studies.length}
+                    meta={itemMeta}
+                  />
+                </StackingCard>
               );
             })}
           </div>
@@ -879,6 +888,9 @@ function DossierDeckCard({ study, idx, total, meta }: DossierDeckCardProps) {
         onMouseLeave={() => setIsHovered(false)}
         className="relative bg-paper border border-line rounded-2xl p-6 sm:p-8 shadow-[0_-16px_44px_rgba(0,0,0,0.55)] backdrop-blur-xl space-y-6 overflow-hidden transition-all duration-300"
       >
+        {/* Flagship Cybernetic Laser Trail on Dossier 01 */}
+        {idx === 0 && <BorderTrail size={120} duration={8} />}
+
         {/* Dynamic 21st.dev / Aceternity cursor spotlight glow */}
         <div
           aria-hidden="true"

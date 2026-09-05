@@ -62,11 +62,11 @@ export function Nav() {
   };
 
   const navLinks = [
-    { label: "Work", href: "#work" },
-    { label: "The Lab", href: "#lab" },
-    { label: "Research", href: "#research" },
-    { label: "Experience", href: "#experience" },
-    { label: "Skills", href: "#skills" },
+    { label: "I: Threshold", href: "#act-1" },
+    { label: "II: Proof", href: "#act-2" },
+    { label: "III: Cathedral", href: "#act-3" },
+    { label: "IV: Gaze", href: "#act-4" },
+    { label: "V: Communion", href: "#act-5" },
   ];
 
   return (
