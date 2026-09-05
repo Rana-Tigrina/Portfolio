@@ -43,11 +43,12 @@ export function ContainerScroll({
   const scale = useTransform(scrollYProgress, [0, 0.45], scaleDimensions());
   const opacity = useTransform(scrollYProgress, [0, 0.2], [0.75, 1]);
 
-  if (!mounted) {
+  // On mobile or before client hydration, render cleanly without 3D perspective to prevent WebKit compositor layer culling and disappearance during scroll
+  if (!mounted || isMobile) {
     return (
       <div
         ref={containerRef}
-        className={`relative flex items-center justify-center p-2 sm:p-4 md:p-6 ${className}`}
+        className={`relative flex items-center justify-center p-0 sm:p-2 md:p-4 ${className}`}
       >
         <div className="w-full relative">
           {titleComponent && (
@@ -55,7 +56,7 @@ export function ContainerScroll({
               {titleComponent}
             </div>
           )}
-          <div className="w-full rounded-token shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
+          <div className="w-full rounded-token shadow-[0_12px_36px_rgba(0,0,0,0.08)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
             {children}
           </div>
         </div>

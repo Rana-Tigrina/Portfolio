@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   motion,
   useScroll,
@@ -40,13 +40,30 @@ function ParallaxText({ children, baseVelocity = 5, className = "" }: ParallaxPr
   });
 
   const shouldReduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(
+        window.innerWidth <= 768 ||
+        window.matchMedia("(pointer: coarse)").matches
+      );
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], {
     clamp: false,
   });
 
-  // Skew text based on scroll speed
-  const skewX = useTransform(smoothVelocity, [-1200, 1200], shouldReduceMotion ? [0, 0] : [-16, 16]);
+  // Skew text based on scroll speed (disabled on mobile to avoid texture re-rasterization)
+  const skewX = useTransform(
+    smoothVelocity,
+    [-1200, 1200],
+    shouldReduceMotion || isMobile ? [0, 0] : [-14, 14]
+  );
 
   const x = useTransform(baseX, (v) => `${wrap(-20, -45, v)}%`);
 
@@ -89,7 +106,7 @@ export function VelocityScroll({
   className?: string;
 }) {
   return (
-    <section className={`relative w-full py-6 md:py-8 border-y border-border/40 bg-paper/60 backdrop-blur-md overflow-hidden ${className}`}>
+    <section className={`relative w-full py-6 md:py-8 border-y border-line/40 bg-paper-2/95 md:bg-paper/60 md:backdrop-blur-md overflow-hidden ${className}`}>
       {/* Subtle edge vignette gradient */}
       <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-paper to-transparent z-10 pointer-events-none" />
       <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-paper to-transparent z-10 pointer-events-none" />

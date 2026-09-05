@@ -79,10 +79,20 @@ export const BackgroundPaths = memo(function BackgroundPaths({
   className?: string;
 }) {
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     setMounted(true);
+    const checkMobile = () => {
+      setIsMobile(
+        window.innerWidth <= 768 ||
+        window.matchMedia("(pointer: coarse)").matches
+      );
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const primaryPaths: PathData[] = useMemo(
@@ -149,7 +159,7 @@ export const BackgroundPaths = memo(function BackgroundPaths({
               strokeLinecap="round"
               initial={{ opacity: path.opacity }}
               animate={
-                shouldReduceMotion
+                shouldReduceMotion || isMobile
                   ? { opacity: path.opacity }
                   : {
                       y: [0, -18, 0],
@@ -175,7 +185,7 @@ export const BackgroundPaths = memo(function BackgroundPaths({
               strokeLinecap="round"
               initial={{ opacity: path.opacity }}
               animate={
-                shouldReduceMotion
+                shouldReduceMotion || isMobile
                   ? { opacity: path.opacity }
                   : {
                       y: [0, -12, 0],

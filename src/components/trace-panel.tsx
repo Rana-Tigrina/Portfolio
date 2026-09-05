@@ -249,7 +249,7 @@ export function TracePanel() {
       </div>
 
       {/* 5-Stage Stepper Flow */}
-      <div className="pt-4 pb-3 overflow-x-auto">
+      <div className="pt-4 pb-3 overflow-x-auto overscroll-x-contain touch-pan-x [scrollbar-width:thin]">
         <div className="flex items-center justify-between min-w-[540px] gap-2">
           {scenario.stages.map((st, idx) => {
             const isCompleted = idx < activeStageIdx;

@@ -27,9 +27,15 @@
   }
 
   html {
-    scroll-behavior: smooth;
     background-color: var(--paper);
     color: var(--ink);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media (min-width: 768px) {
+    html:not(.lenis) {
+      scroll-behavior: smooth;
+    }
   }
 
   body {
@@ -39,6 +45,7 @@
     color: var(--ink);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch;
   }
 
   ::selection {

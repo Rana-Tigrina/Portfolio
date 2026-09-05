@@ -39,6 +39,15 @@ export function NeuralScrollBackground() {
   });
 
   useEffect(() => {
+    // Disable on coarse pointer / mobile touch devices to free GPU fill-rate and prevent scroll lag
+    if (
+      typeof window === "undefined" ||
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.innerWidth <= 768
+    ) {
+      return;
+    }
+
     setMounted(true);
     const canvas = canvasRef.current;
     if (!canvas) return;

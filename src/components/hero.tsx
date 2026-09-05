@@ -114,8 +114,14 @@ export function Hero() {
             </ParticleButton>
           </motion.div>
 
-          {/* Hero Signature Element: Wrapped in Aceternity UI 3D Container Scroll */}
-          <motion.div variants={riseVariants} className="pt-4">
+          {/* Hero Signature Element: Live AI Pipeline Trace */}
+          <motion.div
+            variants={riseVariants}
+            initial={false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+            className="pt-4"
+          >
             <ContainerScroll>
               <TracePanel />
             </ContainerScroll>
