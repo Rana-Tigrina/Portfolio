@@ -57,7 +57,7 @@ class SoundManager {
         this.ctx.resume().catch(() => {});
       }
       return this.ctx;
-    } catch {
+    } catch (_err) {
       return null;
     }
   }
@@ -109,7 +109,7 @@ class SoundManager {
 
       osc.start(now);
       osc.stop(now + 0.05);
-    } catch {}
+    } catch (_err) {}
   }
 
   // Subtle hover tick for cards and buttons
@@ -135,7 +135,7 @@ class SoundManager {
 
       osc.start(now);
       osc.stop(now + 0.02);
-    } catch {}
+    } catch (_err) {}
   }
 
   // Melodic chime on success or unmute
@@ -164,7 +164,7 @@ class SoundManager {
         osc.start(now + idx * 0.06);
         osc.stop(now + idx * 0.06 + 0.2);
       });
-    } catch {}
+    } catch (_err) {}
   }
 
   // Clean dual-pip on system or tab switch
@@ -190,7 +190,7 @@ class SoundManager {
 
       osc.start(now);
       osc.stop(now + 0.08);
-    } catch {}
+    } catch (_err) {}
   }
 
   public playSuccess() {

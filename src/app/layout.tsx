@@ -91,6 +91,7 @@ export const metadata: Metadata = {
 
 import { SmoothScrollProvider } from "@/components/ui/smooth-scroll-provider";
 import { ContextCursor } from "@/components/ui/context-cursor";
+import { NeuralScrollBackground } from "@/components/ui/neural-scroll-background";
 
 export default function RootLayout({
   children,
@@ -145,6 +146,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className="antialiased bg-paper text-ink transition-colors duration-200"
       >
+        <NeuralScrollBackground />
         <ContextCursor />
         <SmoothScrollProvider>
           <a
