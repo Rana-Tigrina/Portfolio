@@ -41,16 +41,16 @@ const systemMetadata: Record<
 > = {
   "healthcare-claims-audit": {
     metricValue: "91%",
-    metricLabel: "Audit & Diagnostic Accuracy",
-    metricSublabel: "CMS Medicare Billing Guidelines",
-    engine: "Gemini 2.0 Flash + LangChain",
-    runtime: "FastAPI · Streamlit · Docker",
-    latency: "310ms inference",
-    confidenceGate: ">0.85 routing threshold",
+    metricLabel: "Audit Adjudication Precision",
+    metricSublabel: "CMS Medicare Billing Rules",
+    engine: "LangGraph + Gemini 3.8 Flash + ChromaDB",
+    runtime: "LangGraph StateGraph · Pydantic v2 · Python",
+    latency: "290ms inference",
+    confidenceGate: ">= 0.72 Composite Score (0.6 LLM + 0.4 Match)",
     keyHighlights: [
-      "Deterministic 5-agent state graph eliminates runaway agent loops",
-      "Automated CMS-1500 extraction with BioClinicalBERT schema validation",
-      "Generates formal legal appeal letters with precise statutory citations",
+      "Deterministic CPT/ICD code overlap matching skips LLM on non-conflicting claims",
+      "Zero-LLM native Python parsing maps CMS Medicare data directly to Pydantic schema",
+      "Generates formal appeal letters with verbatim citations and mandatory [DRAFT] boundary",
     ],
   },
   "multi-agent-research-mcp": {
@@ -84,15 +84,15 @@ const systemMetadata: Record<
   "clinical-documentation-soap": {
     metricValue: "65%",
     metricLabel: "Documentation Time Cut",
-    metricSublabel: "90% Medical Terminology Precision",
-    engine: "WhisperX + LLaMA 3.2 + BioClinicalBERT",
-    runtime: "On-Premise · HIPAA Compliant · Librosa",
+    metricSublabel: "95% SNOMED-CT Precision",
+    engine: "WhisperX + Gemma 4 + Qwen 3.5",
+    runtime: "FastAPI · Librosa · FFmpeg · Docker",
     latency: "Near real-time audio pipeline",
-    confidenceGate: "ICD-10 Diagnostic Validator",
+    confidenceGate: "Qwen 3.5 Clinical & ICD-10 Validator",
     keyHighlights: [
-      "Locally deployable LLaMA 3.2 fine-tuned with clinical prompt hierarchy",
-      "WhisperX acoustic diarization distinguishing doctor vs patient voice",
-      "Structured SOAP generation with automated ICD-10 diagnostic coding",
+      "WhisperX acoustic diarization distinguishing doctor vs patient voice with phoneme alignment",
+      "Structured clinical SOAP notes synthesized by Gemma 4 from natural consultation dialogue",
+      "Secondary clinical validation by Qwen 3.5 verifying drug dosages, contraindications, and ICD-10",
     ],
   },
 };

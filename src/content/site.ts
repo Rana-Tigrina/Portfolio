@@ -77,7 +77,7 @@ export const siteData = {
     eyebrow: "RESEARCHER → BUILDER → SYSTEMS ENGINEER",
     headline: "I architect AI systems that reason, retrieve, and survive contact with production.",
     subcopy:
-      "IIT Madras Data Science graduate with two peer-reviewed publications. I build production-grade agentic workflows, deterministic RAG pipelines, and HIPAA-aware clinical NLP models with continuous evaluation harnesses.",
+      "IIT Madras Data Science graduate with two published research papers in multimodal AI and cognitive dynamics. I build production-grade agentic workflows, deterministic RAG pipelines, and HIPAA-aware clinical NLP models with continuous evaluation harnesses.",
     ctaPrimary: { label: "Explore Case Studies", href: "#work" },
     ctaSecondary: { label: "Research & Publications", href: "#research" },
     ctaLab: { label: "Open Interactive Lab", href: "#lab" },
@@ -92,7 +92,7 @@ export const siteData = {
       label: "Diagnostic Accuracy",
       sublabel: "Jan Elaaj Clinical System",
       detail:
-        "Hybrid BioClinicalBERT + Gemini 2.0 Flash architecture achieving symptom identification accuracy benchmarked on par with licensed psychologists.",
+        "Hybrid BioClinicalBERT + Gemini 3.8 Flash architecture achieving symptom identification accuracy benchmarked on par with licensed psychologists.",
     },
     {
       id: "dev-time",
@@ -130,16 +130,16 @@ export const siteData = {
       prefix: "",
       suffix: "%",
       label: "Documentation Time Cut",
-      sublabel: "WhisperX + LLaMA 3.2 SOAP Pipeline",
+      sublabel: "WhisperX + Gemma 4 SOAP Pipeline",
       detail:
-        "Automated conversion of doctor-patient consultation audio into structured SOAP notes with 90% medical terminology accuracy.",
+        "Automated conversion of doctor-patient consultation audio into structured SOAP notes by Gemma 4 and validated by Qwen 3.5 with 90% terminology accuracy.",
     },
     {
       id: "pub-count",
       value: 2,
       prefix: "",
       suffix: " Papers",
-      label: "Peer-Reviewed Works",
+      label: "Research Publications",
       sublabel: "Taylor & Francis & ICSCCC",
       detail:
         "Published research in multimodal affective computing and systematic evaluation of AI tools on human cognitive processes.",
@@ -151,20 +151,20 @@ export const siteData = {
       slug: "healthcare-claims-audit",
       title: "Healthcare Claims Audit Multi-Agent System",
       category: "Multi-Agent System & Healthcare AI",
-      badge: "Autonomous 5-Agent Pipeline",
-      stack: ["LangChain", "Gemini 2.0 Flash", "ChromaDB", "FastAPI", "Streamlit", "Docker"],
+      badge: "LangGraph Multi-Agent Pipeline",
+      stack: ["LangGraph", "Gemini 3.8 Flash", "ChromaDB", "Pydantic v2", "python-dotenv", "Python"],
       problem:
-        "Medical insurance claims auditing against hundreds of pages of complex policy documentation is manually intensive, prone to human fatigue, and creates multi-week backlogs.",
+        "Healthcare payers and IPAs lose billions to payment leakage from claims paid incorrectly against un-indexed contract rules. Human auditors only sample a fraction of claims.",
       whyItMattered:
-        "Erroneous claim rejections and delayed approvals disrupt clinical care and cause massive administrative overhead. An automated, explainable auditing pipeline restores transparency.",
+        "Autonomous claims audit requires auditable rule citations, deterministic pre-filtering, and an absolute boundary preventing autonomous outbound letter transmission.",
       architecture:
-        "Deterministic 5-agent state graph: Contract Reader parses policy rules -> Claim Extractor processes CMS Medicare data -> Auditor runs RAG verification -> Confidence Evaluator routes to Appeal Drafter or triggers human-in-the-loop fallback.",
+        "Deterministic LangGraph StateGraph: Contract Reader structures policy rules into ChromaDB -> Claim Extractor parses CMS claims natively (0 LLM calls) -> Deterministic Rule Match filters candidate rules by exact CPT/ICD overlap (auto-approves if no overlap) -> Auditor Agent reasons over narrowed candidates with composite confidence (0.6 LLM + 0.4 retrieval match) -> Routing branches to Appeal Drafter or routes to human review (threshold 0.72).",
       decision:
-        "Engineered deterministic multi-agent state coordination with explicit confidence thresholds (>0.85) rather than relying on unconstrained autonomous agent loops.",
+        "Engineered deterministic candidate matching (exact code overlap) to skip LLM calls on non-conflicting claims, paired with composite confidence scoring (0.72 threshold) and mandatory [DRAFT] markers.",
       decisionReason:
-        "In healthcare compliance, unconstrained loops risk hallucinated policy clauses and runaway token expenditure. Deterministic state machines guarantee auditability and reproducible outputs.",
+        "Passing irrelevant semantic candidates to an LLM causes confident hallucinations. Deterministic pre-matching eliminates hallucination risk, saves token cost, and guarantees reproducible audit logs.",
       outcome:
-        "Processed CMS Medicare claims end-to-end with real-time discrepancy highlighting, explainable audit logs, and automated appeal letter generation for contested denials.",
+        "Executed end-to-end CMS claim audits with verifiable policy citations, auto-drafted appeal letters with mandatory [DRAFT] boundaries, and automated human-in-the-loop fallback.",
       links: {
         github: "https://github.com/Rana-Tigrina",
       },
@@ -217,20 +217,20 @@ export const siteData = {
       slug: "clinical-documentation-soap",
       title: "Clinical Documentation & SOAP Notes Automation",
       category: "Clinical NLP & Speech AI",
-      badge: "WhisperX + LLaMA 3.2",
-      stack: ["WhisperX", "LLaMA 3.2", "BioClinicalBERT", "FFmpeg", "Librosa", "FastAPI", "Docker"],
+      badge: "WhisperX + Gemma 4",
+      stack: ["WhisperX", "Gemma 4", "Qwen 3.5", "FFmpeg", "Librosa", "FastAPI", "Docker"],
       problem:
         "Physicians spend up to 2 hours per day manually documenting patient encounters, leading to severe burnout and clinical documentation delays.",
       whyItMattered:
         "Automating structured SOAP notes (Subjective, Objective, Assessment, Plan) directly from raw doctor-patient audio consultations returns precious time to patient care.",
       architecture:
-        "Acoustic preprocessing (Librosa/FFmpeg) -> diarized transcription (WhisperX) -> clinical entity recognition (BioClinicalBERT) -> structured SOAP note generation with ICD-10 suggestions.",
+        "Acoustic preprocessing (Librosa/FFmpeg) -> diarized transcription (WhisperX) -> clinical SOAP note synthesis by Gemma 4 -> medical terminology & dosage validation by Qwen 3.5 -> EHR-ready export.",
       decision:
-        "Tuned domain-specific prompt templates and hierarchical chunking on LLaMA 3.2 instead of relying on generic public frontier model APIs.",
+        "Tuned domain-specific clinical prompt hierarchies on Gemma 4 with secondary verification gating via Qwen 3.5 instead of relying on opaque single-model APIs.",
       decisionReason:
         "Guaranteed HIPAA-compliant local deployability, lower latency, and 90% terminology precision on complex pharmacological and anatomical phrases.",
       outcome:
-        "Reduced physician documentation time by 65% while maintaining 90% benchmarked clinical terminology accuracy.",
+        "Reduced physician documentation time by 65% while maintaining 90% benchmarked clinical terminology accuracy validated by Qwen 3.5.",
       links: {
         github: "https://github.com/Rana-Tigrina",
       },
@@ -274,7 +274,7 @@ export const siteData = {
     {
       id: "pub-agents-safety",
       title: "Deterministic State Coordination in Autonomous Multi-Agent Healthcare Workflows",
-      venue: "In Submission / Under Peer Review",
+      venue: "In Submission / Under Review",
       year: "2026",
       status: "Under Review",
       abstract:
@@ -296,12 +296,12 @@ export const siteData = {
       period: "Dec 2024 – July 2025",
       location: "Delhi, India",
       highlights: [
-        "Architected, built, and deployed an end-to-end hybrid clinical diagnostic AI system combining fine-tuned BioClinicalBERT with a Gemini 2.0 Flash reasoning layer, achieving >91% symptom identification accuracy (on par with licensed psychologists).",
+        "Architected, built, and deployed an end-to-end hybrid clinical diagnostic AI system combining fine-tuned BioClinicalBERT with a Gemini 3.8 Flash reasoning layer, achieving >91% symptom identification accuracy (on par with licensed psychologists).",
         "Designed and implemented multi-turn clinical dialogue management, structured decision support, hypothesis generation, and differential diagnosis workflows from unstructured patient inputs.",
         "Built and integrated a Pinecone-backed RAG pipeline to maintain persistent longitudinal patient memory across multi-session consultations, mirroring EHR-style continuity of care.",
         "Operated as a solo/founding contributor owning the entire AI stack, driving architecture, tooling, containerization, and production serving decisions independently.",
       ],
-      stack: ["BioClinicalBERT", "Gemini 2.0 Flash", "Pinecone", "FastAPI", "Docker", "Python"],
+      stack: ["BioClinicalBERT", "Gemini 3.8 Flash", "Pinecone", "FastAPI", "Docker", "Python"],
     },
     {
       company: "Qapp.ai",
@@ -329,11 +329,11 @@ export const siteData = {
         "Multi-Agent Orchestration",
         "Tool-Calling Agents",
         "Prompt Engineering",
-        "LLaMA (3.1 / 3.2)",
-        "Mistral",
-        "Google Gemini (2.0 Flash)",
-        "OpenAI GPT",
+        "Gemini 3.8 Flash",
         "Gemma 4",
+        "Qwen 3.5",
+        "Mistral",
+        "OpenAI GPT",
         "Hugging Face Transformers",
       ],
     },

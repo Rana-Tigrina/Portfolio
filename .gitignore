@@ -49,3 +49,8 @@ desktop.ini
 *.sublime-workspace
 *.swp
 *~
+
+# Next.js auto-generated agent rules
+AGENTS.md
+CLAUDE.md
+

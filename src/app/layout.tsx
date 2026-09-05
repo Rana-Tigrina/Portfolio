@@ -48,7 +48,9 @@ export const metadata: Metadata = {
     "RAGAS",
     "Clinical NLP",
     "WhisperX",
-    "LLaMA 3.2",
+    "Gemini 3.8 Flash",
+    "Gemma 4",
+    "Qwen 3.5",
     "IIT Madras Data Science",
   ],
   authors: [{ name: "Mohammad Munawwar Malook", url: baseUrl }],
@@ -127,6 +129,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${newsreader.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable}`}
     >
       <head>
@@ -135,7 +138,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="antialiased bg-paper text-ink transition-colors duration-200">
+      <body
+        suppressHydrationWarning
+        className="antialiased bg-paper text-ink transition-colors duration-200"
+      >
         <a
           href="#content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-ink focus:text-paper focus:rounded-token font-mono text-xs shadow-md"

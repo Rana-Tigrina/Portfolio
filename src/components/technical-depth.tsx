@@ -16,19 +16,28 @@ import {
   Code2,
 } from "lucide-react";
 
-const CODE_SNIPPET = `# Production Multi-Agent LangGraph Node
+const CODE_SNIPPET = `# Production LangGraph Node with Deterministic Gating
 from langgraph.graph import StateGraph, END
-from langchain_google_genai import ChatGoogleGenerativeAI
+from google import genai
 
-async def audit_claim_node(state: ClaimAuditState) -> dict:
-    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.1)
-    retriever = ChromaVectorStore.as_retriever(k=5, score_threshold=0.85)
+async def auditor_node(state: ClaimAuditState) -> dict:
+    # 0 LLM calls if no exact code match in deterministic pre-filter
+    if not state.get("candidate_rules"):
+        return {"status": "APPROVED", "routed_to_human": False}
     
-    context = await retriever.ainvoke(state["diagnosis_code"])
-    verdict = await llm.ainvoke(
-        AUDIT_PROMPT.format(claim=state["claim"], policies=context)
+    # Gemini 3.8 Flash reasons over narrowed candidate set only
+    client = genai.Client()
+    response = client.models.generate_content(
+        model="gemini-3.8-flash",
+        contents=AUDIT_PROMPT.format(claim=state["claim"], rules=state["candidate_rules"])
     )
-    return {"adjudication": verdict.content, "flagged": verdict.confidence < 0.90}
+    # Composite score: 0.6 LLM conf + 0.4 retrieval match score
+    composite = 0.6 * response.parsed.confidence + 0.4 * state["retrieval_score"]
+    return {
+        "status": "FLAGGED" if composite >= 0.72 else "REVIEW",
+        "composite_confidence": composite,
+        "routed_to_human": composite < 0.72
+    }
 `;
 
 function TypingCodeTerminal() {
@@ -128,10 +137,10 @@ function MetricBar({
 
 export function TechnicalDepth() {
   const models = [
-    { name: "Gemini 2.0 Flash", tag: "Reasoning & Audit", role: "Primary LLM" },
-    { name: "LLaMA 3.2", tag: "Local Edge Serving", role: "Clinical SOAP" },
-    { name: "BioClinicalBERT", tag: "NER & Embeddings", role: "Medical NLP" },
-    { name: "WhisperX", tag: "Word Alignment", role: "Audio Transcription" },
+    { name: "Gemini 3.8 Flash", tag: "Reasoning & Audit", role: "Primary LLM" },
+    { name: "Gemma 4", tag: "Clinical Generation", role: "SOAP Synthesizer" },
+    { name: "Qwen 3.5", tag: "Clinical Validation", role: "Medical Verification" },
+    { name: "WhisperX", tag: "Diarization & ASR", role: "Audio Pipeline" },
     { name: "LangGraph", tag: "Multi-Agent DAGs", role: "Orchestration" },
     { name: "ChromaDB", tag: "Hybrid Search", role: "Vector DB" },
   ];

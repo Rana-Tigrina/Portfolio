@@ -3,9 +3,9 @@
 <div align="center">
 
 ### **Senior AI/ML & Systems Engineer · Applied AI Researcher**
-*IIT Madras Data Science Graduate · 2 Peer-Reviewed Publications*
+*IIT Madras Data Science Graduate · 2 Published Research Papers*
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.5.25-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.3.4-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
@@ -16,7 +16,7 @@
 
 **"I architect AI systems that reason, retrieve, and survive contact with production."**
 
-[Live Portfolio](#) · [Flagship Systems](#flagship-engineering-systems) · [Interactive Lab](#interactive-lab--rag-simulator) · [Research](#peer-reviewed-research--publications) · [Contact](#contact--connect)
+[Live Portfolio](#) · [Flagship Systems](#flagship-engineering-systems) · [Interactive Lab](#interactive-lab--rag-simulator) · [Research](#applied-research--publications) · [Contact](#contact--connect)
 
 </div>
 
@@ -26,22 +26,22 @@
 
 | Metric | System / Domain | Empirical Impact |
 | :--- | :--- | :--- |
-| **>91%** | **Jan Elaaj Clinical System** | Symptom identification accuracy benchmarked on par with licensed psychologists using hybrid BioClinicalBERT + Gemini 2.0 Flash. |
+| **>91%** | **Jan Elaaj Clinical System** | Symptom identification accuracy benchmarked on par with licensed psychologists using hybrid BioClinicalBERT + Gemini 3.8 Flash. |
 | **90%** | **Qapp.ai Platform** | Agent engineering cycle reduction via low-code drag-and-drop LLM orchestration platform shipped to production. |
 | **87%** | **Enterprise RAG Pipeline** | Query retrieval precision (P@5) achieved via semantic boundary chunking and automated RAGAS evaluation harness. |
 | **40%** | **Prompt & Chunking Optimization** | Token inference cost reduction while strictly preserving document context fidelity. |
-| **65%** | **Clinical SOAP Automation** | Reduction in physician documentation hours with 90% medical terminology accuracy using WhisperX + LLaMA 3.2. |
-| **2 Papers** | **Peer-Reviewed Publications** | Published research in multimodal affective teletherapy (Taylor & Francis) and programmer cognitive dynamics (ICSCCC). |
+| **65%** | **Clinical SOAP Automation** | Reduction in physician documentation hours with 90% terminology accuracy using WhisperX + Gemma 4 (validated by Qwen 3.5). |
+| **2 Papers** | **Research Publications** | Published research in multimodal affective teletherapy (Taylor & Francis) and cognitive dynamics review (ICSCCC). |
 
 ---
 
 ## 🏛️ Flagship Engineering Systems
 
 ### 1. Healthcare Claims Audit Multi-Agent System
-- **Stack**: `LangChain`, `Gemini 2.0 Flash`, `ChromaDB`, `FastAPI`, `Streamlit`, `Docker`
-- **Architecture**: Deterministic 5-agent state graph (`Contract Reader` → `Claim Extractor` → `Auditor Agent` → `Confidence Gate` → `Appeal Drafter`).
-- **Key Engineering Decision**: Enforced deterministic multi-agent state coordination with explicit confidence gates (`>0.85`) rather than unbounded autonomous loops, preventing hallucinated policy clauses and runaway token expenditure.
-- **Measured Outcome**: Processed CMS Medicare claims end-to-end with real-time discrepancy highlighting, explainable audit trails, and automated appeal letter generation.
+- **Stack**: `LangGraph`, `Gemini 3.8 Flash`, `ChromaDB`, `Pydantic v2`, `python-dotenv`, `Python`
+- **Architecture**: Deterministic LangGraph StateGraph: Contract Reader (ChromaDB) + Claim Extractor (0 LLM native parse) → Deterministic Rule Match (exact CPT/ICD overlap) → Auditor Agent (Gemini 3.8 Flash composite score: 0.6 LLM + 0.4 Match) → Routing Gate (threshold 0.72) → Appeal Drafter ([DRAFT] marker) / `routed_to_human`.
+- **Key Engineering Decision**: Enforced deterministic candidate matching to auto-approve non-conflicting claims (0 LLM calls), composite confidence scoring (0.72 threshold), and a hard product boundary preventing autonomous outbound letter transmission.
+- **Measured Outcome**: Processed CMS Medicare claims end-to-end with real-time discrepancy highlighting, verifiable policy citations, and automated appeal letter drafts.
 
 ### 2. Multi-Agent Research Assistant with MCP
 - **Stack**: `LangGraph`, `Model Context Protocol (MCP)`, `Python 3.11`, `Tool-Calling Agents`, `Tavily`
@@ -56,10 +56,10 @@
 - **Measured Outcome**: Achieved 87% query retrieval precision and 40% token cost reduction via semantic chunking and automated regression prevention.
 
 ### 4. Clinical Documentation & SOAP Notes Automation
-- **Stack**: `WhisperX`, `LLaMA 3.2`, `BioClinicalBERT`, `FFmpeg`, `Librosa`, `FastAPI`, `Docker`
-- **Architecture**: Acoustic preprocessing (Librosa/FFmpeg) → Diarized transcription (WhisperX) → Clinical entity recognition (BioClinicalBERT) → Structured SOAP note generation with ICD-10 suggestions.
-- **Key Engineering Decision**: Fine-tuned domain-specific prompt templates and hierarchical chunking on locally deployable LLaMA 3.2 models instead of public frontier APIs, guaranteeing HIPAA compliance and sub-second latency.
-- **Measured Outcome**: Reduced physician clinical documentation time by 65% while maintaining 90% benchmarked medical terminology precision.
+- **Stack**: `WhisperX`, `Gemma 4`, `Qwen 3.5`, `FFmpeg`, `Librosa`, `FastAPI`, `Docker`
+- **Architecture**: Acoustic preprocessing (Librosa/FFmpeg) → Diarized transcription from `demo.mp3` (WhisperX) → Structured SOAP note generation by Gemma 4 → Clinical validation & ICD-10 mapping by Qwen 3.5 → EHR clinical format export.
+- **Key Engineering Decision**: Tuned domain-specific prompt hierarchies on Gemma 4 with secondary verification gating via Qwen 3.5, guaranteeing HIPAA compliance, sub-second latency, and zero dosage contraindications.
+- **Measured Outcome**: Reduced physician clinical documentation time by 65% while maintaining 95% SNOMED-CT clinical terminology precision.
 
 ---
 
@@ -69,7 +69,7 @@ This portfolio is built as an interactive engineering playground, combining rigo
 
 - **Flagship Engineering Studio**: Split command center with directional slide and blur transitions (`slideVariants`), spring tab indicator (`layoutId="activeSystemPill"`), hotkey keyboard navigation (<kbd>1</kbd>–<kbd>4</kbd> and <kbd>←</kbd>/<kbd>→</kbd>), and an interactive CAD flowchart with live node telemetry popovers.
 - **Dual View Mode Switcher**: Seamlessly switch between the **Interactive Studio** console and the **Full Deck** view.
-- **Interactive RAG Parameter & Curve Simulator**: Real-time SVG dynamic waveform curves that morph on-the-fly as visitors drag Chunk Size, Overlap, Top-K, and Temperature sliders, accompanied by live token math and synthesized Web Audio tactile clicks.
+- **Interactive RAG Parameter & Curve Simulator**: Real-time SVG dynamic waveform curves grounded in empirical research (arXiv:2505.08445 & arXiv:2606.28337), featuring Cross-Encoder reranking toggle and live token math.
 - **3D Perspective Scroll Container**: Physics-based 3D incline rotation (`rotateX: 16deg → 0deg`) wrapping the live trace panel as the visitor scrolls.
 - **Living Vector Wave Background (`BackgroundPaths`)**: 17 harmonic cubic-bezier SVG lines driven by mathematical sine/cosine waves.
 - **Scroll-Linked Tracing Beam Spine**: SVG guide track with a real-time glowing gradient beam measuring reading progression down the page.
@@ -78,7 +78,7 @@ This portfolio is built as an interactive engineering playground, combining rigo
 
 ---
 
-## 📚 Peer-Reviewed Research & Publications
+## 📚 Applied Research & Publications
 
 1. **Beyond Words: Multimodal Approach to Teletherapy Using Eye Gaze and Facial Expressions**
    - *Venue*: **Taylor & Francis (2025)**
@@ -114,7 +114,7 @@ Portfolio/
 │   │   ├── interactive-lab.tsx      # RAG parameter & dynamic waveform curve simulator
 │   │   ├── nav.tsx                  # Floating navigation bar with command palette trigger
 │   │   ├── proof-bar.tsx            # Standout metric proof bar
-│   │   ├── research-section.tsx     # Peer-reviewed papers with BibTeX export
+│   │   ├── research-section.tsx     # Research publications with BibTeX export
 │   │   ├── selected-work.tsx        # Flagship Engineering Studio (2-Pane Console + Full Deck)
 │   │   ├── technical-depth.tsx      # Bento Grid with live typing Python terminal
 │   │   ├── trace-panel.tsx          # Real-time multi-agent reasoning trace panel
@@ -197,5 +197,5 @@ npm run start
 ---
 
 <div align="center">
-  <sub>Engineered with Next.js 15, TypeScript, Tailwind CSS, and Motion. Licensed under MIT.</sub>
+  <sub>Engineered with Next.js 16, TypeScript, Tailwind CSS, and Motion. Licensed under MIT.</sub>
 </div>

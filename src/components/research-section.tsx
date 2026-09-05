@@ -25,7 +25,7 @@ export function ResearchSection() {
             <span className="font-mono text-xs text-accent font-semibold tracking-wider uppercase">
               Applied Research &amp; Publications
             </span>
-            <span className="text-xs font-mono text-ink-soft">/ 02 Peer-Reviewed + 01 Under Review</span>
+            <span className="text-xs font-mono text-ink-soft">/ 02 Published + 01 Under Review</span>
           </div>
           <h2 className="font-serif italic text-3xl sm:text-4xl text-ink">
             Bridging Theory to Production Systems
