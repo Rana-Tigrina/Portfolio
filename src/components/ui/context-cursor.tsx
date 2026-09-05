@@ -78,7 +78,7 @@ export function ContextCursor() {
       window.removeEventListener("mousedown", onMouseDown);
       document.removeEventListener("mouseleave", onMouseLeave);
     };
-  }, [mouseX, mouseY]);
+  }, []);
 
   if (shouldReduceMotion || !isVisible) return null;
 
