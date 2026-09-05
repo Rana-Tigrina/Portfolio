@@ -16,7 +16,7 @@ export interface DockItem {
   icon: React.ReactNode;
   href?: string;
   target?: string;
-  onClick?: () => void;
+  onClick?: (e?: React.MouseEvent) => void;
   badge?: React.ReactNode;
   className?: string;
   ariaLabel?: string;
@@ -68,7 +68,7 @@ function DockIcon({
     sound.playClick(850);
     if (item.onClick) {
       if (!item.href) e.preventDefault();
-      item.onClick();
+      item.onClick(e);
     }
   };
 

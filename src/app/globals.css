@@ -30,8 +30,6 @@
     background-color: var(--paper);
     color: var(--ink);
     -webkit-overflow-scrolling: touch;
-    transition: background-color 400ms cubic-bezier(0.16, 1, 0.3, 1),
-                color 400ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   @media (min-width: 768px) {
@@ -48,14 +46,14 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -webkit-overflow-scrolling: touch;
-    transition: background-color 400ms cubic-bezier(0.16, 1, 0.3, 1),
-                color 400ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* Efficient, smooth theme transitions for surface panels and typography without interfering with transforms */
-  header, nav, footer, section, article, button, input, textarea {
-    transition-property: background-color, border-color, color, fill, stroke;
-    transition-duration: 350ms;
+  /* Synchronized, butter-smooth theme transitions across all surfaces, borders, and text */
+  *,
+  *::before,
+  *::after {
+    transition-property: background-color, border-color, color, fill, stroke, text-decoration-color;
+    transition-duration: 250ms;
     transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -238,17 +236,17 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-/* High-performance, silky-smooth surface transitions (no layout thrashing, 120 FPS) */
-body,
-header,
-nav,
-footer,
-.bg-paper,
-.bg-paper-2,
-.border-line {
-  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+/* View Transitions API: Seamless, butter-smooth full-page theme ripple */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
+::view-transition-old(root) {
+  z-index: 1;
+}
 
-
+::view-transition-new(root) {
+  z-index: 9999;
+}

@@ -86,19 +86,60 @@ export function Nav() {
     };
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = (e?: React.MouseEvent) => {
     sound.playClick(750);
     const root = document.documentElement;
     const nextDark = !root.classList.contains("dark");
-    if (nextDark) {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
+
+    const applyTheme = () => {
+      if (nextDark) {
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+      }
+      setIsDark(nextDark);
+      try {
+        localStorage.setItem("theme", nextDark ? "dark" : "light");
+      } catch {}
+    };
+
+    // Use modern View Transitions API with circular ripple origin if supported
+    const hasViewTransition =
+      typeof document !== "undefined" &&
+      "startViewTransition" in document &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!hasViewTransition) {
+      applyTheme();
+      return;
     }
-    setIsDark(nextDark);
-    try {
-      localStorage.setItem("theme", nextDark ? "dark" : "light");
-    } catch {}
+
+    const x = e?.clientX ?? window.innerWidth / 2;
+    const y = e?.clientY ?? window.innerHeight / 2;
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    const transition = (document as unknown as { startViewTransition: (cb: () => void) => { ready: Promise<void> } }).startViewTransition(() => {
+      applyTheme();
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 480,
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          pseudoElement: "::view-transition-new(root)",
+        }
+      );
+    });
   };
 
   const toggleSound = () => {

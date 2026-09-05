@@ -91,7 +91,7 @@ export const metadata: Metadata = {
 
 import { SmoothScrollProvider } from "@/components/ui/smooth-scroll-provider";
 import { ContextCursor } from "@/components/ui/context-cursor";
-import { AsciiSpiralBackground } from "@/components/ui/ascii-spiral-background";
+import { NeuralLatticeBackground } from "@/components/ui/neural-lattice-background";
 import { AmbientHorizonGlow } from "@/components/ui/ambient-horizon-glow";
 import { PortfolioChat } from "@/components/chat/portfolio-chat";
 
@@ -172,7 +172,7 @@ export default function RootLayout({
         className="antialiased bg-paper text-ink transition-colors duration-200"
       >
         <AmbientHorizonGlow />
-        <AsciiSpiralBackground />
+        <NeuralLatticeBackground />
         <ContextCursor />
         <SmoothScrollProvider>
           <a

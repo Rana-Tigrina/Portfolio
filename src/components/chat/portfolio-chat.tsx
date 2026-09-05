@@ -716,7 +716,7 @@ export function PortfolioChat() {
                       Ask anything about Munawwar&apos;s work
                     </h3>
                     <p className="text-xs text-ink-soft leading-relaxed">
-                      Trained on Munawwar&apos;s verified master resume and engineering architectures. Powered by custom low-latency neural inference.
+                      Grounded in Munawwar&apos;s verified engineering dossier, architecture blueprints, and production telemetry. Powered by low-latency neural inference.
                     </p>
                   </div>
 
