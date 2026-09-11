@@ -10,28 +10,27 @@ export function ResearchSection() {
   const [copied, setCopied] = useState(false);
 
   const handleCopyBibtex = (bibtex: string) => {
-    sound.playSuccess();
     navigator.clipboard.writeText(bibtex);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <section id="research" className="py-16 md:py-24 border-b border-line">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
+    <section id="research" className="py-20 md:py-28 border-b border-line bg-paper">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
         {/* Header */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-xs text-accent font-semibold tracking-wider uppercase">
-              Applied Research &amp; Publications
+            <span className="font-sans text-xs text-accent font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-full border border-accent/30 bg-accent-soft">
+              Publications
             </span>
-            <span className="text-xs font-mono text-ink-soft">/ 02 Published + 01 Under Review</span>
+            <span className="text-xs font-sans text-ink-soft">/ 02 Peer-Reviewed + 01 Under Review</span>
           </div>
-          <h2 className="font-serif italic text-3xl sm:text-4xl text-ink">
-            Bridging Theory to Production Systems
+          <h2 className="font-serif italic text-3xl sm:text-4xl lg:text-5xl text-ink tracking-tight">
+            Applied Research &amp; Publications
           </h2>
-          <p className="font-sans text-sm sm:text-base text-ink-soft max-w-2xl">
-            My research investigates multimodal affective computing in healthcare and the systemic cognitive impacts of generative AI tools.
+          <p className="font-sans text-sm sm:text-base text-ink-soft max-w-2xl leading-relaxed">
+            Bridging mathematical theory to production systems—investigating multimodal teletherapy and systematic cognitive dynamics at IIT Madras.
           </p>
         </div>
 
@@ -41,24 +40,22 @@ export function ResearchSection() {
             return (
               <div
                 key={pub.id}
-                data-cursor="paper"
-                data-cursor-text="PAPER"
-                className="p-5 sm:p-6 bg-paper border border-line rounded-token flex flex-col justify-between space-y-4 hover:border-ink-soft/60 transition-colors"
+                className="p-6 sm:p-7 bg-paper border border-line rounded-2xl flex flex-col justify-between space-y-5 hover:border-accent/50 transition-all duration-200 shadow-2xs"
               >
-                <div className="space-y-3">
+                <div className="space-y-3.5">
                   <div className="flex items-center justify-between">
                     <span
-                      className={`font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-token border ${
+                      className={`font-sans text-xs tracking-wide px-2.5 py-0.5 rounded-full border ${
                         pub.status === "Published"
-                          ? "bg-accent-soft text-accent border-accent/30"
+                          ? "bg-accent-soft text-accent border-accent/30 font-semibold"
                           : pub.status === "Accepted"
-                          ? "bg-paper-2 text-ink border-line"
+                          ? "bg-paper-2 text-ink border-line font-medium"
                           : "bg-paper-2 text-ink-soft border-line/60"
                       }`}
                     >
                       {pub.status} · {pub.year}
                     </span>
-                    <span className="font-mono text-[11px] text-ink-soft">
+                    <span className="font-sans text-xs text-ink-soft">
                       {pub.venue.includes("(") ? pub.venue.split("(")[1].replace(")", "") : "Journal"}
                     </span>
                   </div>

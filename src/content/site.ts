@@ -67,6 +67,7 @@ export const siteData = {
     phone: "+91 93546 26671",
     github: "https://github.com/Rana-Tigrina",
     linkedin: "https://www.linkedin.com/in/munawwar-malook/",
+    resume: "https://drive.google.com/file/d/1rQyxmXvSFy-8TIwRkot5Zx3l-izmFVR8/view?usp=drive_link",
     status: {
       available: true,
       text: "Available for Full-Time AI & GenAI Engineering roles",
@@ -78,9 +79,12 @@ export const siteData = {
     headline: "I architect AI systems that reason, retrieve, and survive contact with production.",
     subcopy:
       "IIT Madras Data Science graduate with two published research papers in multimodal AI and cognitive dynamics. I build production-grade agentic workflows, deterministic RAG pipelines, and HIPAA-aware clinical NLP models with continuous evaluation harnesses.",
-    ctaPrimary: { label: "Explore Case Studies", href: "#work" },
-    ctaSecondary: { label: "Research & Publications", href: "#research" },
-    ctaLab: { label: "Open Interactive Lab", href: "#lab" },
+    ctaResume: {
+      label: "Download Resume",
+      href: "https://drive.google.com/file/d/1rQyxmXvSFy-8TIwRkot5Zx3l-izmFVR8/view?usp=drive_link",
+    },
+    ctaPrimary: { label: "Work Experience", href: "#experience" },
+    ctaSecondary: { label: "Selected Systems", href: "#work" },
   },
 
   proofMetrics: [

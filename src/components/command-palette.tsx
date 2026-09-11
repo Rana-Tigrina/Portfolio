@@ -20,6 +20,8 @@ import {
   Terminal,
   Bot,
   Sparkles,
+  ShieldCheck,
+  FileDown,
 } from "lucide-react";
 
 interface CommandPaletteProps {
@@ -98,10 +100,10 @@ export function CommandPalette({ isOpen, onClose, onRunTrace }: CommandPalettePr
     {
       category: "Navigation",
       items: [
-        { label: "Selected Case Studies", icon: FolderGit2, action: () => navigateTo("#work") },
-        { label: "Interactive RAG & Agent Lab", icon: FlaskConical, action: () => navigateTo("#lab") },
-        { label: "Research & Publications", icon: BookOpen, action: () => navigateTo("#research") },
+        { label: "Download Resume (Google Drive)", icon: FileDown, action: () => window.open("https://drive.google.com/file/d/1rQyxmXvSFy-8TIwRkot5Zx3l-izmFVR8/view?usp=drive_link", "_blank") },
         { label: "Engineering Experience", icon: Briefcase, action: () => navigateTo("#experience") },
+        { label: "Selected Case Studies", icon: FolderGit2, action: () => navigateTo("#work") },
+        { label: "Research & Publications", icon: BookOpen, action: () => navigateTo("#research") },
         { label: "Technical Depth Matrix", icon: Terminal, action: () => navigateTo("#skills") },
         { label: "Education & Credentials", icon: GraduationCap, action: () => navigateTo("#education") },
         { label: "Get in Touch / Contact", icon: Mail, action: () => navigateTo("#contact") },

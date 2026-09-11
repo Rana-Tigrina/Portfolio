@@ -27,6 +27,7 @@ import {
   ShieldCheck,
   FileCode2,
   ExternalLink,
+  FileDown,
 } from "lucide-react";
 
 export function Nav() {
@@ -38,24 +39,34 @@ export function Nav() {
   const [navVisible, setNavVisible] = useState(true);
   const lastScrollY = useRef(0);
 
-  // Navbar only appears when at the top/starting area of the page.
-  // Smoothly disappears when scrolling away and does not reappear during mid-page scroll.
+  // Smart-sticky navbar:
+  // - Always visible at top of page (currentScrollY <= 60)
+  // - While scrolling down: hides smoothly (currentScrollY > 90 and deltaY > 6)
+  // - While scrolling up: reveals immediately (deltaY < -4)
+  // - Always visible when dropdown menu or mobile menu is active
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
+      const deltaY = currentScrollY - lastScrollY.current;
 
       // Keep navbar locked open when interacting with menus
       if (activeMenu || mobileMenuOpen) {
         setNavVisible(true);
+        lastScrollY.current = currentScrollY;
         return;
       }
 
-      // Navbar is ONLY visible at top of page (scrollY <= 80)
-      if (currentScrollY <= 80) {
+      if (currentScrollY <= 60) {
         setNavVisible(true);
-      } else {
+      } else if (deltaY > 6 && currentScrollY > 90) {
+        // Scrolling DOWN -> hide smoothly
         setNavVisible(false);
+      } else if (deltaY < -4) {
+        // Scrolling UP -> reveal immediately
+        setNavVisible(true);
       }
+
+      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -228,7 +239,37 @@ export function Nav() {
           {/* ================= ZONE 2: INTERACTIVE NAVBAR MENU (DROPDOWNS) ================= */}
           <div className="hidden lg:flex items-center justify-center flex-1">
             <Menu setActive={setActiveMenu}>
-              {/* Menu Item 1: Case Studies */}
+              {/* Menu Item 1: Experience */}
+              <MenuItem
+                setActive={setActiveMenu}
+                active={activeMenu}
+                item="Experience"
+                href="#experience"
+              >
+                <div className="p-4 w-[380px] space-y-2">
+                  <div className="flex items-center justify-between pb-2 border-b border-line text-xs font-mono">
+                    <span className="font-semibold text-ink flex items-center gap-1.5">
+                      <Briefcase className="w-3.5 h-3.5 text-accent" />
+                      Work Experience &amp; Impact
+                    </span>
+                    <span className="text-[10px] text-accent font-semibold">Production AI</span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <HoveredLink href="#experience" badge="Clinical AI">
+                      Jan Elaaj · BioClinicalBERT &amp; Gemini
+                    </HoveredLink>
+                    <HoveredLink href="#experience" badge="Orchestration">
+                      Qapp.ai · Low-Code Multi-Agent Platform
+                    </HoveredLink>
+                    <HoveredLink href="#education" badge="IIT Madras">
+                      B.S. in Data Science (CGPA 8.5)
+                    </HoveredLink>
+                  </div>
+                </div>
+              </MenuItem>
+
+              {/* Menu Item 2: Case Studies */}
               <MenuItem
                 setActive={setActiveMenu}
                 active={activeMenu}
@@ -294,41 +335,6 @@ export function Nav() {
                 </div>
               </MenuItem>
 
-              {/* Menu Item 2: The Lab */}
-              <MenuItem
-                setActive={setActiveMenu}
-                active={activeMenu}
-                item="The Lab"
-                href="#lab"
-              >
-                <div className="p-4 w-[380px] space-y-2">
-                  <div className="flex items-center justify-between pb-2 border-b border-line text-xs font-mono">
-                    <span className="font-semibold text-ink flex items-center gap-1.5">
-                      <FlaskConical className="w-3.5 h-3.5 text-accent" />
-                      Interactive AI Lab
-                    </span>
-                    <span className="text-[10px] text-accent font-semibold px-1.5 py-0.2 bg-accent-soft rounded">
-                      Live Demos
-                    </span>
-                  </div>
-
-                  <div className="space-y-1">
-                    <HoveredLink href="#lab" badge="Interactive">
-                      Multi-Agent Latency Profiler
-                    </HoveredLink>
-                    <HoveredLink href="#lab" badge="Evaluation">
-                      Deterministic Overlap Rule Tester
-                    </HoveredLink>
-                    <HoveredLink href="#lab" badge="Clinical">
-                      Acoustic Diarization &amp; SOAP Synthesizer
-                    </HoveredLink>
-                    <HoveredLink href="#lab" badge="Observability">
-                      RAGAS Faithfulness &amp; Relevance Gate
-                    </HoveredLink>
-                  </div>
-                </div>
-              </MenuItem>
-
               {/* Menu Item 3: Research */}
               <MenuItem
                 setActive={setActiveMenu}
@@ -352,38 +358,8 @@ export function Nav() {
                     <HoveredLink href="#research" badge="Affective AI">
                       Gaze Tracking &amp; Cognitive Workload
                     </HoveredLink>
-                    <HoveredLink href="#research" badge="RAG Benchmark">
-                      Empirical RAG Parameter Frontiers
-                    </HoveredLink>
-                  </div>
-                </div>
-              </MenuItem>
-
-              {/* Menu Item 4: Experience */}
-              <MenuItem
-                setActive={setActiveMenu}
-                active={activeMenu}
-                item="Experience"
-                href="#experience"
-              >
-                <div className="p-4 w-[380px] space-y-2">
-                  <div className="flex items-center justify-between pb-2 border-b border-line text-xs font-mono">
-                    <span className="font-semibold text-ink flex items-center gap-1.5">
-                      <Briefcase className="w-3.5 h-3.5 text-accent" />
-                      Background &amp; Credentials
-                    </span>
-                    <span className="text-[10px] text-accent font-semibold">IIT Madras '25</span>
-                  </div>
-
-                  <div className="space-y-1">
-                    <HoveredLink href="#experience" badge="Industry">
-                      Jan Elaaj · Key AI Contributor
-                    </HoveredLink>
-                    <HoveredLink href="#education" badge="Academics">
-                      IIT Madras · B.S. Data Science
-                    </HoveredLink>
-                    <HoveredLink href="#skills" badge="Technical">
-                      Systems Depth &amp; Invariant Architecture
+                    <HoveredLink href="#research" badge="Cognitive AI">
+                      Impact on Cognitive Processes
                     </HoveredLink>
                   </div>
                 </div>
@@ -401,16 +377,33 @@ export function Nav() {
               <AnimatedDock items={dockItems} />
             </div>
 
+            {/* Quick Resume CTA */}
+            <a
+              href="https://drive.google.com/file/d/1rQyxmXvSFy-8TIwRkot5Zx3l-izmFVR8/view?usp=drive_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex"
+            >
+              <Button
+                variant="primary"
+                size="sm"
+                className="h-8 px-3 text-xs font-mono shrink-0 font-semibold gap-1.5 shadow-sm"
+              >
+                <FileDown className="w-3.5 h-3.5" />
+                <span>Resume</span>
+              </Button>
+            </a>
+
             {/* Quick Contact CTA */}
             <Button
-              variant="primary"
+              variant="outline"
               size="sm"
               onClick={() => {
                 sound.playClick(800);
                 const el = document.querySelector("#contact");
                 if (el) el.scrollIntoView({ behavior: "smooth" });
               }}
-              className="h-8 px-3 text-xs font-mono shrink-0 hidden md:inline-flex"
+              className="h-8 px-2.5 text-xs font-mono shrink-0 hidden md:inline-flex"
             >
               Contact
             </Button>
@@ -484,6 +477,17 @@ export function Nav() {
             >
               <div className="grid grid-cols-2 gap-2 font-mono text-xs">
                 <a
+                  href="#experience"
+                  onClick={() => {
+                    sound.playClick(750);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="p-2.5 rounded-xl bg-paper-2 border border-line/60 text-ink flex items-center justify-between"
+                >
+                  <span>Experience</span>
+                  <span className="text-[10px] text-accent font-semibold">Jan Elaaj</span>
+                </a>
+                <a
                   href="#work"
                   onClick={() => {
                     sound.playClick(750);
@@ -493,17 +497,6 @@ export function Nav() {
                 >
                   <span>Case Studies</span>
                   <span className="text-[10px] text-accent font-semibold">4 Systems</span>
-                </a>
-                <a
-                  href="#lab"
-                  onClick={() => {
-                    sound.playClick(750);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="p-2.5 rounded-xl bg-paper-2 border border-line/60 text-ink flex items-center justify-between"
-                >
-                  <span>The Lab</span>
-                  <span className="text-[10px] text-accent font-semibold">Demos</span>
                 </a>
                 <a
                   href="#research"
@@ -517,31 +510,41 @@ export function Nav() {
                   <span className="text-[10px] text-ink-soft">Papers</span>
                 </a>
                 <a
-                  href="#experience"
+                  href="#skills"
                   onClick={() => {
                     sound.playClick(750);
                     setMobileMenuOpen(false);
                   }}
                   className="p-2.5 rounded-xl bg-paper-2 border border-line/60 text-ink flex items-center justify-between"
                 >
-                  <span>Experience</span>
-                  <span className="text-[10px] text-ink-soft">Career</span>
+                  <span>Tech Stack</span>
+                  <span className="text-[10px] text-ink-soft">Bento</span>
+                </a>
+                <a
+                  href="#education"
+                  onClick={() => {
+                    sound.playClick(750);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="p-2.5 rounded-xl bg-paper-2 border border-line/60 text-ink flex items-center justify-between"
+                >
+                  <span>Education</span>
+                  <span className="text-[10px] text-ink-soft">IIT Madras</span>
                 </a>
               </div>
 
               {/* Mobile Quick Action Buttons */}
               <div className="pt-2 border-t border-line/70 flex items-center justify-between gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setPaletteOpen(true);
-                  }}
-                  className="flex-1 py-2 px-3 rounded-xl bg-paper-2 border border-line text-xs font-mono text-ink-soft flex items-center justify-center gap-1.5"
+                <a
+                  href="https://drive.google.com/file/d/1rQyxmXvSFy-8TIwRkot5Zx3l-izmFVR8/view?usp=drive_link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => sound.playClick(750)}
+                  className="flex-1 py-2 px-3 rounded-xl bg-accent text-white text-xs font-mono font-semibold flex items-center justify-center gap-1.5 shadow-sm"
                 >
-                  <Command className="w-3.5 h-3.5 text-accent" />
-                  <span>Search</span>
-                </button>
+                  <FileDown className="w-3.5 h-3.5" />
+                  <span>Resume</span>
+                </a>
 
                 <a
                   href="#contact"
@@ -549,7 +552,7 @@ export function Nav() {
                     sound.playClick(750);
                     setMobileMenuOpen(false);
                   }}
-                  className="flex-1 py-2 px-3 rounded-xl bg-accent text-white text-xs font-mono font-semibold flex items-center justify-center gap-1"
+                  className="flex-1 py-2 px-3 rounded-xl bg-paper-2 border border-line text-xs font-mono font-semibold text-ink flex items-center justify-center gap-1"
                 >
                   <span>Contact</span>
                 </a>

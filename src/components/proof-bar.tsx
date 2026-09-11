@@ -43,15 +43,12 @@ function AnimatedMetric({ metric }: { metric: ProofMetric }) {
   return (
     <div
       ref={ref}
-      onMouseEnter={() => {
-        setIsHovered(true);
-        sound.playClick(820);
-      }}
+      onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="relative p-4 sm:p-5 border-r border-b border-line/80 last:border-r-0 hover:bg-paper-2 transition-colors cursor-pointer group"
     >
       <div className="flex items-start justify-between mb-2">
-        <span className="font-mono text-[11px] uppercase tracking-wider text-ink-soft">
+        <span className="font-sans text-[11px] uppercase tracking-wider text-ink-soft">
           {metric.sublabel}
         </span>
         <Info className="w-3.5 h-3.5 text-ink-soft/60 group-hover:text-accent transition-colors" />
@@ -88,10 +85,10 @@ export function ProofBar() {
     <section className="border-b border-line bg-paper">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between pb-3 border-b border-line/60">
-          <span className="font-mono text-xs uppercase tracking-wider text-ink-soft">
-            Quantified Production Benchmarks & Evidence
+          <span className="font-sans text-xs uppercase tracking-wider text-ink-soft">
+            Quantified Production Benchmarks &amp; Evidence
           </span>
-          <span className="text-[11px] font-mono text-accent">
+          <span className="text-[11px] font-sans text-accent">
             Hover metric for provenance
           </span>
         </div>

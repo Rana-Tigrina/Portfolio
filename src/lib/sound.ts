@@ -5,7 +5,7 @@ type Listener = (isMuted: boolean) => void;
 
 class SoundManager {
   private ctx: AudioContext | null = null;
-  private isMuted: boolean = false; // Enabled for interactive experience
+  private isMuted: boolean = true; // Muted by default for quiet editorial elegance
   private listeners: Set<Listener> = new Set();
   private userInteracted: boolean = false;
 
@@ -13,9 +13,9 @@ class SoundManager {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("portfolio_sound_enabled");
       if (stored !== null) {
-        this.isMuted = stored === "false";
+        this.isMuted = stored === "false" || stored === "muted";
       } else {
-        this.isMuted = false;
+        this.isMuted = true;
       }
 
       // Auto-unlock AudioContext on first user gesture

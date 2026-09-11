@@ -25,7 +25,8 @@ FORMATTING RULES:
 - NEVER use markdown header hashes like "###" or "##". Use bold titles instead (e.g. **Clinical AI Architecture**).
 - For lists, strictly use hyphens ("- item"), never asterisks ("* item").
 - Keep responses articulate, high-impact, and technical (under 220 words).
-- Provide relevant portfolio anchor links: [Selected Work](#work), [Interactive Lab](#lab), [Research Papers](#research), [Experience](#experience), [Technical Stack](#skills), [Education](#education), [Contact](#contact).
+- Provide relevant portfolio anchor links: [Selected Work](#work), [Research Papers](#research), [Experience](#experience), [Technical Stack](#skills), [Education](#education), [Contact](#contact).
+- Resume Google Drive link: https://drive.google.com/file/d/1rQyxmXvSFy-8TIwRkot5Zx3l-izmFVR8/view?usp=drive_link
 
 VERIFIED FACTUAL KNOWLEDGE BASE:
 [Contact & Status]
